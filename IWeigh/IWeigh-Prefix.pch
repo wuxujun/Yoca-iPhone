@@ -13,4 +13,87 @@
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
+    #import "blocktypedef.h"
+    #import <OpenUDID.h>
 #endif
+
+#define DB_FILE_NAME    @"yoca.sqlite"
+
+
+#define UMENG_APPKEY        @"52649a7e56240b87b6169d13"
+
+#define APPKEY_WEIBO        @"3547118772"
+#define APPSECRET_WEIBO     @"62669f1857a9af23eb7ce5980ceb107c"
+#define REDIRECTURI_WEIBO   @"https://hlterm.oicp.net/openapi/ability/index.php/Micblog/callback"
+
+
+#define APPKEY_TENCENT      @"100334902"
+
+#define kHttpUrl @"http://y.mchome.cn/index.php?/ums/"
+
+
+#define ApplicationDelegate                 ((AppDelegate *)[[UIApplication sharedApplication] delegate])
+
+
+#define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define IS_IPHONE_5 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0f)
+#define IS_RETINA ([[UIScreen mainScreen] scale] == 2.0f)
+
+#define iOS_VERSION_6         ([[[UIDevice currentDevice] systemVersion] integerValue] >= 6.0)
+#define iOS_VERSION_7         ([[[UIDevice currentDevice] systemVersion] integerValue] >= 7.0)
+#define IOS_VERSION_8_OR_ABOVE         (([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)? (YES):(NO))
+
+
+#ifdef DEBUG
+#   define DLog(fmt, ...) {NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);}
+#   define ELog(err) {if(err) DLog(@"%@", err)}
+#else
+#   define DLog(...)
+#   define ELog(err)
+#endif
+
+#if TARGET_IPHONE_SIMULATOR
+#define DEVICE_UDID     @"1234567890abcdefghij1234567890abcdefghij"
+#else
+#define DEVICE_UDID     [OpenUDID value]
+#endif
+
+#define SAFE_RELEASE(var)       [var release];var=nil;
+
+#define RGBCOLOR(r,g,b)      [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
+#define RGBACOLOR(r,g,b,a)      [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
+
+#define LoadingImageBackgroundColor RGBCOLOR(203, 203, 203)
+
+#define APP_BACKGROUND_COLOR    RGBCOLOR(42, 42, 42)
+#define APP_TABLEBG_COLOR       RGBCOLOR(48,48,48)
+#define APP_FONT_COLOR_SEL      RGBCOLOR(60,201,121)
+#define APP_FONT_COLOR          RGBCOLOR(128,128,128)
+#define APP_LINE_GREEN          RGBCOLOR(60,201,121)
+#define APP_LINE_YELLOW         RGBCOLOR(255,247,131)
+#define APP_LINE_RED            RGBCOLOR(235,144,143)
+
+
+#define SYSTEM_SMALL_FONT   @"small font"
+#define SYSTEM_LARGE_FONT   @"large font"
+#define SYSTEM_MID_FONT     @"default font"
+#define SYSTEM_FONT_KEY     @"system font"
+
+#define SYSTEM_LARGE_IMAGE  @"large image"
+#define SYSTEM_SMALL_IMAGE  @"small image"
+#define SYSTEM_IMAGE_KEY    @"system image"
+
+#define MEDICALINFO_LAST_UPDATE_TIME @"medical last update time"
+#define MEDICALINFO_PREVIOUS_UPDATE_TIME @"medical previous update time"
+
+#define APP_OPEN_PASSWORD   @"app_open_password"
+
+#define BLEDATA_RECVICE         @"kBLEDataReceive"
+#define BLEDATA_RECVICE_STATUS  @"kBLEDataReceiveStatus"
+#define SYNC_DATA_REFRESH       @"kSyncDataRefresh"
+#define CONFIG_INIT_FLAG        @"CONFIG_INIT_FLAG"
+
+
+#define IWEIGH_SERVICE_UUID         @"0000fff0-0000-1000-8000-00805f9b34fb"
+#define IWEIGH_CHARACTERISTIC_UUID  @"00002902-0000-1000-8000-00805f9b34fb"

@@ -1,2 +1,9 @@
 /* Localized versions of Info.plist keys */
-
+CFBundleDisplayName="YOCA";
+"dmpasscode_enter_new_code" = "Enter new code";
+"dmpasscode_enter_to_unlock" = "Enter code to unlock";
+"dmpasscode_repeat" = "Repeat code";
+"dmpasscode_not_match" = "Codes did not match, please try again.";
+"dmpasscode_okay" = "Okay";
+"dmpasscode_n_left" = "%i attempts left";
+"dmpasscode_touchid_reason" = "Authenticate to access locked feature.";

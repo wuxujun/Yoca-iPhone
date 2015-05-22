@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="AccountEntity" representedClassName="AccountEntity" syncable="YES">
+        <attribute name="addtime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="aid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="avatar" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bmr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bodyAge" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="brithday" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="doneTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="muscle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sex" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="subFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="targetType" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="targetWeight" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="userNick" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="visFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="water" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weight" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="WeightEntity" representedClassName="WeightEntity" syncable="YES">
+        <attribute name="addtime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="aid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="bmr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bodyAge" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="changetime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="fat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="muscle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="picktime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="visFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="water" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weight" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="wid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="WeightHisEntity" representedClassName="WeightHisEntity" syncable="YES">
+        <attribute name="addtime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="aid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="bmr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bodyAge" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="changetime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="fat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="muscle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="picktime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="visFat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="water" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weight" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="wid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="AccountEntity" positionX="-63" positionY="-27" width="128" height="388"/>
+        <element name="WeightEntity" positionX="151" positionY="-117" width="128" height="255"/>
+        <element name="WeightHisEntity" positionX="304" positionY="-117" width="128" height="255"/>
+    </elements>
+</model>
