@@ -18,7 +18,7 @@
     }else if ([key isEqualToString:@"aid"]) {
         self.aid=[value intValue];
     }else if([key isEqualToString:@"pickTime"]){
-        self.picktime=value;
+        self.pickTime=value;
     }else if([key isEqualToString:@"weight"]){
         self.weight=value;
     }else if([key isEqualToString:@"fat"]){

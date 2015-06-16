@@ -24,6 +24,7 @@ typedef void(^SqlBlock)(NSString* sql,NSArray* arguments);
 @property (nonatomic,strong) NSString   *value;
 @property (nonatomic,strong) NSString   *valueTitle;
 @property (nonatomic,strong) NSString*  progres;
+@property (nonatomic,assign)NSInteger   isShow;
 
 
 +(void)generateInsertSql:(NSDictionary*)info completion:(SqlBlock)completion;

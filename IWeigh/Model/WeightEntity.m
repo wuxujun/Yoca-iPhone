@@ -16,8 +16,8 @@
         self.wid=[value intValue];
     }else if ([key isEqualToString:@"aid"]) {
         self.aid=[value intValue];
-    }else if([key isEqualToString:@"picktime"]){
-        self.picktime=value;
+    }else if([key isEqualToString:@"pickTime"]){
+        self.pickTime=value;
     }else if([key isEqualToString:@"weight"]){
         self.weight=value;
     }else if([key isEqualToString:@"fat"]){
@@ -66,7 +66,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"wid",@"aid",@"picktime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein", nil];
+    return [NSArray arrayWithObjects:@"wid",@"aid",@"pickTime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein", nil];
 }
 
 +(void)generateInsertSql:(NSDictionary *)info completion:(SqlBlock)completion

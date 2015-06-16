@@ -17,6 +17,7 @@
 #import "BLEViewController.h"
 #import "DBHelper.h"
 #import "DBManager.h"
+#import "BLEViewController.h"
 #import "UserDefaultHelper.h"
 #import "HCurrentUserContext.h"
 
@@ -82,7 +83,9 @@ static NSString *const kAllowTracking=@"allowTracking";
     [MobClick setAppVersion:version];
     
     [DBHelper initDatabase];
-    
+    {
+        [DBHelper addColumnToTable:@"t_home_target" ColumnName:@"isShow"];
+    }
     
     [SMS_SDK registerApp:@"12a614ceb40a" withSecret:@"bc5c19f196ac4e9c52e96d3a4fbfda63"];
     [UMSocialData setAppKey:@"52649a7e56240b87b6169d13"];
@@ -147,6 +150,8 @@ static NSString *const kAllowTracking=@"allowTracking";
             }
         }
         
+//        [ApplicationDelegate openBLEView];
+        
         if ([[HCurrentUserContext sharedInstance] uid]) {
             DLog(@"%@",[[HCurrentUserContext sharedInstance] uid]);
             [ApplicationDelegate openMainView];
@@ -157,6 +162,22 @@ static NSString *const kAllowTracking=@"allowTracking";
     } error:^(NSError *error) {
         
     }];
+}
+
+-(void)openBLEView
+{
+    for (UIView* view in self.window.subviews) {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    BLEViewController* homeView=[[BLEViewController alloc]init];
+    
+    UINavigationController *navController=[[UINavigationController alloc] initWithRootViewController:homeView];
+    
+    [self.window setRootViewController:navController];
+    [self.window makeKeyAndVisible];
+    
 }
 
 -(void)openHomeView
@@ -215,13 +236,14 @@ static NSString *const kAllowTracking=@"allowTracking";
     NSMutableDictionary* params=[NSMutableDictionary dictionaryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:@"0",@"syncid", nil]];
     [self.networkEngine postOperationWithURLString:url params:params success:^(MKNetworkOperation *completedOperation, id result) {
         NSDictionary* rs=(NSDictionary*)result;
-//        DLog(@"%@",rs);
+        DLog(@"%@",rs);
         id array=[rs objectForKey:@"root"];
         if ([array isKindOfClass:[NSArray class]]) {
             for (int i=0; i<[array count]; i++) {
                 if ([[DBManager getInstance] insertOrUpdateWeight:[array objectAtIndex:i]]) {
                 }
             }
+            
         }
     } error:^(NSError *error) {
         DLog(@"%@",error);
@@ -421,12 +443,8 @@ static NSString *const kAllowTracking=@"allowTracking";
     }
     
     self.peripheral=peripheral;
-    if (self.bleService==nil) {
-        self.bleService=[[BluetoothLEService alloc]initWithPeripheral:self.peripheral withServiceUUIDs:@[@"FFF0"] delegate:self];
-        [self.bleService discoverServices];
-    }else{
-        [self.bleService startNotifyingForServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
-    }
+    self.bleService=[[BluetoothLEService alloc]initWithPeripheral:self.peripheral withServiceUUIDs:@[@"FFF0"] delegate:self];
+    [self.bleService discoverServices];
 }
 
 -(void)didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData
@@ -476,6 +494,7 @@ static NSString *const kAllowTracking=@"allowTracking";
         }
     }else{
         self.peripheral=nil;
+        self.bleService=nil;
     }
 }
 
@@ -485,7 +504,6 @@ static NSString *const kAllowTracking=@"allowTracking";
     NSString* str=@"";
     if ([data length]==20) {
         [[NSNotificationCenter defaultCenter] postNotificationName:BLEDATA_RECVICE object:data];
-//        [self dealWeightValue:data];
     }else{
         Byte *testByte = (Byte *)[data bytes];
         for(int i=0;i<[data length];i++){
@@ -519,6 +537,7 @@ static NSString *const kAllowTracking=@"allowTracking";
     
     [[NSNotificationCenter defaultCenter] postNotificationName:BLEDATA_RECVICE_STATUS object:[NSDictionary dictionaryWithObjectsAndKeys:@"未连接",@"status", nil]];
     self.peripheral=nil;
+    self.bleService=nil;
     [[BluetoothLEManager sharedManager] discoverDevices];
 }
 

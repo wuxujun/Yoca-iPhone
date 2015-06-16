@@ -13,10 +13,18 @@
 #import "TargetHeadView.h"
 #import "DBManager.h"
 #import "AccountEntity.h"
+#import "StringUtil.h"
 
-@interface ITargetViewController ()<ISegmentViewDelegate,UITextFieldDelegate,TargetHeadViewDelegate>
+
+@interface ITargetViewController ()<ISegmentViewDelegate,UITextFieldDelegate,TargetHeadViewDelegate,UIActionSheetDelegate>
 {
     int         currentType;
+    
+    NSInteger       aid;
+    
+    NSInteger       targetType;
+    NSString*       doneDate;
+    float           sliderValue;
 }
 
 
@@ -32,7 +40,7 @@
     [self addBackBarButton];
     [self setCenterTitle:@"目标设置"];
     [self addRightButtonWithTitle:@"保存" withSel:@selector(save)];
-    
+    targetType=0;
     if (self.mTableView==nil) {
         self.mTableView=[[HKeyboardTableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
         self.mTableView.backgroundColor=APP_TABLEBG_COLOR;
@@ -51,8 +59,17 @@
         
         NSArray* array=[[DBManager getInstance] queryAccountForID:[[self.infoDict objectForKey:@"dataIndex"] integerValue]];
         if ([array count]>0) {
-            AccountEntity* account=[array objectAtIndex:0];
-            [self.headView setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",account.height],@"height", [NSString stringWithFormat:@"%ld",account.sex],@"sex",nil]];
+            AccountEntity* localAccount=[array objectAtIndex:0];
+            [self.headView setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",localAccount.height],@"height", [NSString stringWithFormat:@"%d",localAccount.sex],@"sex",nil]];
+            if (localAccount.sex==0) {
+                sliderValue=(localAccount.height-100)/100.0;
+            }else{
+                sliderValue=(localAccount.height-105)/100.0;
+            }
+            aid=localAccount.aid;
+            targetType=localAccount.targetType;
+            doneDate=localAccount.doneTime;
+            sliderValue=[localAccount.targetWeight floatValue]/100.0;
         }
     }
 }
@@ -64,7 +81,21 @@
 
 -(void)save
 {
+    if (doneDate==nil) {
+        [self alertRequestResult:@"请选择达成日期" isPop:NO];
+        return;
+    }
+    NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
+    [dict setValue:[NSString stringWithFormat:@"%d",aid] forKey:@"id"];
+    [dict setValue:[NSString stringWithFormat:@"%d",targetType] forKey:@"targetType"];
+    [dict setValue:[NSString stringWithFormat:@"%.1f",sliderValue*100.0]  forKey:@"targetWeight"];
+    [dict setValue:[NSString stringWithFormat:@"%@",doneDate] forKey:@"doneTime"];
     
+    if ([[DBManager getInstance] insertOrUpdateAccount:dict]) {
+        [self alertRequestResult:@"目标设置成功" isPop:YES];
+    }else{
+        [self alertRequestResult:@"保存失败!" isPop:NO];
+    }
 }
 
 #pragma mark - Table view data source
@@ -124,10 +155,15 @@
             self.setValueLabel=[[UILabel alloc]initWithFrame:CGRectMake(150, 10, 100, 36)];
             [self.setValueLabel setTextColor:APP_FONT_COLOR_SEL];
             [self.setValueLabel setFont:[UIFont boldSystemFontOfSize:26.0f]];
+            
             [cell addSubview:self.setValueLabel];
             
             UISlider *slider=[[UISlider alloc]initWithFrame:CGRectMake(40, 80-30, bounds.size.width-80, 20)];
             [slider addTarget:self action:@selector(slider:) forControlEvents:UIControlEventValueChanged];
+            if (sliderValue) {
+                [slider setValue:sliderValue];
+                [self.setValueLabel setText:[NSString stringWithFormat:@"%.1f",sliderValue*100]];
+            }
             [cell addSubview:slider];
             
             UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 87.5, bounds.size.width, 0.5)];
@@ -143,13 +179,29 @@
             [label setTextColor:APP_FONT_COLOR];
             [cell addSubview:label];
             
+            self.doneDateBG=[[UIView alloc]initWithFrame:CGRectMake(19.5, 39.5, bounds.size.width-39, 37)];
+            [self.doneDateBG setBackgroundColor:APP_FONT_COLOR];
+            [self.doneDateBG.layer setMasksToBounds:YES];
+            [self.doneDateBG.layer setCornerRadius:5];
+            [cell addSubview:self.doneDateBG];
+            
             self.doneDateField =[[UITextField alloc] initWithFrame:CGRectMake(20, 40, bounds.size.width-40, 36)];
-            [self.doneDateField setBackground:[[UIImage imageNamed:@"long_input_bg"] stretchableImageWithLeftCapWidth:50 topCapHeight:50]];
+            [self.doneDateField setBackgroundColor:APP_TABLEBG_COLOR];
+            [self.doneDateField setTextColor:APP_FONT_COLOR];
             [self.doneDateField setPlaceholder:@"请输入完成日期"];
             [self.doneDateField setBorderStyle:UITextBorderStyleNone];
             [self.doneDateField setFont:[UIFont systemFontOfSize:16.0f]];
             [self.doneDateField setReturnKeyType:UIReturnKeyDone];
             [self.doneDateField setKeyboardType:UIKeyboardTypeDefault];
+            [self.doneDateField.layer setMasksToBounds:YES];
+            [self.doneDateField.layer setCornerRadius:5.0];
+            [self.doneDateField setValue:APP_FONT_COLOR forKeyPath:@"_placeholderLabel.textColor"];
+            [self.doneDateField endEditing:NO];
+            [self.doneDateField addTarget:self action:@selector(didChangeDate:) forControlEvents:UIControlEventEditingDidBegin];
+            if (doneDate) {
+                [self.doneDateField setText:doneDate];
+            }
+            
             UIView *leftView=[[UIView alloc]init];
             CGRect frame=self.doneDateField.frame;
             frame.size.width=8;
@@ -180,13 +232,75 @@
 -(IBAction)slider:(id)sender
 {
     UISlider* sl=(UISlider*)sender;
-    [self.setValueLabel setText:[NSString stringWithFormat:@"%.1f",sl.value]];
+    DLog(@"%f",sl.value);
+    sliderValue=sl.value;
+    [self.setValueLabel setText:[NSString stringWithFormat:@"%.1f",(sl.value)*100]];
 }
 
 -(void)segmentViewSelectIndex:(NSInteger)index
 {
+    targetType=index;
+    DLog(@"%d",targetType);
+}
+
+#pragma mark - 日期选择框
+-(void)didChangeDate:(id)sender
+{
+    UITextField *field=(UITextField*)sender;
+    [field resignFirstResponder];
+    if (IOS_VERSION_8_OR_ABOVE) {
+        UIAlertController* alertController=[UIAlertController alertControllerWithTitle:nil message:@"\n\n\n\n\n\n\n\n\n\n\n" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIDatePicker *datePicker=[[UIDatePicker alloc]init];
+        datePicker.datePickerMode=UIDatePickerModeDate;
+        datePicker.backgroundColor=[UIColor whiteColor];
+        datePicker.tag=101;
+        [datePicker setMinimumDate:[NSDate date]];
+        UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
+            formatter.dateFormat=@"yyyyMMdd";
+            NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
+            [formatter setTimeZone:timezone];
+            
+            NSString *dateTemp=[formatter stringFromDate:datePicker.date];
+            doneDate=dateTemp;
+            [self.mTableView reloadData];
+        }];
+        
+        [alertController.view addSubview:datePicker];
+        [alertController addAction:canelAction];
+        [self presentViewController:alertController animated:NO completion:nil];
+    }else{
+        NSString *title = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? @"\n\n\n\n\n\n\n\n\n\n\n" : @"\n\n\n\n\n\n\n\n\n\n\n" ;
+        UIActionSheet *sheet=[[UIActionSheet alloc]initWithTitle:title delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"OK" otherButtonTitles:nil];
+        sheet.tag=100;
+        sheet.actionSheetStyle=UIActionSheetStyleAutomatic;
+        
+        UIDatePicker *datePicker=[[UIDatePicker alloc]init];
+        datePicker.datePickerMode=UIDatePickerModeDate;
+        datePicker.tag=101;
+        [datePicker setMinimumDate:[NSDate date]];
+        [sheet addSubview:datePicker];
+        [sheet showInView:self.view];
+    }
     
 }
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (actionSheet.tag==100) {
+        UIDatePicker  *datePick=(UIDatePicker*)[actionSheet viewWithTag:101];
+        if (datePick) {
+            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
+            formatter.dateFormat=@"yyyyMMdd";
+            NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
+            [formatter setTimeZone:timezone];
+            NSString *dateTemp=[formatter stringFromDate:datePick.date];
+            doneDate=dateTemp;
+        }
+        [self.mTableView reloadData];
+    }
+}
+
 
 #pragma mark - UITextFieldDelegate
 -(BOOL)textFieldShouldReturn:(UITextField *)textField

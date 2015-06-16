@@ -7,14 +7,14 @@
 //
 
 #import "IChartViewController.h"
+#import <QuartzCore/QuartzCore.h>
+#import "UIViewController+NavigationBarButton.h"
 #import "WeightHisEntity.h"
 #import "IChartFView.h"
 
 @interface IChartViewController()
 
 @property (nonatomic,strong)NSMutableArray*         datas;
-
-@property (nonatomic,strong)IChartFView*        footView;
 
 @end
 
@@ -26,19 +26,17 @@
     [super viewDidLoad];
  
     self.datas=[[NSMutableArray alloc]init];
-    for (int i=0; i<9;i++) {
+    for (int i=0; i<7;i++) {
         [self.datas addObject:@([self getRandomInteger])];
     }
     
-    DLog(@"%f",self.view.frame.size.height);
-    if (self.footView==nil) {
-        self.footView=[[IChartFView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-80, self.view.frame.size.width, 80)];
-        [self.view addSubview:self.footView];
-        
-    }
+    [self setCenterTitle:[self.infoDict objectForKey:@"title"]];
     
+    DLog(@"%@",self.infoDict);
     
-    self.myGraph=[[BEMSimpleLineGraphView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 300)];
+    float height=[[self.infoDict objectForKey:@"height"] floatValue];
+    
+    self.myGraph=[[BEMSimpleLineGraphView alloc]initWithFrame:CGRectMake(5, 5, self.view.frame.size.width-10,200)];
     self.myGraph.dataSource=self;
     self.myGraph.delegate=self;
     self.myGraph.enableBezierCurve=YES;
@@ -67,6 +65,8 @@
     self.myGraph.enableReferenceYAxisLines=YES;
     self.myGraph.enableReferenceAxisFrame=YES;
     self.myGraph.animationGraphStyle=BEMLineAnimationDraw;
+    [self.myGraph.layer setMasksToBounds:YES];
+    [self.myGraph.layer setCornerRadius:5.0f];
     
     [self.view addSubview:self.myGraph];
 //    NSArray* array=[WeightHisEntity MR_findAll];
@@ -91,6 +91,7 @@
 //            DLog(@"%@   %@  %@  %@",entity.weight,entity.bmr,entity.fat,entity.subFat);
 //        }
 //    }
+
 }
 
 - (NSInteger)getRandomInteger
@@ -121,7 +122,18 @@
 
 -(NSString*)lineGraph:(BEMSimpleLineGraphView *)graph labelOnXAxisForIndex:(NSInteger)index
 {
-    return @"1";
+    DLog(@"%d",index);
+    switch (index) {
+        case 1:
+            return @"周一";
+        case 3:
+            return @"周三";
+        case 5:
+            return @"周五";
+        default:
+            break;
+    }
+    return @"周日";
 }
 
 -(void)lineGraph:(BEMSimpleLineGraphView *)graph didTouchGraphWithClosestIndex:(NSInteger)index

@@ -31,10 +31,11 @@
     
     
     id<IHomeIViewDelegate>       delegate;
+    
 }
 
 @property (nonatomic,strong)NSDictionary* infoDict;
-
+@property (nonatomic,assign)BOOL        isShow;
 -(id)initWithFrame:(CGRect)frame delegate:(id)aDelegate;
 
 
@@ -44,5 +45,6 @@
 @protocol IHomeIViewDelegate <NSObject>
 
 -(void)onChartClicked:(IHomeIView*)view;
+-(void)onEditClicked:(IHomeIView*)view;
 
 @end

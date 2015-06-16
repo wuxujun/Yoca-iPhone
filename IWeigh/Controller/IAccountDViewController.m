@@ -212,9 +212,42 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+
 -(IBAction)showCamera:(id)sender
 {
-    [self showImagePicker:YES];
+//    [self showImagePicker:YES];
+    
+    if (IOS_VERSION_8_OR_ABOVE) {
+        UIAlertController* alert=[UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction* cancelAction=[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            
+        }];
+        UIAlertAction* cameraAction=[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self showImagePicker:YES];
+        }];
+        
+        UIAlertAction* photoAction=[UIAlertAction actionWithTitle:@"从相册获取" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self showImagePicker:NO];
+        }];
+        
+        [alert addAction:cancelAction];
+        BOOL hasCamera=[UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+        if (hasCamera) {
+            [alert addAction:cameraAction];
+        }
+        [alert addAction:photoAction];
+        [self presentViewController:alert animated:YES completion:^{
+            
+        }];
+        
+    }else{
+        UIActionSheet* sheet=[[UIActionSheet alloc]initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"拍照" otherButtonTitles:@"从相册获取", nil];
+        sheet.actionSheetStyle=UIActionSheetStyleAutomatic;
+        sheet.tag=101;
+        [sheet showInView:self.view];
+    }
+    
 }
 
 -(void)showImagePicker:(BOOL)isCamera
@@ -520,9 +553,10 @@
         datePicker.datePickerMode=UIDatePickerModeDate;
         datePicker.backgroundColor=[UIColor whiteColor];
         datePicker.tag=101;
+        [datePicker setMaximumDate:[NSDate date]];
         UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
             NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
-            formatter.dateFormat=@"yyyy-MM-dd";
+            formatter.dateFormat=@"yyyyMMdd";
             NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
             [formatter setTimeZone:timezone];
             
@@ -538,11 +572,13 @@
     }else{
         NSString *title = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? @"\n\n\n\n\n\n\n\n\n\n\n" : @"\n\n\n\n\n\n\n\n\n\n\n" ;
         UIActionSheet *sheet=[[UIActionSheet alloc]initWithTitle:title delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"OK" otherButtonTitles:nil];
+        sheet.tag=100;
         sheet.actionSheetStyle=UIActionSheetStyleAutomatic;
         
         UIDatePicker *datePicker=[[UIDatePicker alloc]init];
         datePicker.datePickerMode=UIDatePickerModeDate;
         datePicker.tag=101;
+        [datePicker setMaximumDate:[NSDate date]];
         [sheet addSubview:datePicker];
         [sheet showInView:self.view];
     }
@@ -551,18 +587,27 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    UIDatePicker  *datePick=(UIDatePicker*)[actionSheet viewWithTag:101];
-    if (datePick) {
-        NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
-        formatter.dateFormat=@"yyyy-MM-dd";
-        NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
-        [formatter setTimeZone:timezone];
+    if (actionSheet.tag==100) {
+        UIDatePicker  *datePick=(UIDatePicker*)[actionSheet viewWithTag:101];
+        if (datePick) {
+            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
+            formatter.dateFormat=@"yyyyMMdd";
+            NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
+            [formatter setTimeZone:timezone];
         
-        NSString *dateTemp=[formatter stringFromDate:datePick.date];
-        nAge=[NSString ageWithDateOfBirth:datePick.date];
-        mBirthday=dateTemp;
+            NSString *dateTemp=[formatter stringFromDate:datePick.date];
+            nAge=[NSString ageWithDateOfBirth:datePick.date];
+            mBirthday=dateTemp;
+        }
+        [self.mTableView reloadData];
+    }else if(actionSheet.tag==101){
+        DLog("%ld  %ld",(long)actionSheet.tag,(long)buttonIndex);
+        if (buttonIndex==0) {
+            [self showImagePicker:YES];
+        }else if(buttonIndex==1){
+            [self showImagePicker:NO];
+        }
     }
-    [self.mTableView reloadData];
 }
 
 -(BOOL)disablesAutomaticKeyboardDismissal

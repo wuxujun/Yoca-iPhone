@@ -220,6 +220,18 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return iAge;
 }
 
++(NSInteger)dateWithForDays:(NSString *)newDate
+{
+    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyyMMdd"];
+    NSDate* endDate=[dateFormatter dateFromString:newDate];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    unsigned int unitFlag = NSDayCalendarUnit;
+    NSDateComponents *components = [calendar components:unitFlag fromDate:[NSDate date] toDate:endDate options:0];
+    NSInteger days = [components day] + 1;
+    return days;
+}
+
 +(NSString *)ToHex:(int)tmpid
 {
     NSString *nLetterValue;

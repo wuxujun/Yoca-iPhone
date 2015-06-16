@@ -72,8 +72,8 @@
  */
 - (void)scan
 {
-    [self.centralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:IWEIGH_SERVICE_UUID]]
-                                                options:@{ CBCentralManagerScanOptionAllowDuplicatesKey : @YES }];
+    [self.centralManager scanForPeripheralsWithServices:nil
+                                                options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @YES }];
     
     NSLog(@"Scanning started");
 }
@@ -96,7 +96,7 @@
 //        return;
 //    }
     
-    NSLog(@"Discovered %@ at %@", peripheral.name, RSSI);
+    DLog(@"Discovered %@ at %@", peripheral.name, RSSI);
     
     // Ok, it's in range - have we already seen it?
     if (self.discoveredPeripheral != peripheral) {
@@ -105,7 +105,7 @@
         self.discoveredPeripheral = peripheral;
         
         // And connect
-        NSLog(@"Connecting to peripheral %@", peripheral);
+        DLog(@"Connecting to peripheral %@", peripheral);
         [self.centralManager connectPeripheral:peripheral options:nil];
     }
 }
@@ -124,20 +124,19 @@
  */
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
-    NSLog(@"Peripheral Connected");
+    DLog(@"Peripheral Connected  %@" ,peripheral);
     
     // Stop scanning
     [self.centralManager stopScan];
-    NSLog(@"Scanning stopped");
+    DLog(@"Scanning stopped");
     
     // Clear the data that we may already have
     [self.data setLength:0];
-    
+    DLog(@"%@",self.discoveredPeripheral);
     // Make sure we get the discovery callbacks
-    peripheral.delegate = self;
-    
+    self.discoveredPeripheral.delegate = self;
     // Search only for services that match our UUID
-    [peripheral discoverServices:@[[CBUUID UUIDWithString:IWEIGH_SERVICE_UUID]]];
+    [self.discoveredPeripheral discoverServices:nil];
 }
 
 
@@ -152,11 +151,13 @@
         return;
     }
     
+    DLog(@"%@",peripheral.services);
     // Discover the characteristic we want...
     
     // Loop through the newly filled peripheral.services array, just in case there's more than one.
     for (CBService *service in peripheral.services) {
-        [peripheral discoverCharacteristics:@[[CBUUID UUIDWithString:IWEIGH_CHARACTERISTIC_UUID]] forService:service];
+        
+        [peripheral discoverCharacteristics:nil forService:service];
     }
 }
 
@@ -178,8 +179,7 @@
     for (CBCharacteristic *characteristic in service.characteristics) {
         DLog(@"%@",characteristic);
         // And check if it's the right one
-        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:IWEIGH_CHARACTERISTIC_UUID]]) {
-            
+        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@"FFF0"]]) {
             // If it is, subscribe to it
             [peripheral setNotifyValue:YES forCharacteristic:characteristic];
         }

@@ -7,9 +7,10 @@
 //
 
 #import "IHomeTView.h"
+#import "StringUtil.h"
 
 @implementation IHomeTView
-
+@synthesize infoDict;
 
 -(id)initWithFrame:(CGRect)frame
 {
@@ -56,7 +57,7 @@
     [contentView addSubview:tValueLabel];
     
     wValueLabel=[[UILabel alloc]init];
-    [wValueLabel setText:@"-0.2"];
+    [wValueLabel setText:@"0.0"];
     [wValueLabel setTextColor:APP_FONT_COLOR_SEL];
     [wValueLabel setFont:[UIFont boldSystemFontOfSize:26]];
     [wValueLabel setTextAlignment:NSTextAlignmentRight];
@@ -102,8 +103,15 @@
     [self reAdjustLayout];
 }
 
--(void)setInfoDict:(NSDictionary *)infoDict
+-(void)setInfoDict:(NSDictionary *)aInfoDict
 {
+    infoDict=aInfoDict;
+    if ([infoDict objectForKey:@"targetWeight"]) {
+        [tValueLabel setText:[infoDict objectForKey:@"targetWeight"]];
+    }
+    if ([infoDict objectForKey:@"doneTime"]) {
+        [dValueLabel setText:[NSString stringWithFormat:@"%ld",[NSString dateWithForDays:[infoDict objectForKey:@"doneTime"]] ]];
+    }
 }
 
 -(void)reAdjustLayout

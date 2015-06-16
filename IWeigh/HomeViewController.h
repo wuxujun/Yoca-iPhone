@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BLEManager.h"
 #import <CoreLocation/CoreLocation.h>
 #import <CoreLocation/CLLocationManagerDelegate.h>
+#import <UMSocial.h>
 
-@interface HomeViewController : UIViewController<BLEManagerDelegate,CLLocationManagerDelegate>
+@interface HomeViewController : UIViewController<CLLocationManagerDelegate,UMSocialUIDelegate>
 
 @property (nonatomic,strong)UITableView*    mTableView;
 

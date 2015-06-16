@@ -24,10 +24,16 @@
 - (BOOL)insertOrUpdateConfig:(NSDictionary *)info;
 - (BOOL)insertOrUpdateTargetInfo:(NSDictionary *)info;
 -(NSArray*)queryTargetInfo;
+-(NSString*)queryTargetInfoForType:(NSInteger)type;
 
+-(NSInteger)queryWeightCount:(NSInteger)aid;
 -(NSArray*)queryWeights:(NSInteger)aid;
 -(NSInteger)queryWeightCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
 -(NSArray*)queryWeightWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
+-(NSInteger)queryWeightHisCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
+-(NSArray*)queryWeightHisWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
+-(NSArray*)queryWeightHisWithAccountId:(NSInteger)aid;
+-(BOOL)deleteWeightHisEntity:(NSInteger)wid;
 
 -(BOOL)insertOrUpdateHomeTarget:(NSDictionary*)info;
 -(NSInteger)queryHomeTargetCountWithAId:(NSInteger)aid;
@@ -36,5 +42,10 @@
 -(BOOL)insertOrUpdateWarn:(NSDictionary*)info;
 -(NSInteger)queryWarnCountWithId:(NSString*)wid;
 -(NSArray*)queryWarns;
+
+-(BOOL)insertOrUpdateHealth:(NSDictionary*)info;
+-(NSInteger)queryHealthCountWithId:(NSString*)wid;
+-(NSArray*)queryHealthWithAId:(NSInteger)aid targetType:(NSInteger)nType start:(NSString*)startTime end:(NSString*)endTime;
+
 
 @end

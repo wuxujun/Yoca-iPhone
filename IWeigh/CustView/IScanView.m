@@ -93,6 +93,10 @@
     [infoButton setHidden:YES];
     [contentView addSubview:infoButton];
     
+    infoImage=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"info.png"]];
+    [infoImage setHidden:YES];
+    [contentView addSubview:infoImage];
+    
     statusLabel=[[UILabel alloc]init];
     [statusLabel setText:@"未连接"];
     [statusLabel setTextColor:APP_FONT_COLOR_SEL];
@@ -151,6 +155,7 @@
     [footView setHidden:YES];
     [weighLabel setHidden:YES];
     [infoButton setHidden:YES];
+    [infoImage setHidden:YES];
     [self setNeedsDisplay];
 }
 
@@ -161,6 +166,7 @@
     [pointLabel setHidden:YES];
     [weighLabel setHidden:YES];
     [infoButton setHidden:YES];
+    [infoImage setHidden:YES];
     [self setNeedsDisplay];
 }
 
@@ -172,6 +178,7 @@
     [numView setHidden:YES];
     [pointLabel setHidden:YES];
     [infoButton setHidden:NO];
+    [infoImage setHidden:NO];
     
     [self setNeedsDisplay];
 }
@@ -208,6 +215,7 @@
 
     [weighLabel setFrame:CGRectMake((contentViewArea.width-120)/2, (contentViewArea.height-120)/2+10, 120, 120)];
     [infoButton setFrame:CGRectMake((contentViewArea.width-170)/2, (contentViewArea.height-170)/2+10, 170, 170)];
+    [infoImage setFrame:CGRectMake((contentViewArea.width-170)/2+10, contentViewArea.height-70, 26, 26)];
 
     [statusLabel setFrame:CGRectMake((contentViewArea.width-150)/2, contentViewArea.height-70, 150, 40)];
     [sharedButton setFrame:CGRectMake(contentViewArea.width-60, contentViewArea.height-80, 30, 38)];

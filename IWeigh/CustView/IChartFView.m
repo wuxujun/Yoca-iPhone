@@ -28,6 +28,7 @@
     smallLabel=[[UILabel alloc]init];
     [smallLabel setText:@"最低值"];
     [smallLabel setFont:[UIFont boldSystemFontOfSize:18.0]];
+    [smallLabel setTextColor:APP_FONT_COLOR];
     [smallLabel setTextAlignment:NSTextAlignmentCenter];
     [contentView addSubview:smallLabel];
     
@@ -35,6 +36,7 @@
     [averageLabel setText:@"平均值"];
     [averageLabel setFont:[UIFont boldSystemFontOfSize:18.0]];
     [averageLabel setTextAlignment:NSTextAlignmentCenter];
+    [averageLabel setTextColor:APP_FONT_COLOR];
     [contentView addSubview:averageLabel];
     
     
@@ -42,18 +44,19 @@
     [bigLabel setText:@"最高值"];
     [bigLabel setFont:[UIFont boldSystemFontOfSize:18.0]];
     [bigLabel setTextAlignment:NSTextAlignmentCenter];
+    [bigLabel setTextColor:APP_FONT_COLOR];
     [contentView addSubview:bigLabel];
     
     sValueLabel=[[UILabel alloc]init];
     [sValueLabel setText:@"55"];
-    [sValueLabel setTextColor:[UIColor greenColor]];
+    [sValueLabel setTextColor:APP_FONT_COLOR];
     [sValueLabel setFont:[UIFont boldSystemFontOfSize:26]];
     [sValueLabel setTextAlignment:NSTextAlignmentRight];
     [contentView addSubview:sValueLabel];
     
     aValueLabel=[[UILabel alloc]init];
     [aValueLabel setText:@"-0.2"];
-    [aValueLabel setTextColor:[UIColor greenColor]];
+    [aValueLabel setTextColor:APP_FONT_COLOR];
     [aValueLabel setFont:[UIFont boldSystemFontOfSize:26]];
     [aValueLabel setTextAlignment:NSTextAlignmentRight];
     [contentView addSubview:aValueLabel];
@@ -61,7 +64,7 @@
     
     bValueLabel=[[UILabel alloc]init];
     [bValueLabel setText:@"15"];
-    [bValueLabel setTextColor:[UIColor greenColor]];
+    [bValueLabel setTextColor:APP_FONT_COLOR];
     [bValueLabel setFont:[UIFont boldSystemFontOfSize:26]];
     [bValueLabel setTextAlignment:NSTextAlignmentRight];
     [contentView addSubview:bValueLabel];

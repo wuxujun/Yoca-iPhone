@@ -9,6 +9,7 @@
 #import "DBHelper.h"
 #import "PathHelper.h"
 #import "FMDatabase.h"
+#import "FMDatabaseAdditions.h"
 #import "FMDatabaseQueue.h"
 #import "blocktypedef.h"
 
@@ -86,11 +87,28 @@ static FMDatabase *db;
     return db;
 }
 
++(void)addColumnToTable:(NSString *)tableName ColumnName:(NSString *)column
+{
+    
+    if ((tableName == nil) || (column == nil))
+    {
+        return;
+    }
+    BOOL bExist = [db columnExists:column inTableWithName:tableName];
+    
+    if (!bExist) {
+        
+        NSString *sql = [NSString stringWithFormat:@"ALTER TABLE %@ ADD %@ text",tableName,column];
+        
+        [db executeUpdate:sql]; 
+        
+    }
+}
+
 + (NSArray *)queryAll:(Class)type sql:(NSString *)sql params:(NSArray *)params
 {
-    DLog(@"DB query: %@", sql);
-    DLog(@"Params: %@", params);
-    
+//    DLog(@"DB query: %@", sql);
+//    DLog(@"Params: %@", params);
 #ifdef DEBUG_MODE
     [db setLogsErrors:YES];
 #endif

@@ -15,6 +15,7 @@
 #import "TargetInfoEntity.h"
 #import "HomeTargetEntity.h"
 #import "WarnEntity.h"
+#import "HealthEntity.h"
 
 @implementation DBManager
 
@@ -113,7 +114,7 @@ static DBManager *sharedDBManager=nil;
 
 -(NSInteger)queryAccountCountWithType:(NSInteger)type
 {
-    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_account WHERE type=%ld",type];
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_account WHERE type=%ld",(long)type];
     __block NSInteger count = 0;
     [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
         count = index;
@@ -197,16 +198,37 @@ static DBManager *sharedDBManager=nil;
     NSString* sql=@"SELECT * FROM t_target_info ORDER BY type desc";
     return [DBHelper queryAll:[TargetInfoEntity class] sql:sql params:@[]];
 }
+-(NSString*)queryTargetInfoForType:(NSInteger)type
+{
+    NSString* sql=[NSString stringWithFormat:@"SELECT * FROM t_target_info WHERE  type=%ld",(long)type];
+    NSArray* array=[DBHelper queryAll:[TargetInfoEntity class] sql:sql params:@[]];
+    if ([array count]>0) {
+        TargetInfoEntity* info=[array objectAtIndex:0];
+        return info.content;
+    }
+    return @"";
+}
+
+
+-(NSInteger)queryWeightCount:(NSInteger)aid
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_weight WHERE aid=%ld ",(long)aid];
+    __block NSInteger count = 0;
+    [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
+        count = index;
+    }];
+    return count;
+}
 
 -(NSArray*)queryWeights:(NSInteger)aid
 {
-    NSString* sql=[NSString stringWithFormat:@"SELECT * FROM t_weight WHERE aid=%ld ORDER BY picktime desc",aid];
+    NSString* sql=[NSString stringWithFormat:@"SELECT * FROM t_weight WHERE aid=%ld ORDER BY pickTime desc",(long)aid];
     return [DBHelper queryAll:[WeightEntity class] sql:sql params:@[]];
 }
 
 -(NSInteger)queryWeightCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid
 {
-    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_weight WHERE aid=%ld and picktime='%@'",aid,pickTime];
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_weight WHERE aid=%ld and pickTime='%@'",(long)aid,pickTime];
     __block NSInteger count = 0;
     [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
         count = index;
@@ -216,8 +238,36 @@ static DBManager *sharedDBManager=nil;
 
 -(NSArray*)queryWeightWithPicktime:(NSString *)pickTime account:(NSInteger)aid
 {
-    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight WHERE aid=%ld and picktime='%@'",aid,pickTime];
+    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight WHERE aid=%ld and pickTime='%@'",(long)aid,pickTime];
     return [DBHelper queryAll:[WeightEntity class] sql:sql params:@[]];
+}
+
+-(NSInteger)queryWeightHisCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_weight_his WHERE aid=%ld and pickTime='%@'",(long)aid,pickTime];
+    __block NSInteger count = 0;
+    [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
+        count = index;
+    }];
+    return count;
+}
+
+-(BOOL)deleteWeightHisEntity:(NSInteger)wid
+{
+    NSString* sql=[NSString stringWithFormat:@"DELETE FROM t_weight_his WHERE wid=%ld",(long)wid];
+    return [DBHelper excuteSql:sql withArguments:@[]];
+}
+
+-(NSArray*)queryWeightHisWithAccountId:(NSInteger)aid
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight_his WHERE aid=%ld ORDER BY pickTime DESC ",(long)aid];
+    return [DBHelper queryAll:[WeightHisEntity class] sql:sql params:@[]];
+}
+
+-(NSArray*)queryWeightHisWithPicktime:(NSString *)pickTime account:(NSInteger)aid
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight_his WHERE aid=%ld and pickTime='%@'",(long)aid,pickTime];
+    return [DBHelper queryAll:[WeightHisEntity class] sql:sql params:@[]];
 }
 
 - (NSInteger)queryHomeTargetCountWithId:(NSString *)mId
@@ -250,7 +300,7 @@ static DBManager *sharedDBManager=nil;
 
 -(NSInteger)queryHomeTargetCountWithAId:(NSInteger)aid
 {
-    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_home_target WHERE aid=%ld",aid];
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_home_target WHERE aid=%ld",(long)aid];
     __block NSInteger count = 0;
     [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
         count = index;
@@ -260,9 +310,9 @@ static DBManager *sharedDBManager=nil;
 
 -(NSArray*)queryHomeTargetWithAId:(NSInteger)aid status:(NSInteger)state
 {
-    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_home_target WHERE aid=%ld ORDER BY TYPE ASC",aid];
+    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_home_target WHERE aid=%ld ORDER BY TYPE ASC",(long)aid];
     if (state==1) {
-        sql=[NSString stringWithFormat:@"SELECT * FROM t_home_target WHERE aid=%ld and state=1 ORDER BY TYPE ASC",aid];
+        sql=[NSString stringWithFormat:@"SELECT * FROM t_home_target WHERE aid=%ld and isShow=1 ORDER BY TYPE ASC",(long)aid];
     }
     return [DBHelper queryAll:[HomeTargetEntity class] sql:sql params:@[]];
 }
@@ -297,6 +347,38 @@ static DBManager *sharedDBManager=nil;
 -(NSArray*)queryWarns
 {
     NSString *sql =@"SELECT * from t_warn WHERE status=0 ORDER BY wid DESC";
+    return [DBHelper queryAll:[WarnEntity class] sql:sql params:@[]];
+}
+
+-(BOOL)insertOrUpdateHealth:(NSDictionary *)info
+{
+    NSInteger count = [self queryHealthCountWithId:info[@"wid"]];
+    __block BOOL isSuccess;
+    if (count == 0) {
+        [HealthEntity generateInsertSql:info completion:^(NSString *sql, NSArray *arguments) {
+            isSuccess = [DBHelper excuteSql:sql withArguments:arguments];
+        }];
+    }else{
+        [HealthEntity generateUpdateSql:info completion:^(NSString *sql, NSArray *arguments) {
+            isSuccess = [DBHelper excuteSql:sql withArguments:arguments];
+        }];
+    }
+    return isSuccess;
+}
+
+-(NSInteger)queryHealthCountWithId:(NSString *)wid
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT COUNT(*) from t_health WHERE wid=%@", wid];
+    __block NSInteger count = 0;
+    [DBHelper queryCountWithSql:sql params:nil completion:^(NSInteger index) {
+        count = index;
+    }];
+    return count;
+}
+
+-(NSArray*)queryHealthWithAId:(NSInteger)aid targetType:(NSInteger)nType start:(NSString *)startTime end:(NSString *)endTime
+{
+    NSString *sql = [NSString stringWithFormat:@"SELECT * from t_health WHERE aid=%ld and targetType=%ld",(long)aid,(long)nType];
     return [DBHelper queryAll:[WarnEntity class] sql:sql params:@[]];
 }
 

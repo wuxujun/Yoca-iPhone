@@ -12,6 +12,9 @@
 #import "ILoginViewController.h"
 #import "IRegisterViewController.h"
 #import "UIButton+Bootstrap.h"
+#import <UMSocial.h>
+#import <UMSocialSinaHandler.h>
+
 
 @interface IHomeViewController ()<TencentSessionDelegate,UITextFieldDelegate>
 {
@@ -90,7 +93,16 @@
 
 -(IBAction)weiboLogin:(id)sender
 {
-
+ 
+    UMSocialSnsPlatform* snsPlatfrom=[UMSocialSnsPlatformManager getSocialPlatformWithName:UMShareToSina];
+    snsPlatfrom.loginClickHandler(self,[UMSocialControllerService defaultControllerService],YES,^(UMSocialResponseEntity *response){
+        if (response.responseCode==UMSResponseCodeSuccess) {
+            UMSocialAccountEntity* snsAccount=[[UMSocialAccountManager socialAccountDictionary] valueForKey:UMShareToSina];
+            DLog(@"username is %@ uid is %@, token is %@ url is %@",snsAccount.userName,snsAccount.usid,snsAccount.accessToken,snsAccount.iconURL);
+            
+        }
+    });
+    
 }
 
 #pragma mark - Table view data source

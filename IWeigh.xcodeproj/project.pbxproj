@@ -14,7 +14,7 @@
 		420E8BCD1A8F70DB00CF513E /* IScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = 420E8BCC1A8F70DB00CF513E /* IScanView.m */; };
 		420E8BD01A8F7F3500CF513E /* IHomeTView.m in Sources */ = {isa = PBXBuildFile; fileRef = 420E8BCF1A8F7F3500CF513E /* IHomeTView.m */; };
 		420E8BD31A8F93AB00CF513E /* IWarnAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 420E8BD21A8F93AB00CF513E /* IWarnAViewController.m */; };
-		42121BCD1ABD3E53006398DE /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42121BCC1ABD3E53006398DE /* HealthKit.framework */; };
+		42121BCD1ABD3E53006398DE /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42121BCC1ABD3E53006398DE /* HealthKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4219239F19B214C600681FCA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4219239E19B214C600681FCA /* Foundation.framework */; };
 		421923A119B214C600681FCA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 421923A019B214C600681FCA /* CoreGraphics.framework */; };
 		421923A319B214C600681FCA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 421923A219B214C600681FCA /* UIKit.framework */; };
@@ -150,11 +150,19 @@
 		42CAF21B1A014B7000BF2067 /* IMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42CAF21A1A014B7000BF2067 /* IMenuViewController.m */; };
 		42CAF2211A014C3C00BF2067 /* INavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42CAF21F1A014C3C00BF2067 /* INavigationController.m */; };
 		42CEEB401B0D7365002C0494 /* IDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 42CEEB3F1B0D7365002C0494 /* IDatePicker.m */; };
+		42D2CE081B0F8C3200FA6A92 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42D2CE071B0F8C3200FA6A92 /* MainViewController.m */; };
+		42D56D1F1B1749700023C3FF /* WeightUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 42D56D1E1B1749700023C3FF /* WeightUtils.m */; };
+		42D969D81B2344770043C480 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42D969D71B2344770043C480 /* ImageIO.framework */; };
+		42D98E201B15FBCD00D7B4E9 /* IHisPagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42D98E1F1B15FBCD00D7B4E9 /* IHisPagesViewController.m */; };
 		42DA6B931AF7A67A00DA5C0D /* DBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 42DA6B921AF7A67A00DA5C0D /* DBHelper.m */; };
 		42DA6B961AF7A70F00DA5C0D /* PathHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 42DA6B951AF7A70F00DA5C0D /* PathHelper.m */; };
 		42DA6B991AF7AA1700DA5C0D /* DBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 42DA6B981AF7AA1700DA5C0D /* DBManager.m */; };
 		42DAD4021B0382620029771E /* WarnEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 42DAD4011B0382620029771E /* WarnEntity.m */; };
 		42DB53B31AF8A6DE009A745E /* yoca.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 42DB53B21AF8A6DE009A745E /* yoca.sqlite */; };
+		42E076E61B14A7FB00A269E8 /* star_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 42E076E21B14A7FB00A269E8 /* star_empty.png */; };
+		42E076E71B14A7FB00A269E8 /* star_empty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 42E076E31B14A7FB00A269E8 /* star_empty@2x.png */; };
+		42E076E81B14A7FB00A269E8 /* star_full.png in Resources */ = {isa = PBXBuildFile; fileRef = 42E076E41B14A7FB00A269E8 /* star_full.png */; };
+		42E076E91B14A7FB00A269E8 /* star_full@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 42E076E51B14A7FB00A269E8 /* star_full@2x.png */; };
 		42E135091AD4D1BB0053E78F /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E134F81AD4D1BB0053E78F /* NSData+Base64.m */; };
 		42E1350A1AD4D1BB0053E78F /* NSDate+RFC1123.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E134FA1AD4D1BB0053E78F /* NSDate+RFC1123.m */; };
 		42E1350B1AD4D1BB0053E78F /* NSDictionary+RequestEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E134FC1AD4D1BB0053E78F /* NSDictionary+RequestEncoding.m */; };
@@ -184,6 +192,8 @@
 		42E9D1321A8A465600F92F45 /* UIView+LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E9D1241A8A465600F92F45 /* UIView+LoadingView.m */; };
 		42E9D1331A8A465600F92F45 /* UIViewController+NavigationBarButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E9D1261A8A465600F92F45 /* UIViewController+NavigationBarButton.m */; };
 		42E9D1341A8A465600F92F45 /* UIWebView+Addition.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E9D1281A8A465600F92F45 /* UIWebView+Addition.m */; };
+		42F22F5F1B1377F100439031 /* VerticallyAlignedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F22F5E1B1377F100439031 /* VerticallyAlignedLabel.m */; };
+		42F22F621B137E3800439031 /* IHisViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F22F611B137E3800439031 /* IHisViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -398,6 +408,13 @@
 		42CAF2201A014C3C00BF2067 /* INavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = INavigationController.h; sourceTree = "<group>"; };
 		42CEEB3E1B0D7365002C0494 /* IDatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDatePicker.h; sourceTree = "<group>"; };
 		42CEEB3F1B0D7365002C0494 /* IDatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDatePicker.m; sourceTree = "<group>"; };
+		42D2CE061B0F8C3200FA6A92 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		42D2CE071B0F8C3200FA6A92 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		42D56D1D1B1749700023C3FF /* WeightUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeightUtils.h; sourceTree = "<group>"; };
+		42D56D1E1B1749700023C3FF /* WeightUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeightUtils.m; sourceTree = "<group>"; };
+		42D969D71B2344770043C480 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		42D98E1E1B15FBCD00D7B4E9 /* IHisPagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHisPagesViewController.h; sourceTree = "<group>"; };
+		42D98E1F1B15FBCD00D7B4E9 /* IHisPagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IHisPagesViewController.m; sourceTree = "<group>"; };
 		42DA6B911AF7A67A00DA5C0D /* DBHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBHelper.h; sourceTree = "<group>"; };
 		42DA6B921AF7A67A00DA5C0D /* DBHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBHelper.m; sourceTree = "<group>"; };
 		42DA6B941AF7A70F00DA5C0D /* PathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathHelper.h; sourceTree = "<group>"; };
@@ -407,6 +424,10 @@
 		42DAD4001B0382620029771E /* WarnEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WarnEntity.h; sourceTree = "<group>"; };
 		42DAD4011B0382620029771E /* WarnEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WarnEntity.m; sourceTree = "<group>"; };
 		42DB53B21AF8A6DE009A745E /* yoca.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = yoca.sqlite; sourceTree = "<group>"; };
+		42E076E21B14A7FB00A269E8 /* star_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_empty.png; sourceTree = "<group>"; };
+		42E076E31B14A7FB00A269E8 /* star_empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star_empty@2x.png"; sourceTree = "<group>"; };
+		42E076E41B14A7FB00A269E8 /* star_full.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_full.png; sourceTree = "<group>"; };
+		42E076E51B14A7FB00A269E8 /* star_full@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star_full@2x.png"; sourceTree = "<group>"; };
 		42E134F71AD4D1BB0053E78F /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		42E134F81AD4D1BB0053E78F /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		42E134F91AD4D1BB0053E78F /* NSDate+RFC1123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+RFC1123.h"; sourceTree = "<group>"; };
@@ -467,6 +488,10 @@
 		42E9D1261A8A465600F92F45 /* UIViewController+NavigationBarButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+NavigationBarButton.m"; sourceTree = "<group>"; };
 		42E9D1271A8A465600F92F45 /* UIWebView+Addition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+Addition.h"; sourceTree = "<group>"; };
 		42E9D1281A8A465600F92F45 /* UIWebView+Addition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+Addition.m"; sourceTree = "<group>"; };
+		42F22F5D1B1377F100439031 /* VerticallyAlignedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerticallyAlignedLabel.h; sourceTree = "<group>"; };
+		42F22F5E1B1377F100439031 /* VerticallyAlignedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VerticallyAlignedLabel.m; sourceTree = "<group>"; };
+		42F22F601B137E3800439031 /* IHisViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHisViewController.h; sourceTree = "<group>"; };
+		42F22F611B137E3800439031 /* IHisViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IHisViewController.m; sourceTree = "<group>"; };
 		DB265CE3581FC1BCF847DE3C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		E21E11830690AA6B0F43D535 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -476,6 +501,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42D969D81B2344770043C480 /* ImageIO.framework in Frameworks */,
 				42121BCD1ABD3E53006398DE /* HealthKit.framework in Frameworks */,
 				42B6B0E61A03C546001F8B23 /* CoreLocation.framework in Frameworks */,
 				427036EF1AB9C67E00342CC2 /* CoreBluetooth.framework in Frameworks */,
@@ -558,6 +584,7 @@
 		4219239D19B214C600681FCA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				42D969D71B2344770043C480 /* ImageIO.framework */,
 				42121BCC1ABD3E53006398DE /* HealthKit.framework */,
 				427036EE1AB9C67E00342CC2 /* CoreBluetooth.framework */,
 				4246B29F1A8DF64D00B2AE9B /* libicucore.dylib */,
@@ -605,6 +632,8 @@
 				421923A519B214C600681FCA /* Supporting Files */,
 				427036EB1AB9B0E700342CC2 /* BLEViewController.h */,
 				427036EC1AB9B0E700342CC2 /* BLEViewController.m */,
+				42D2CE061B0F8C3200FA6A92 /* MainViewController.h */,
+				42D2CE071B0F8C3200FA6A92 /* MainViewController.m */,
 			);
 			path = IWeigh;
 			sourceTree = "<group>";
@@ -645,6 +674,8 @@
 				42DAD4011B0382620029771E /* WarnEntity.m */,
 				4277B45F1B0A46B000E9C955 /* HealthEntity.h */,
 				4277B4601B0A46B000E9C955 /* HealthEntity.m */,
+				42D56D1D1B1749700023C3FF /* WeightUtils.h */,
+				42D56D1E1B1749700023C3FF /* WeightUtils.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -777,6 +808,10 @@
 				4243F41F1AA1923E0069F16F /* IChartPagesViewController.m */,
 				42905B231B024B7800D1C443 /* IContentEViewController.h */,
 				42905B241B024B7800D1C443 /* IContentEViewController.m */,
+				42F22F601B137E3800439031 /* IHisViewController.h */,
+				42F22F611B137E3800439031 /* IHisViewController.m */,
+				42D98E1E1B15FBCD00D7B4E9 /* IHisPagesViewController.h */,
+				42D98E1F1B15FBCD00D7B4E9 /* IHisPagesViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -793,6 +828,8 @@
 				42E9D1101A8A465600F92F45 /* Category */,
 				42ACEFF41A88E01C000A5F66 /* StringUtil.h */,
 				42ACEFF51A88E01C000A5F66 /* StringUtil.m */,
+				42F22F5D1B1377F100439031 /* VerticallyAlignedLabel.h */,
+				42F22F5E1B1377F100439031 /* VerticallyAlignedLabel.m */,
 				4243F41B1AA191E50069F16F /* PageSwitchView.h */,
 				4243F41C1AA191E50069F16F /* PageSwitchView.m */,
 				42B9D87A1AF9044400C22C23 /* StringUtils.h */,
@@ -806,6 +843,10 @@
 		42CAF21E1A014B8000BF2067 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				42E076E21B14A7FB00A269E8 /* star_empty.png */,
+				42E076E31B14A7FB00A269E8 /* star_empty@2x.png */,
+				42E076E41B14A7FB00A269E8 /* star_full.png */,
+				42E076E51B14A7FB00A269E8 /* star_full@2x.png */,
 				423AFF161B0CD30700E9A54E /* icon_navi_back_bl.png */,
 				423AFF171B0CD30700E9A54E /* icon_navi_back_bl@2x.png */,
 				423AFF101B0CB79800E9A54E /* ic_nav.png */,
@@ -1035,6 +1076,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				424ECD271A8E5690009D7595 /* delet_red.png in Resources */,
+				42E076E91B14A7FB00A269E8 /* star_full@2x.png in Resources */,
 				424ECD3B1A8E5690009D7595 /* userbig-icon118px.png in Resources */,
 				424ECD411A8E5690009D7595 /* back.png in Resources */,
 				42E1CF131AFD0582009D4328 /* nav_left@2x.png in Resources */,
@@ -1055,6 +1097,7 @@
 				424ECD4A1A8E5690009D7595 /* userbig.png in Resources */,
 				42DB53B31AF8A6DE009A745E /* yoca.sqlite in Resources */,
 				424ECD351A8E5690009D7595 /* seting-icon78px.png in Resources */,
+				42E076E61B14A7FB00A269E8 /* star_empty.png in Resources */,
 				424ECD4F1A8F1772009D7595 /* long_input_bg.png in Resources */,
 				424ECD3E1A8E5690009D7595 /* vistorbig-icon118px.png in Resources */,
 				424ECD2E1A8E5690009D7595 /* write.png in Resources */,
@@ -1079,6 +1122,7 @@
 				424ECD2F1A8E5690009D7595 /* back-icon15px.png in Resources */,
 				42C617181A5D7E7100D6B3BE /* weibo.png in Resources */,
 				42C617191A5D7E7100D6B3BE /* qq.png in Resources */,
+				42E076E71B14A7FB00A269E8 /* star_empty@2x.png in Resources */,
 				424ECD491A8E5690009D7595 /* user.png in Resources */,
 				424ECD331A8E5690009D7595 /* enter-icon15px.png in Resources */,
 				424ECD451A8E5690009D7595 /* plus.png in Resources */,
@@ -1088,6 +1132,7 @@
 				424ECD2C1A8E5690009D7595 /* remand.png in Resources */,
 				424ECD481A8E5690009D7595 /* turnoff.png in Resources */,
 				423AFF191B0CD30700E9A54E /* icon_navi_back_bl@2x.png in Resources */,
+				42E076E81B14A7FB00A269E8 /* star_full.png in Resources */,
 				421923A919B214C600681FCA /* InfoPlist.strings in Resources */,
 				424ECD381A8E5690009D7595 /* turnoff-hit-icon30px.png in Resources */,
 				424ECD3F1A8E5690009D7595 /* ic_action_accept.png in Resources */,
@@ -1142,6 +1187,8 @@
 				4268E7BC1A90E6D600AA9EE9 /* BEMPermanentPopupView.m in Sources */,
 				42E1CF181AFF8B1F009D4328 /* IScrollNumView.m in Sources */,
 				425179AC1A93867100B0AE12 /* IYocaViewController.m in Sources */,
+				42F22F621B137E3800439031 /* IHisViewController.m in Sources */,
+				42F22F5F1B1377F100439031 /* VerticallyAlignedLabel.m in Sources */,
 				42E9D1311A8A465600F92F45 /* UIView+Addition.m in Sources */,
 				427036ED1AB9B0E700342CC2 /* BLEViewController.m in Sources */,
 				42DA6B931AF7A67A00DA5C0D /* DBHelper.m in Sources */,
@@ -1151,6 +1198,7 @@
 				421923AB19B214C600681FCA /* main.m in Sources */,
 				425179AF1A938AC000B0AE12 /* ITargetViewController.m in Sources */,
 				42E1CF1B1AFFA930009D4328 /* IChartFView.m in Sources */,
+				42D56D1F1B1749700023C3FF /* WeightUtils.m in Sources */,
 				4268E7BA1A90E6D600AA9EE9 /* BEMCircle.m in Sources */,
 				4254EC891B00F04F0008E43F /* IHomeIView.m in Sources */,
 				42CEEB401B0D7365002C0494 /* IDatePicker.m in Sources */,
@@ -1176,6 +1224,7 @@
 				420226BA1AB8599200B64CEC /* BLEManager.m in Sources */,
 				42E9D10E1A8A3AF000F92F45 /* HNetworkOperation.m in Sources */,
 				4268E7C01A90E70600AA9EE9 /* IChartViewController.m in Sources */,
+				42D98E201B15FBCD00D7B4E9 /* IHisPagesViewController.m in Sources */,
 				424ECD691A8F62DE009D7595 /* UIAlertView+MKBlockAdditions.m in Sources */,
 				42DA6B961AF7A70F00DA5C0D /* PathHelper.m in Sources */,
 				4268E7C91A90F19400AA9EE9 /* UIButton+Bootstrap.m in Sources */,
@@ -1199,6 +1248,7 @@
 				42E9D12D1A8A465600F92F45 /* UIImage+AutoSizedImage.m in Sources */,
 				42E135101AD4D1BB0053E78F /* Reachability.m in Sources */,
 				42B9D8821AF90C4900C22C23 /* TargetInfoEntity.m in Sources */,
+				42D2CE081B0F8C3200FA6A92 /* MainViewController.m in Sources */,
 				42B9D8791AF903C600C22C23 /* SIAlertView.m in Sources */,
 				42B9D87F1AF9063000C22C23 /* ConfigEntity.m in Sources */,
 				42E1350A1AD4D1BB0053E78F /* NSDate+RFC1123.m in Sources */,

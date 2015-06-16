@@ -26,6 +26,7 @@
 
 +(NSString*)currentTime:(NSDateFormatter*)formatter;
 +(NSInteger)ageWithDateOfBirth:(NSDate*)date;
++(NSInteger)dateWithForDays:(NSString*)newDate;
 
 +(NSString *)ToHex:(int)tmpid;
 @end

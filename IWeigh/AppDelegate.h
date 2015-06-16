@@ -28,6 +28,7 @@
 @property (strong, nonatomic) HNetworkEngine*       networkEngine;
 @property(nonatomic,strong)id<GAITracker>       tracker;
 
+-(void)openBLEView;
 -(void)openMainView;
 -(void)openHomeView;
 -(void)writeBLEData:(NSData*)aData;

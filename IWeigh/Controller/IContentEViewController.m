@@ -9,13 +9,18 @@
 #import "IContentEViewController.h"
 #import "UIViewController+NavigationBarButton.h"
 #import "DBManager.h"
+#import "IScanView.h"
+#import "AccountEntity.h"
+#import "IHomeTView.h"
 #import "IHomeIView.h"
 #import "HomeTargetEntity.h"
 
-@interface IContentEViewController ()
+@interface IContentEViewController ()<IScanViewDelegate,IHomeIViewDelegate>
 {
     
 }
+@property(nonatomic,strong)IScanView*  scanView;
+@property(nonatomic,strong)AccountEntity*   accountEntity;
 
 @end
 
@@ -38,6 +43,19 @@
         self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         [self.view addSubview:self.mTableView];
     }
+    if (self.scanView==nil) {
+        self.scanView=[[IScanView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 260) delegate:self];
+        [self.mTableView setTableHeaderView:self.scanView];
+    }
+    
+    if (self.infoDict) {
+        int index=[[self.infoDict objectForKey:@"dataIndex"] intValue];
+        NSArray *array=[[DBManager getInstance] queryAccountForID:index];
+        if ([array count]>0) {
+            self.accountEntity=[array objectAtIndex:0];
+        }
+    }
+
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -75,11 +93,15 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.mDatas count];
+    return [self.mDatas count]+1;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.row==0) {
+        return 80.0f;
+    }
+    
     return 70.0f;
 }
 
@@ -91,24 +113,58 @@
     CGRect bounds=self.view.frame;
     cell.backgroundColor=APP_TABLEBG_COLOR;
     
-    HomeTargetEntity* entity=[self.mDatas objectAtIndex:indexPath.row];
-    NSMutableDictionary * dict=[NSMutableDictionary dictionary];
-    [dict setObject:entity.title forKey:@"title"];
-    if (entity.unit) {
-        [dict setObject:entity.unit forKey:@"unit"];
-    }
-    [dict setObject:@"正常" forKey:@"status"];
-    [dict setObject:@"1" forKey:@"isEdit"];
-    
-    IHomeIView* item=[[IHomeIView alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 70) delegate:self];
-    [item setInfoDict:dict];
-    [cell addSubview:item];
-    
-    UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 69.5, bounds.size.width, 0.5)];
-    [img setBackgroundColor:[UIColor blackColor]];
-    [cell addSubview:img];
-    [cell sendSubviewToBack:img];
-    
+    if (indexPath.row==0) {
+        if (self.accountEntity&&self.accountEntity.targetType==0) {
+            UIImageView* edit=[[UIImageView alloc]initWithFrame:CGRectMake(20, 9, 36, 36)];
+            [edit setContentMode:UIViewContentModeScaleAspectFill];
+            [edit setImage:[UIImage imageNamed:@"edit"]];
+            [cell addSubview:edit];
+            
+            UILabel *lb=[[UILabel alloc]initWithFrame:CGRectMake(60, (50-26)/2, 200, 26)];
+            [lb setText:@"目标未设置,点击设置"];
+            [lb setFont:[UIFont boldSystemFontOfSize:16.0f]];
+            [cell addSubview:lb];
+        }else{
+            IHomeTView* item=[[IHomeTView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 80)];
+            [item setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:@"1",@"weight",self.accountEntity.targetWeight,@"targetWeight",self.accountEntity.doneTime,@"doneTime", nil]];
+            [cell addSubview:item];
+        }
+        UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 79.5, bounds.size.width, 0.5)];
+        [img setBackgroundColor:[UIColor blackColor]];
+        [cell addSubview:img];
+        [cell sendSubviewToBack:img];
+        
+    }else{
+        if (indexPath.row<=[self.mDatas count]) {
+            HomeTargetEntity* entity=[self.mDatas objectAtIndex:indexPath.row-1];
+            NSMutableDictionary * dict=[NSMutableDictionary dictionary];
+            [dict setObject:entity.title forKey:@"title"];
+            if (entity.unit) {
+                [dict setObject:entity.unit forKey:@"unit"];
+            }
+            if (entity.value) {
+                [dict setObject:entity.value forKey:@"value"];
+            }
+            if (entity.valueTitle) {
+                [dict setObject:entity.valueTitle forKey:@"valueTitle"];
+            }
+            if (entity.progres) {
+                [dict setObject:entity.progres forKey:@"progres"];
+            }
+            [dict setObject:[NSString stringWithFormat:@"%d",entity.state] forKey:@"state"];
+            [dict setObject:[NSString stringWithFormat:@"%d",entity.isShow] forKey:@"isShow"];
+            [dict setObject:@"1" forKey:@"isEdit"];
+            [dict setObject:[NSString stringWithFormat:@"%d",entity.tid] forKey:@"id"];
+            IHomeIView* item=[[IHomeIView alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 70) delegate:self];
+            [item setInfoDict:dict];
+            [cell addSubview:item];
+            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 69.5, bounds.size.width, 0.5)];
+            [img setBackgroundColor:[UIColor blackColor]];
+            [cell addSubview:img];
+            [cell sendSubviewToBack:img];
+            
+        }
+    }        
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
     return cell;
     
@@ -118,6 +174,19 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+}
+
+-(void)onEditClicked:(IHomeIView*)view
+{
+    NSInteger tid=[[view.infoDict objectForKey:@"id"] integerValue];
+    if (tid>0) {
+        NSMutableDictionary* dict=[[NSMutableDictionary alloc]init];
+        [dict setObject:[NSString stringWithFormat:@"%ld",tid] forKey:@"id"];
+        [dict setObject:[NSString stringWithFormat:@"%d",[view isShow]] forKey:@"isShow"];
+        if ([[DBManager getInstance] insertOrUpdateHomeTarget:dict]) {
+            DLog(@"%ld  state = %d is update success",tid,[view isShow]);
+        }
+    }
 }
 
 

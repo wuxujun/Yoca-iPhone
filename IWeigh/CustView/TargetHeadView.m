@@ -31,21 +31,21 @@
     [recomLabel setFont:[UIFont systemFontOfSize:18.0f]];
     [recomLabel setText:@"推荐体重"];
     [recomLabel setTextAlignment:NSTextAlignmentCenter];
-    [recomLabel setTextColor:[UIColor whiteColor]];
+    [recomLabel setTextColor:[UIColor blackColor]];
     [contentView addSubview:recomLabel];
     
     recomVLabel=[[UILabel alloc]init];
     [recomVLabel setFont:[UIFont boldSystemFontOfSize:40.0f]];
     [recomVLabel setTextAlignment:NSTextAlignmentCenter];
     [recomVLabel setText:@"11.0"];
-    [recomVLabel setTextColor:[UIColor whiteColor]];
+    [recomVLabel setTextColor:[UIColor blackColor]];
     [contentView addSubview:recomVLabel];
     
     
     recomULabel=[[UILabel alloc]init];
     [recomULabel setTextAlignment:NSTextAlignmentRight];
     [recomULabel setText:@"Kg"];
-    [recomULabel setTextColor:[UIColor whiteColor]];
+    [recomULabel setTextColor:[UIColor blackColor]];
     [contentView addSubview:recomULabel];
     
     currentLabel=[[UILabel alloc]init];

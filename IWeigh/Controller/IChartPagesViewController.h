@@ -11,4 +11,6 @@
 
 @interface IChartPagesViewController : UIViewController
 
+@property(nonatomic,strong)NSDictionary*    infoDict;
+
 @end

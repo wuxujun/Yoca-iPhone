@@ -17,6 +17,8 @@
 + (FMDatabase *)db;
 + (BOOL)openDB:(NSString *)dbPath;
 
++(void)addColumnToTable:(NSString *)tableName ColumnName:(NSString *)column;
+
 + (NSArray *)queryAll:(Class)type sql:(NSString *)sql params:(NSArray *)params;
 + (NSArray *)queryAll:(Class)type conditions:(NSString *)conditions params:(NSArray *)params;
 + (NSArray *)queryAll:(Class)type fields:(NSString *)fields conditions:(NSString *)conditions params:(NSArray *)params;

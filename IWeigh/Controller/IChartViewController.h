@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 #import "BEMSimpleLineGraphView.h"
 
-@interface IChartViewController : UIViewController<BEMSimpleLineGraphDataSource,BEMSimpleLineGraphDelegate>
+@interface IChartViewController : BaseViewController<BEMSimpleLineGraphDataSource,BEMSimpleLineGraphDelegate>
 
 @property (nonatomic,strong) IBOutlet  BEMSimpleLineGraphView *myGraph;
 
-
+@property (nonatomic,strong)NSDictionary*       infoDict;
+@property (nonatomic,assign)NSInteger           targetType;
 @end

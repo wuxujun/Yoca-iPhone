@@ -22,6 +22,7 @@
 #import "IChartViewController.h"
 #import "DBHelper.h"
 #import "DBManager.h"
+#import "WeightUtils.h"
 #import "HomeTargetEntity.h"
 #import "TargetInfoEntity.h"
 #import "IHomeIView.h"
@@ -32,14 +33,14 @@
 {
     CLLocationManager       *locManager;
     
-    BLEManager*     bleManager;
-    
     NSInteger             nHeight;
     NSInteger             nAge;
     NSInteger             nSex;
     
+    NSMutableArray          *hisDatas;
     NSMutableArray          *datas;
     NSInteger               nIndex;
+    NSInteger               nLastIndex;
     
     NSMutableArray          *targetDatas;
     
@@ -55,9 +56,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    hisDatas=[[NSMutableArray alloc]init];
     datas=[[NSMutableArray alloc]init];
     targetDatas=[[NSMutableArray alloc] init];
     nIndex=0;
+    nLastIndex=-1;
     
     if ([CLLocationManager locationServicesEnabled]) {
         locManager=[[CLLocationManager alloc]init];
@@ -65,7 +68,9 @@
         locManager.desiredAccuracy=kCLLocationAccuracyBest;
         locManager.distanceFilter=1000;
         if (IOS_VERSION_8_OR_ABOVE) {
-            [locManager requestAlwaysAuthorization];
+//            [locManager requestAlwaysAuthorization];  //一直在后台位置服务
+            [locManager requestWhenInUseAuthorization];//使用时获取位置信息
+            
         }
     }
     
@@ -81,11 +86,7 @@
     NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
     [formatter setTimeZone:timezone];
     self.today=[formatter stringFromDate:[NSDate date]];
-
-//    bleManager=[BLEManager getInstance];
-//    [bleManager controlSetup:1];
-//    bleManager.deleagte=self;
-    
+ 
     if (self.infoDict) {
         [self setCenterTitle:[self.infoDict objectForKey:@"title"]];
         int index=[[self.infoDict objectForKey:@"dataIndex"] intValue];
@@ -129,10 +130,10 @@
     for (int i=0; i<[array count]; i++) {
         TargetInfoEntity* entity=[array objectAtIndex:i];
         NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
-        [dict setObject:[NSString stringWithFormat:@"%ld",entity.type] forKey:@"type"];
+        [dict setObject:[NSString stringWithFormat:@"%d",entity.type] forKey:@"type"];
         [dict setObject:entity.title forKey:@"title"];
         [dict setObject:entity.unit forKey:@"unit"];
-        [dict setObject:[NSString stringWithFormat:@"%ld",self.accountEntity.aid] forKey:@"aid"];
+        [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
         if (entity.type<2) {
             [dict setObject:@"1" forKey:@"state"];
         }
@@ -142,26 +143,119 @@
     }
 }
 
+-(void)resetHomeTargetInfo:(WeightEntity*)weight
+{
+    NSArray* array=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:0];
+    for (int i=0; i<[array count]; i++) {
+        HomeTargetEntity* entity=[array objectAtIndex:i];
+        NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
+        switch (entity.type) {
+            case 0:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.bmi] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBMIStatus:[weight.bmi doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBMIStatusTitle:[weight.bmi doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBMIStatusValue:[weight.bmi doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 1:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.weight] forKey:@"value"];
+                
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getWeightStatus:self.accountEntity.height sex:self.accountEntity.sex value:[weight.weight doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getWeightStatusTitle:self.accountEntity.height sex:self.accountEntity.sex value:[weight.weight doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getWeightStatusValue:self.accountEntity.height sex:self.accountEntity.sex value:[weight.weight doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 2:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.fat] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getFatStatus:self.accountEntity.age sex:self.accountEntity.sex value:[weight.fat doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getFatStatusTitle:self.accountEntity.age sex:self.accountEntity.sex value:[weight.fat doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getFatStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[weight.fat doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 3:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.subFat] forKey:@"value"];[dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getSufFatStatus:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getSubFatStatusTitle:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getSubFatStatusValue:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 4:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.visFat] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getVisFatStatus:[weight.visFat doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getVisFatStatusTitle:[weight.visFat doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getVisFatStatusValue:[weight.visFat doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 5:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.water] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getWaterStatus:self.accountEntity.sex value:[weight.water doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getWaterStatusTitle:self.accountEntity.sex value:[weight.water doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getWaterStatusValue:self.accountEntity.sex value:[weight.water doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 6:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.BMR] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBMRStatus:self.accountEntity.age sex:self.accountEntity.sex value:[weight.BMR doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBMRStatusTitle:self.accountEntity.age sex:self.accountEntity.sex value:[weight.BMR doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBMRStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[weight.BMR doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 7:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.bodyAge] forKey:@"value"];
+                [dict setObject:@"1" forKey:@"state"];
+                [dict setObject:@"正常" forKey:@"valueTitle"];
+                [dict setObject:@"0.50" forKey:@"progres"];
+            }
+                break;
+            case 8:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.muscle] forKey:@"value"];[dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getMuscleStatus:self.accountEntity.height sex:self.accountEntity.sex value:[weight.muscle doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getMuscleStatusTitle:self.accountEntity.height sex:self.accountEntity.sex value:[weight.muscle doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getMuscleStatusValue:self.accountEntity.height sex:self.accountEntity.sex value:[weight.muscle doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 9:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.bone] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBoneStatus:[weight.weight doubleValue] sex:self.accountEntity.sex value:[weight.bone doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBoneStatusTitle:[weight.weight doubleValue] sex:self.accountEntity.sex value:[weight.bone doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBoneStatusValue:[weight.weight doubleValue] sex:self.accountEntity.sex value:[weight.bone doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 10:
+                [dict setObject:[NSString stringWithFormat:@"0.0"] forKey:@"value"];
+                break;
+            default:
+                break;
+        }
+        [dict setObject:[NSString stringWithFormat:@"%d",entity.tid] forKey:@"id"];
+        [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
+        
+        if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
+            DLog(@"HomeTargetInfo insert or update Success.");
+        }
+    }
+    
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEStatusUpdate:) name:BLEDATA_RECVICE_STATUS object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDataReceive:) name:BLEDATA_RECVICE object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRefresh:) name:SYNC_DATA_REFRESH object:nil];
-    [self countData];
-//    if (bleManager.activePeripheral.isConnected) {
-//        return;
-//    }
-//    if (bleManager.peripherals) {
-//        bleManager.peripherals=nil;
-//    }
-//    [bleManager findBLEPeripherals:5];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [locManager startUpdatingLocation];
     if ([self.infoDict objectForKey:@"dataIndex"]) {
         [self loadHistoryData];
     }
@@ -187,12 +281,11 @@
 
 -(void)loadHistoryData
 {
-    NSInteger count=[[DBManager getInstance] queryWeightCountWithPicktime:self.today account:self.accountEntity.aid];
-    NSArray* array=[[DBManager getInstance] queryWeightWithPicktime:self.today account:self.accountEntity.aid];
+    NSInteger count=[[DBManager getInstance] queryWeightHisCountWithPicktime:self.today account:self.accountEntity.aid];
+    NSArray* array=[[DBManager getInstance] queryWeightHisWithPicktime:self.today account:self.accountEntity.aid];
     if ([array count]>0) {
-        [datas addObjectsFromArray:array];
-        
-        WeightHisEntity *his=[datas objectAtIndex:0];
+        [hisDatas addObjectsFromArray:array];
+        WeightHisEntity *his=[hisDatas objectAtIndex:0];
         if (his!=NULL) {
             [self.scanView setWeighValue:his.weight];
         }
@@ -205,13 +298,34 @@
         [self.scanView setFoot];
 //        [self.scanView setWeighValue:@"72.5"];
     }
-
-    if (count>0) {
-        [targetDatas removeAllObjects];
-        NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:1];
-        [targetDatas addObjectsFromArray:ary];
-        [self.mTableView reloadData];
+    
+    
+    
+    [datas removeAllObjects];
+    NSArray* array1=[[DBManager getInstance] queryWeights:self.accountEntity.aid];
+    if ([array1 count]>0) {
+        [datas addObjectsFromArray:array1];
     }
+
+    if (nLastIndex>=0&&nLastIndex<[array1 count]) {
+        WeightEntity* entity=[datas objectAtIndex:nLastIndex];
+        if (entity!=NULL) {
+            [self.scanView setWeighValue:entity.weight];
+            [self.scanView setDateTitle:entity.pickTime];
+        }
+    }
+    
+    if (count>0) {
+        [self loadHomeTarget];
+    }
+}
+
+-(void)loadHomeTarget
+{
+    [targetDatas removeAllObjects];
+    NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:1];
+    [targetDatas addObjectsFromArray:ary];
+    [self.mTableView reloadData];
 }
 
 -(void)onBLEStatusUpdate:(NSNotification*)notification
@@ -319,7 +433,7 @@
             DLog(@"%@",entity);
             [[DBManager getInstance] insertOrUpdateWeightHis:entity];
             
-//            [self countData];
+            [self countData:entity];
             
             //10h =>16  14h=>20
             Byte byte[]={9,11,18,31,5,1,16,53};
@@ -382,7 +496,20 @@
             if (entity.unit) {
                 [dict setObject:entity.unit forKey:@"unit"];
             }
-            [dict setObject:@"正常" forKey:@"status"];
+            if (entity.value) {
+                [dict setObject:entity.value forKey:@"value"];
+            }
+            if (entity.state) {
+                [dict setObject:[NSString stringWithFormat:@"%d",entity.state] forKey:@"state"];
+            }
+            if (entity.valueTitle){
+                [dict setObject:entity.valueTitle forKey:@"valueTitle"];
+            }
+            if (entity.progres) {
+                [dict setObject:entity.progres forKey:@"progres"];
+            }
+            
+            [dict setObject:@"1" forKey:@"isChart"];
             IHomeIView* item=[[IHomeIView alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 70) delegate:self];
             [item setInfoDict:dict];
             [cell addSubview:item];
@@ -399,7 +526,7 @@
     if (indexPath.row==0) {
         if (self.accountEntity&&self.accountEntity.targetType==0) {
             ITargetViewController* dController=[[ITargetViewController alloc]init];
-            dController.infoDict=[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%ld",self.accountEntity.aid],@"dataIndex", nil];
+            dController.infoDict=[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",self.accountEntity.aid],@"dataIndex", nil];
             [self.navigationController pushViewController:dController animated:YES];
         }
     }
@@ -409,7 +536,8 @@
 #pragma mark - IScanViewDelegate
 -(void)onScanViewShared:(IScanView *)view
 {
-    
+
+    [UMSocialSnsService presentSnsIconSheetView:self appKey:@"52649a7e56240b87b6169d13" shareText:@"分享文件" shareImage:nil shareToSnsNames:[NSArray arrayWithObjects: UMShareToSina,UMShareToTencent,UMShareToQQ,UMShareToQzone,UMShareToWechatSession,UMShareToWechatTimeline,UMShareToSms,UMShareToEmail,nil] delegate:self];
 }
 
 -(void)onScanViewSelected:(UIButton *)btn
@@ -423,28 +551,43 @@
             if ([datas count]>0&&nIndex>=0) {
                 WeightEntity* entity=[datas objectAtIndex:nIndex];
                 if (entity!=NULL) {
-                    [self.scanView setDateTitle:[NSString stringWithFormat:@"%@",entity.picktime]];
-                    [self.scanView setWeighValue:entity.weight];
+                    [self.scanView setDateTitle:[NSString stringWithFormat:@"%@",entity.pickTime]];
+                    [self.scanView setWeighValue:[NSString stringWithFormat:@"%.1f",[entity.weight floatValue]]];
+                    [self resetHomeTargetInfo:entity];
                 }
             }
+            nLastIndex=nIndex;
         }else{
             nIndex--;
             if (nIndex<0) {
                 nIndex=0;
                 [self.scanView setDateTitle:@"今日"];
+                WeightEntity *entity=[datas objectAtIndex:nIndex];
+                if (entity!=NULL) {
+                    if ([entity.pickTime isEqualToString:self.today]) {
+                        [self.scanView setWeighValue:entity.weight];
+                        [self resetHomeTargetInfo:entity];
+                    }else{
+                        [self.scanView setFoot];
+                    }
+                }
             }else{
                 WeightEntity* entity=[datas objectAtIndex:nIndex];
                 if (entity!=NULL) {
-                    if ([entity.picktime isEqualToString:self.today]) {
+                    if ([entity.pickTime isEqualToString:self.today]) {
                         [self.scanView setDateTitle:@"今日"];
                     }else{
-                        [self.scanView setDateTitle:[NSString stringWithFormat:@"%@",entity.picktime]];
+                        [self.scanView setDateTitle:[NSString stringWithFormat:@"%@",entity.pickTime]];
                     }
-                    [self.scanView setWeighValue:entity.weight];
+                    [self.scanView setWeighValue:[NSString stringWithFormat:@"%.1f",[entity.weight floatValue]]];
+                    [self resetHomeTargetInfo:entity];
+                    DLog(@"%@  %@",entity.pickTime,entity.weight);
                 }
             }
+            nLastIndex=nIndex;
         }
     }
+    [self loadHomeTarget];
 }
 
 -(void)onScanViewClicked:(IScanView *)view
@@ -456,54 +599,75 @@
 
 -(void)onChartClicked:(IHomeIView *)view
 {
-    
+    IChartPagesViewController* dController=[[IChartPagesViewController alloc]init];
+    dController.infoDict=self.infoDict;
+    [self.navigationController pushViewController:dController animated:YES];
 }
 
--(void)countData
+-(void)countData:(NSDictionary*)aDict
 {
-    
-//    WeightHisEntity* entity=[WeightHisEntity MR_findFirstWithPredicate:[NSPredicate predicateWithValue:YES] sortedBy:@"wid" ascending:NO];
-//    if (entity) {
-//        [self.accountEntity setWeight:entity.weight];
-//        [self.accountEntity setFat:entity.fat];
-//        [self.accountEntity setSubFat:entity.subFat];
-//        [self.accountEntity setVisFat:entity.visFat];
-//        [self.accountEntity setWater:entity.water];
-//        [self.accountEntity setBmr:entity.bmr];
-//        [self.accountEntity setBodyAge:entity.bodyAge];
-//        [self.accountEntity setMuscle:entity.muscle];
-//        [self.accountEntity setBone:entity.bone];
-//        
-//        [self.scanView setWeighValue:entity.weight];
-//        
-//        [self.mTableView reloadData];
-//    }
-}
-
-
--(void)BLEConnected:(NSString *)uuid
-{
-    DLog(@"%@",uuid);
-}
-
--(void)BLEDisConnected
-{
-    if (bleManager.activePeripheral.isConnected) {
-        [[bleManager CM] cancelPeripheralConnection:bleManager.activePeripheral];
-        bleManager.activePeripheral=nil;
+    NSArray* array=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:0];
+    for (int i=0; i<[array count]; i++) {
+        HomeTargetEntity* entity=[array objectAtIndex:i];
+        NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
+        switch (entity.type) {
+            case 0:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bmi"]] forKey:@"value"];
+                break;
+            case 1:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"weight"]] forKey:@"value"];
+                break;
+            case 2:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"fat"]] forKey:@"value"];
+                break;
+            case 3:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"subFat"]] forKey:@"value"];
+                break;
+            case 4:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"visFat"]] forKey:@"value"];
+                break;
+            case 5:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"water"]] forKey:@"value"];
+                break;
+            case 6:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"BMR"]] forKey:@"value"];
+                break;
+            case 7:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bodyAge"]] forKey:@"value"];
+                break;
+            case 8:
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"muscle"]] forKey:@"value"];
+                break;
+            case 9:
+                
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bone"]] forKey:@"value"];
+                break;
+            case 10:
+                [dict setObject:[NSString stringWithFormat:@"0.0"] forKey:@"value"];
+                break;
+            default:
+                break;
+        }
+        [dict setObject:[NSString stringWithFormat:@"%d",entity.tid] forKey:@"id"];
+        [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
+        
+        if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
+            DLog(@"HomeTargetInfo insert or update Success.");
+        }
     }
+    [self loadHomeTarget];
 }
-
--(void)BLEValueUpdated:(char)value
-{
-    DLog(@"%c",value);
-}
-
 
 #pragma mark -- LocationManager
 -(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     DLog(@"%d",status);
+    if (status==kCLAuthorizationStatusAuthorizedAlways||status==kCLAuthorizationStatusAuthorizedWhenInUse) {
+        DLog(@"Authorized...");
+        [locManager startUpdatingLocation];
+    }else if(status==kCLAuthorizationStatusDenied||status==kCLAuthorizationStatusRestricted){
+        DLog(@"Denied");
+    }
 }
 
 -(void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error

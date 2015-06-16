@@ -12,6 +12,8 @@
 
 @property (nonatomic,strong)UILabel*        setValueLabel;
 @property (nonatomic,strong)UITextField*    doneDateField;
+@property (nonatomic,strong)UIView*         doneDateBG;
+
 @property (nonatomic,strong)NSDictionary*   infoDict;
 
 @end

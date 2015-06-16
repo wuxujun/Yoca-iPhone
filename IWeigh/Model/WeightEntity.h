@@ -14,7 +14,7 @@ typedef void(^SqlBlock)(NSString* sql,NSArray* arguments);
 
 @property (nonatomic, assign) NSInteger wid;
 @property (nonatomic, assign) NSInteger aid;
-@property (nonatomic, strong) NSString * picktime;
+@property (nonatomic, strong) NSString * pickTime;
 @property (nonatomic, strong) NSString * weight;
 @property (nonatomic, strong) NSString * fat;
 @property (nonatomic, strong) NSString * subFat;

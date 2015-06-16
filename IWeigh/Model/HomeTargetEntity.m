@@ -31,6 +31,10 @@
         self.valueTitle=value;
     }else if([key isEqualToString:@"progres"]){
         self.progres=value;
+    }else if([key isEqualToString:@"unit"]){
+        self.unit=value;
+    }else if([key isEqualToString:@"isShow"]){
+        self.isShow=[value intValue];
     }
 }
 -(void)setValue:(id)value forUndefinedKey:(NSString *)key
@@ -45,7 +49,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"id",@"type",@"title",@"aid",@"state",@"unit",@"sex",@"height",@"value",@"valutTitle",@"progres", nil];
+    return [NSArray arrayWithObjects:@"id",@"type",@"title",@"aid",@"state",@"unit",@"sex",@"height",@"value",@"valutTitle",@"progres,isShow", nil];
 }
 
 +(void)generateInsertSql:(NSDictionary *)info completion:(SqlBlock)completion
@@ -59,7 +63,7 @@
     for (int i=0; i<values.count; i++) {
         NSString *value = values[i];
         NSString *key = keys[i];
-        NSArray *integerKeyArray = @[@"id",@"type", @"state",@"aid",@"sex",@"height"];
+        NSArray *integerKeyArray = @[@"id",@"type", @"state",@"aid",@"sex",@"height",@"isShow"];
         if ([integerKeyArray containsObject:key]) {
             [finalKeys addObject:key];
             [finalValues addObject:@([value integerValue])];
@@ -96,7 +100,7 @@
     for (int i=0; i<values.count; i++) {
         NSString *value = values[i];
         NSString *key = keys[i];
-        NSArray *integerKeyArray = @[@"id",@"type",@"state",@"aid",@"sex",@"height"];
+        NSArray *integerKeyArray = @[@"id",@"type",@"state",@"aid",@"sex",@"height",@"isShow"];
         if ([integerKeyArray containsObject:key]) {
             if ([key isEqualToString:@"id"]) {
                 mID = @([value integerValue]);

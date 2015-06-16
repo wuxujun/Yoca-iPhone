@@ -30,6 +30,7 @@
     UILabel         *weighLabel;
     UILabel         *statusLabel;
     UIButton        *infoButton;
+    UIImageView     *infoImage;
     
     UILabel         *dateLabel;
     UIButton*       leftButton;

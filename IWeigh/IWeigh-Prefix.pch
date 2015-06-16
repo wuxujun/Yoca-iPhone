@@ -22,8 +22,8 @@
 
 #define UMENG_APPKEY        @"52649a7e56240b87b6169d13"
 
-#define APPKEY_WEIBO        @"3547118772"
-#define APPSECRET_WEIBO     @"62669f1857a9af23eb7ce5980ceb107c"
+#define APPKEY_WEIBO        @"2846029855"
+#define APPSECRET_WEIBO     @"6edd97b068547492519b8eefa084f344"
 #define REDIRECTURI_WEIBO   @"https://hlterm.oicp.net/openapi/ability/index.php/Micblog/callback"
 
 
