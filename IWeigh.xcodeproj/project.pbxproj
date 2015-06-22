@@ -95,6 +95,10 @@
 		4254EC8C1B00FFDA0008E43F /* IValueTrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 4254EC8B1B00FFDA0008E43F /* IValueTrackingSlider.m */; };
 		4254EC8F1B0100600008E43F /* IValuePopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4254EC8E1B0100600008E43F /* IValuePopupView.m */; };
 		4254EC911B0107F30008E43F /* ic_indicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 4254EC901B0107F30008E43F /* ic_indicator.png */; };
+		4267184D1B307E8000ED125D /* CRNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 4267184A1B307E8000ED125D /* CRNavigationBar.m */; };
+		4267184E1B307E8000ED125D /* CRNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4267184C1B307E8000ED125D /* CRNavigationController.m */; };
+		426718511B307F7900ED125D /* IInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 426718501B307F7900ED125D /* IInfoViewController.m */; };
+		426718541B307FCB00ED125D /* IInfoPagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 426718531B307FCB00ED125D /* IInfoPagesViewController.m */; };
 		4268E7A81A90DA5C00AA9EE9 /* DMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E79C1A90DA5C00AA9EE9 /* DMKeychain.m */; };
 		4268E7A91A90DA5C00AA9EE9 /* DMPasscode.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E79E1A90DA5C00AA9EE9 /* DMPasscode.m */; };
 		4268E7AA1A90DA5C00AA9EE9 /* DMPasscodeConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E7A01A90DA5C00AA9EE9 /* DMPasscodeConfig.m */; };
@@ -320,6 +324,14 @@
 		4254EC8D1B0100600008E43F /* IValuePopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IValuePopupView.h; sourceTree = "<group>"; };
 		4254EC8E1B0100600008E43F /* IValuePopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IValuePopupView.m; sourceTree = "<group>"; };
 		4254EC901B0107F30008E43F /* ic_indicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_indicator.png; sourceTree = "<group>"; };
+		426718491B307E8000ED125D /* CRNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRNavigationBar.h; sourceTree = "<group>"; };
+		4267184A1B307E8000ED125D /* CRNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRNavigationBar.m; sourceTree = "<group>"; };
+		4267184B1B307E8000ED125D /* CRNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRNavigationController.h; sourceTree = "<group>"; };
+		4267184C1B307E8000ED125D /* CRNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CRNavigationController.m; sourceTree = "<group>"; };
+		4267184F1B307F7900ED125D /* IInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IInfoViewController.h; sourceTree = "<group>"; };
+		426718501B307F7900ED125D /* IInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IInfoViewController.m; sourceTree = "<group>"; };
+		426718521B307FCB00ED125D /* IInfoPagesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IInfoPagesViewController.h; sourceTree = "<group>"; };
+		426718531B307FCB00ED125D /* IInfoPagesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IInfoPagesViewController.m; sourceTree = "<group>"; };
 		4268E79B1A90DA5C00AA9EE9 /* DMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMKeychain.h; sourceTree = "<group>"; };
 		4268E79C1A90DA5C00AA9EE9 /* DMKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMKeychain.m; sourceTree = "<group>"; };
 		4268E79D1A90DA5C00AA9EE9 /* DMPasscode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPasscode.h; sourceTree = "<group>"; };
@@ -712,6 +724,17 @@
 			path = MKAdditions;
 			sourceTree = "<group>";
 		};
+		426718481B307E8000ED125D /* CRNavigationBar */ = {
+			isa = PBXGroup;
+			children = (
+				426718491B307E8000ED125D /* CRNavigationBar.h */,
+				4267184A1B307E8000ED125D /* CRNavigationBar.m */,
+				4267184B1B307E8000ED125D /* CRNavigationController.h */,
+				4267184C1B307E8000ED125D /* CRNavigationController.m */,
+			);
+			path = CRNavigationBar;
+			sourceTree = "<group>";
+		};
 		4268E7991A90DA5C00AA9EE9 /* DMPasscode */ = {
 			isa = PBXGroup;
 			children = (
@@ -812,6 +835,10 @@
 				42F22F611B137E3800439031 /* IHisViewController.m */,
 				42D98E1E1B15FBCD00D7B4E9 /* IHisPagesViewController.h */,
 				42D98E1F1B15FBCD00D7B4E9 /* IHisPagesViewController.m */,
+				4267184F1B307F7900ED125D /* IInfoViewController.h */,
+				426718501B307F7900ED125D /* IInfoViewController.m */,
+				426718521B307FCB00ED125D /* IInfoPagesViewController.h */,
+				426718531B307FCB00ED125D /* IInfoPagesViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -819,6 +846,7 @@
 		42CAF21D1A014B8000BF2067 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				426718481B307E8000ED125D /* CRNavigationBar */,
 				42B9D8741AF903C600C22C23 /* SIAlertView */,
 				42E134F51AD4D1BB0053E78F /* MKNetworkKit */,
 				4268E7C11A90F19400AA9EE9 /* StrapButton */,
@@ -1233,6 +1261,7 @@
 				42E1350F1AD4D1BB0053E78F /* MKNetworkOperation.m in Sources */,
 				4268E7AB1A90DA5C00AA9EE9 /* DMPasscodeInternalField.m in Sources */,
 				424ECD681A8F62DE009D7595 /* UIActionSheet+MKBlockAdditions.m in Sources */,
+				426718541B307FCB00ED125D /* IInfoPagesViewController.m in Sources */,
 				42ACEFF61A88E01C000A5F66 /* StringUtil.m in Sources */,
 				4238332B1AA8ADAE00C11620 /* TargetHeadView.m in Sources */,
 				4243F4201AA1923E0069F16F /* IChartPagesViewController.m in Sources */,
@@ -1258,9 +1287,12 @@
 				42E9D10F1A8A3AF000F92F45 /* UserDefaultHelper.m in Sources */,
 				4254EC8F1B0100600008E43F /* IValuePopupView.m in Sources */,
 				42E9D12F1A8A465600F92F45 /* UIImage+Custome.m in Sources */,
+				4267184E1B307E8000ED125D /* CRNavigationController.m in Sources */,
 				424ECCFD1A8E5102009D7595 /* IAccountDViewController.m in Sources */,
+				4267184D1B307E8000ED125D /* CRNavigationBar.m in Sources */,
 				421923B519B214C600681FCA /* HomeViewController.m in Sources */,
 				424ECD5E1A8F6242009D7595 /* UIHelper.m in Sources */,
+				426718511B307F7900ED125D /* IInfoViewController.m in Sources */,
 				424ECD671A8F62DE009D7595 /* NSObject+MKBlockAdditions.m in Sources */,
 				421923AF19B214C600681FCA /* AppDelegate.m in Sources */,
 				4268E7A81A90DA5C00AA9EE9 /* DMKeychain.m in Sources */,

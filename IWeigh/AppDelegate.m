@@ -21,6 +21,9 @@
 #import "UserDefaultHelper.h"
 #import "HCurrentUserContext.h"
 
+#import "IInfoPagesViewController.h"
+#import "CRNavigationController.h"
+
 #import <UMSocial.h>
 #import <UMSocialSnsService.h>
 #import <UMSocialWechatHandler.h>
@@ -154,7 +157,8 @@ static NSString *const kAllowTracking=@"allowTracking";
         
         if ([[HCurrentUserContext sharedInstance] uid]) {
             DLog(@"%@",[[HCurrentUserContext sharedInstance] uid]);
-            [ApplicationDelegate openMainView];
+//            [ApplicationDelegate openMainView];
+            [ApplicationDelegate openTabMainView];
         }else{
             [ApplicationDelegate openHomeView];
         }
@@ -227,6 +231,27 @@ static NSString *const kAllowTracking=@"allowTracking";
     self.window.backgroundColor=[UIColor whiteColor];
     
     [self.window makeKeyAndVisible];
+}
+
+-(void)openTabMainView
+{
+    for (UIView* view in self.window.subviews) {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    [BluetoothLEManager sharedManagerWithDelegate:self];
+    
+    [self syncWeight];
+    
+    UITabBarController* tabBarController=[[UITabBarController alloc]init];
+    self.viewController=tabBarController;
+    self.window.rootViewController=self.viewController;
+    [self.window makeKeyAndVisible];
+    
+    NSArray* viewControllers=@[[[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],
+    [[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],[[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],[[CRNavigationController alloc]initWithRootViewController:[[IInfoPagesViewController alloc]init]]];
+    tabBarController.viewControllers=viewControllers;
     
 }
 

@@ -19,6 +19,7 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate,REFrostedViewControllerDelegate,BluetoothLEManagerDelegateProtocol,BluetoothLEServiceProtocol,CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic,strong) UITabBarController*    viewController;
 
 @property (nonatomic,assign)CBPeripheral    *peripheral;
 @property (nonatomic,strong)BluetoothLEService  *bleService;
@@ -30,6 +31,7 @@
 
 -(void)openBLEView;
 -(void)openMainView;
+-(void)openTabMainView;
 -(void)openHomeView;
 -(void)writeBLEData:(NSData*)aData;
 +(AppDelegate*)getAppelegate;
