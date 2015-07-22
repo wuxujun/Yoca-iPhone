@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "UIViewController+NavigationBarButton.h"
 #import <TencentOpenAPI/TencentOAuth.h>
-#import "INavigationController.h"
+//#import "INavigationController.h"
 #import "StringUtil.h"
 #import "IScanView.h"
 #import "IHomeTView.h"
@@ -28,6 +28,11 @@
 #import "IHomeIView.h"
 #import "IYocaViewController.h"
 #import "IContentEViewController.h"
+#import "IUserViewController.h"
+
+
+static const int kSegmentedControlWidth  = 85;
+
 
 @interface HomeViewController ()<IScanViewDelegate,IHomeIViewDelegate>
 {
@@ -49,15 +54,31 @@
 @property (nonatomic,strong)NSString*   today;
 
 @property (nonatomic,strong)AccountEntity*  accountEntity;
+
 @end
 
 @implementation HomeViewController
+
+-(id)init
+{
+    self=[super init];
+    if (self) {
+        self.title=@"主页";
+        self.navigationItem.title=@"Home";
+//        [self.tabBarItem setImage:[UIImage imageNamed:@"Home"]];
+        //        self.tabBarItem.selectedImage=[UIImage imageNamed:@"Home_Press"];
+        //        [self.tabBarItem setImageInsets:UIEdgeInsetsMake(5, 0, -5, 0)];
+        [self.tabBarItem setTitlePositionAdjustment:UIOffsetMake(0, -4)];
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     hisDatas=[[NSMutableArray alloc]init];
     datas=[[NSMutableArray alloc]init];
+    self.accountDatas=[[NSMutableArray alloc] init];
     targetDatas=[[NSMutableArray alloc] init];
     nIndex=0;
     nLastIndex=-1;
@@ -77,7 +98,12 @@
     [self setCenterTitle:@"Home"];
     
 	// Do any additional setup after loading the view, typically from a nib.
+#ifdef NAV_LEFT_MENU
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_left"] style:UIBarButtonItemStylePlain target:(INavigationController*)self.navigationController action:@selector(showMenu)];
+#else
+    self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@"切换" style:UIBarButtonItemStylePlain target:self action:@selector(switchAccount:)];
+#endif
+    NSLog(@"%f",self.tabBarController.tabBar.frame.size.height);
     
     [self addRightButtonWithTitle:@"编辑" withSel:@selector(edit:)];
     
@@ -122,6 +148,53 @@
         [self.mTableView setTableHeaderView:self.scanView];
     }
     
+    [self.accountDatas removeAllObjects];
+    [self.accountDatas addObjectsFromArray:[[DBManager getInstance] queryAccountForType:0]];
+}
+
+-(IBAction)switchAccount:(id)sender
+{
+    UIBarButtonItem* btn=(UIBarButtonItem*)sender;
+    [btn setEnabled:NO];
+    __block IUserViewController* user=[[IUserViewController alloc]init];
+    [user setBackBlock:^(void){
+        [self removeUserView:user];
+        [btn setEnabled:YES];
+    }];
+    
+    [user setSelectBlock:^(int idx){
+        [self refreshAccountData:idx];
+        [self removeUserView:user];
+        [btn setEnabled:YES];
+    }];
+    
+    CATransition *catran=[CATransition animation];
+    catran.type=kCATransitionPush;
+    catran.subtype=kCATransitionFromLeft;
+    catran.duration=0.3f;
+    [user.view.layer addAnimation:catran forKey:nil];
+    [self.view addSubview:user.view];
+}
+
+-(void)removeUserView:(UIViewController*)sender
+{
+    [UIView animateWithDuration:0.3f animations:^(void){
+        [sender.view setFrame:CGRectMake(-SCREEN_WIDTH/2, 0, 0, 0)];
+    }completion:^(BOOL finished) {
+        [sender.view removeFromSuperview];
+    }];
+}
+
+
+-(void)refreshAccountData:(int)index
+{
+    DLog("refreshAccountData %d",index);
+    
+    NSArray* array=[[DBManager getInstance] queryAccountForID:index];
+    if ([array count]>0) {
+        self.accountEntity=[array objectAtIndex:0];
+        [self setCenterTitle:self.accountEntity.userNick];
+    }
 }
 
 -(void)initHomeTargetInfo
@@ -403,7 +476,7 @@
             if (self.accountEntity) {
                 DLog(@"height=%d   age=%d   sex=%d",self.accountEntity.height,self.accountEntity.age,self.accountEntity.sex);
             }
-            Byte byte[]={9,11,18,17,8,1,nHeight,nAge,nSex,1,(27+nHeight+nAge+nSex)};
+            Byte byte[]={9,11,18,17,13,1,nHeight,nAge,nSex,1,0,0,0,0,0,(32+nHeight+nAge+nSex)};
             [ApplicationDelegate writeBLEData:[[NSData alloc]initWithBytes:byte length:11]];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }else if(requestID==2){

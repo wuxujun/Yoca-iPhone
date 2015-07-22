@@ -1,26 +1,28 @@
 //
-//  ISettingViewController.m
+//  IMyViewController.m
 //  IWeigh
 //
-//  Created by xujunwu on 15/2/13.
+//  Created by xujunwu on 15/7/21.
 //  Copyright (c) 2015年 ___xujun___. All rights reserved.
 //
 
-#import "ISettingViewController.h"
+#import "IMyViewController.h"
 #import "UIViewController+NavigationBarButton.h"
 #import "INavigationController.h"
+#import "IAccountViewController.h"
+#import "ISettingViewController.h"
 #import "IWarnViewController.h"
 #import "HCurrentUserContext.h"
 #import "UserDefaultHelper.h"
 #import "DMPasscode.h"
 #import "AppDelegate.h"
 
-@interface ISettingViewController ()
+@interface IMyViewController ()
 
 @end
 
-@implementation ISettingViewController
 
+@implementation IMyViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -29,7 +31,7 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    [self setCenterTitle:@"设置"];
+    [self setCenterTitle:@"我"];
     
 #ifdef NAV_LEFT_MENU
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_left"] style:UIBarButtonItemStylePlain target:(INavigationController*)self.navigationController action:@selector(showMenu)];
@@ -52,7 +54,7 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-   
+    
 }
 
 -(void)viewDidDisappear:(BOOL)animated
@@ -78,7 +80,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return 4;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -91,59 +93,22 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
-    NSArray *titles = @[@"称重提醒", @"设备管理", @"隐私密码",@"版本更新",@"关于我们"];
+    NSArray *titles = @[@"用户管理", @"数据管理", @"设置",@"减服相册"];
     CGRect bounds=self.view.frame;
     cell.backgroundColor=APP_TABLEBG_COLOR;
-    switch (indexPath.row) {
-        case 2:
-        {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
-            [uLabel setText:titles[indexPath.row]];
-            [uLabel setTextColor:APP_FONT_COLOR];
-            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-            [cell addSubview:uLabel];
+    UILabel* uLabel=[[UILabel alloc]init];
+    
+    [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
+    [uLabel setText:titles[indexPath.row]];
+    [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
+    [uLabel setTextColor:APP_FONT_COLOR];
+    [cell addSubview:uLabel];
+    UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
+    [img setBackgroundColor:[UIColor blackColor]];
+    [cell addSubview:img];
+    [cell sendSubviewToBack:img];
             
-            UISwitch* sw=[[UISwitch alloc]initWithFrame:CGRectMake(bounds.size.width-70, (64-28)/2, 100, 28)];
-            [sw addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
-            [cell addSubview:sw];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
-            [img setBackgroundColor:[UIColor blackColor]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
-        }
-            break;
-        case 3:
-        {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
-            [uLabel setText:titles[indexPath.row]];
-            [uLabel setTextColor:APP_FONT_COLOR];
-            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-            [cell addSubview:uLabel];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
-            [img setBackgroundColor:[UIColor blackColor]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
-        }
-            break;
-        default:
-        {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
-            [uLabel setText:titles[indexPath.row]];
-            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-            [uLabel setTextColor:APP_FONT_COLOR];
-            [cell addSubview:uLabel];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
-            [img setBackgroundColor:[UIColor blackColor]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
-            
-            [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-        }
-            break;
-    }
+    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     
     return cell;
 }
@@ -151,23 +116,13 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
- 
+    
     if (indexPath.row==0) {
-        IWarnViewController *dController=[[IWarnViewController alloc]init];
+        IAccountViewController *dController=[[IAccountViewController alloc]init];
         [self.navigationController pushViewController:dController animated:YES];
-    }
-}
-
--(IBAction)switchAction:(id)sender
-{
-    UISwitch* sw=(UISwitch*)sender;
-    [UserDefaultHelper setObject:[NSNumber numberWithBool:sw.on] forKey:APP_OPEN_PASSWORD];
-    if(sw.on){
-        [DMPasscode setupPasscodeInViewController:self completion:^(BOOL success) {
-            DLog(@"SUCCESS");
-        }];
-    }else{
-        [DMPasscode removePasscode];
+    }else if(indexPath.row==2){
+        ISettingViewController* dController=[[ISettingViewController alloc]init];
+        [self.navigationController pushViewController:dController animated:YES];
     }
     
 }

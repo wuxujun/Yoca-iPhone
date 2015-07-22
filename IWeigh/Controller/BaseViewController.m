@@ -29,6 +29,10 @@
     [backBtn setTitle:@"返回"];
     self.navigationItem.backBarButtonItem=backBtn;
     
+    self.networkEngine =  [[HNetworkEngine alloc]initWithHostName:nil customHeaderFields:nil];
+    
+    _tabBarHeight=self.tabBarController.tabBar.frame.size.height;
+    _navHeight=self.navigationController.navigationBar.frame.size.height;
 }
 
 -(void)viewWillAppear:(BOOL)animated

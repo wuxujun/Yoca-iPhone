@@ -51,9 +51,21 @@ static NSString *const kAllowTracking=@"allowTracking";
 
 @implementation AppDelegate
 
+#define ScreenHeight [[UIScreen mainScreen] bounds].size.height
+#define ScreenWidth  [[UIScreen mainScreen] bounds].size.width
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+
+    AppDelegate *myDelegate=(AppDelegate*)[UIApplication sharedApplication].delegate;
+    if (ScreenHeight>480) {
+        myDelegate.autoSizeScaleX=ScreenWidth/320;
+        myDelegate.autoSizeScaleY=ScreenHeight/568;
+    }else{
+        myDelegate.autoSizeScaleX=1.0;
+        myDelegate.autoSizeScaleY=1.0;
+    }
     
     NSDictionary *appDefault=@{kAllowTracking:@(YES)};
     [[NSUserDefaults standardUserDefaults]registerDefaults:appDefault];
@@ -112,6 +124,28 @@ static NSString *const kAllowTracking=@"allowTracking";
     
     return YES;
 }
+
++(void)storyBoradAutoLay:(UIView*)allView
+{
+    for (UIView* temp in allView.subviews) {
+        temp.frame=CGRectMake1(temp.frame.origin.x, temp.frame.origin.y, temp.frame.size.width, temp.frame.size.height);
+        for (UIView* temp1 in temp.subviews) {
+            temp1.frame=CGRectMake1(temp1.frame.origin.x, temp1.frame.origin.y, temp1.frame.size.width, temp1.frame.size.height);
+        }
+    }
+}
+
+//修改CGRectMake
+CG_INLINE CGRect
+CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
+{
+    AppDelegate *myDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    CGRect rect;
+    rect.origin.x = x * myDelegate.autoSizeScaleX; rect.origin.y = y * myDelegate.autoSizeScaleY;
+    rect.size.width = width * myDelegate.autoSizeScaleX; rect.size.height = height * myDelegate.autoSizeScaleY;
+    return rect;
+}
+
 
 -(void)initializePlat
 {
@@ -241,18 +275,14 @@ static NSString *const kAllowTracking=@"allowTracking";
         }
     }
     [BluetoothLEManager sharedManagerWithDelegate:self];
-    
     [self syncWeight];
+    self.viewController=[[CustomTabBarViewController alloc] init];
     
-    UITabBarController* tabBarController=[[UITabBarController alloc]init];
-    self.viewController=tabBarController;
+    [self.viewController.tabBar setBarStyle:UIBarStyleBlack];
     self.window.rootViewController=self.viewController;
     [self.window makeKeyAndVisible];
-    
-    NSArray* viewControllers=@[[[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],
-    [[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],[[CRNavigationController alloc]initWithRootViewController:[[HomeViewController alloc]init]],[[CRNavigationController alloc]initWithRootViewController:[[IInfoPagesViewController alloc]init]]];
-    tabBarController.viewControllers=viewControllers;
-    
+//    UIColor* navigationTextColor=RGBCOLOR(188, 117, 255);
+//    self.window.tintColor=navigationTextColor;
 }
 
 -(void)syncWeight
@@ -550,8 +580,8 @@ static NSString *const kAllowTracking=@"allowTracking";
     char data=0x01;
     NSData* d=[[NSData alloc]initWithBytes:&data length:1];
     if (self.bleService) {
-        [self.bleService setValue:d forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF1"];
-        [self.bleService startNotifyingForServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
+        [self.bleService setValue:d forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
+        [self.bleService startNotifyingForServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF1"];
     }
 }
 
@@ -568,7 +598,7 @@ static NSString *const kAllowTracking=@"allowTracking";
 
 -(void)writeBLEData:(NSData *)aData
 {
-    [self.bleService setValue:aData forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF1"];
+    [self.bleService setValue:aData forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
 }
 
 @end

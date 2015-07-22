@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+            }
+            
+            body {
+                color: #666666;
+                padding:5px 5px 5px 5px;
+                font-size: %dpx; /* 这里改动文字大小，下面的字体大小都为此为相对 */
+                font-family: Tahoma, arial, 'Helvetica', sans-serif;
+                background-color: #ffffff;
+            }
+
+            #content {
+                margin:%dpx %dpx %dpx %dpx;
+                line-height: 1.7em;
+                width: 98%;
+            }
+            
+            #content ol, #content ul {
+                margin-left: 1em;
+                padding-left: 0em;
+            }
+            
+            #content ul {
+                list-style: square;
+                list-style-position: inside;
+            }
+            
+            #content > ol,
+            #content > ul {
+                margin-left: 0em;
+            }
+            
+            a:link,
+            a:visited {
+                color:#e6484b;
+                text-decoration:underline;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            <img src="%@" />
+        </div>
+    </body>
+    
+</html>

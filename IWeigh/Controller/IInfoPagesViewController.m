@@ -38,16 +38,16 @@
     [self.view setBackgroundColor:APP_BACKGROUND_COLOR];
     
     DLog(@"%f  nav Height  %f   %f",self.view.frame.size.height,self.navigationController.navigationBar.frame.size.height,self.pageSwitchView.frame.size.height);
-    NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithDictionary:self.infoDict];
+    NSMutableDictionary *dict=[NSMutableDictionary dictionary];
     [dict setObject:[NSString stringWithFormat:@"%.0f",self.pageSwitchView.frame.size.height] forKey:@"height"];
     
     self.infoController0=[[IInfoViewController alloc]init];
     [self.infoController0.view setFrame:self.pageSwitchView.frame];
-    self.infoController0.infoDict=dict;
+//    self.infoController0.infoDict=dict;
     self.infoController0.dataType=0;
     self.infoController0.title=@"健康信息";
     self.infoController1=[[IInfoViewController alloc]init];
-    self.infoController1.infoDict=dict;
+//    self.infoController1.infoDict=dict;
     self.infoController1.dataType=1;
     self.infoController1.title=@"减肥资讯";
     [self.pageSwitchView buildUI];

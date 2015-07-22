@@ -15,7 +15,8 @@
 @property(nonatomic,strong)UITableView*         mTableView;
 @property(nonatomic,strong)NSMutableArray       *mDatas;
 @property(nonatomic,strong)HNetworkEngine       *networkEngine;
-
+@property(nonatomic,assign)float                navHeight;
+@property(nonatomic,assign)float                tabBarHeight;
 
 
 -(void)alertRequestResult:(NSString*)msg isPop:(BOOL)flag;

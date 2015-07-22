@@ -16,4 +16,6 @@
 @property (nonatomic,strong)UITableView*    mTableView;
 
 @property (nonatomic,strong)NSDictionary*   infoDict;
+
+@property (nonatomic,strong)NSMutableArray* accountDatas;
 @end

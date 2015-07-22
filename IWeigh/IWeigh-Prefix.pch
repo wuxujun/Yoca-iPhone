@@ -20,6 +20,10 @@
 #define DB_FILE_NAME    @"yoca.sqlite"
 
 
+#define SCREEN_WIDTH    ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT   ([UIScreen mainScreen].bounds.size.height)
+#define SCREEN_SIZE     ([UIScreen mainScreen].bounds)
+
 #define UMENG_APPKEY        @"52649a7e56240b87b6169d13"
 
 #define APPKEY_WEIBO        @"2846029855"
@@ -33,7 +37,6 @@
 
 
 #define ApplicationDelegate                 ((AppDelegate *)[[UIApplication sharedApplication] delegate])
-
 
 #define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
@@ -97,3 +100,9 @@
 
 #define IWEIGH_SERVICE_UUID         @"0000fff0-0000-1000-8000-00805f9b34fb"
 #define IWEIGH_CHARACTERISTIC_UUID  @"00002902-0000-1000-8000-00805f9b34fb"
+
+
+typedef void(^VoidBlock)();
+typedef void(^VoidBlock_int)(int idx);
+
+//#define NAV_LEFT_MENU

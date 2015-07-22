@@ -40,6 +40,7 @@
     
     self.menuHeadView=[[IMenuHView alloc]initWithFrame:CGRectMake(0, 0, 320, 184) delegate:self];
     self.tableView.tableHeaderView=self.menuHeadView;
+
     
 }
 
