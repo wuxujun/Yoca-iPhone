@@ -218,13 +218,16 @@
 	{
 		[self.foundPeripherals addObject:peripheral];
 	}
-    DLog(@"CentralManager didDiscoverPeripheral %@   %@    %@",peripheral,advertisementData,RSSI);
     if (iOS_VERSION_7) {
         
     }else{
         [self.centralManager retrievePeripheralsWithIdentifiers:[NSArray arrayWithObject:(id)peripheral.identifier]];
     }
-	[self.delegate didDiscoverPeripheral:peripheral advertisementData:advertisementData];
+    if ([peripheral.name isEqualToString:@"WSD01"]) {
+        DLog(@"CentralManager didDiscoverPeripheral %@   %@    %@",peripheral,advertisementData,RSSI);
+        DLog(@"%@",peripheral.name);
+        [self.delegate didDiscoverPeripheral:peripheral advertisementData:advertisementData];
+    }
 }
 
 #pragma mark - Connection/Disconnection

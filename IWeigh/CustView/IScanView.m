@@ -57,27 +57,17 @@
     [rightButton addTarget:self action:@selector(selected:) forControlEvents:UIControlEventTouchUpInside];
     [contentView addSubview:rightButton];
     
+    line=[[UIImageView alloc]init];
+    [line setBackgroundColor:APP_LINE_GREEN];
+    [contentView addSubview:line];
+    
+    
     fatLabel=[[UILabel alloc]init];
     [fatLabel setText:@""];
     [fatLabel setTextColor:[UIColor grayColor]];
     [fatLabel setFont:[UIFont boldSystemFontOfSize:16.0]];
     [fatLabel setTextAlignment:NSTextAlignmentLeft];
     [contentView addSubview:fatLabel];
-    
-    numView=[[IScrollNumView alloc]initWithFrame:CGRectMake((self.frame.size.width-120)/2,( self.frame.size.height-120)/2+10, 120, 120)];
-    [numView setNumberSize:3];
-    [numView setDigitColor:APP_FONT_COLOR_SEL];
-    [numView setDigitFont:[UIFont boldSystemFontOfSize:42.0]];
-    [numView didConfigFinish];
-    [numView setHidden:YES];
-    [contentView addSubview:numView];
-    
-    pointLabel=[[UILabel alloc]initWithFrame:CGRectMake((self.frame.size.width-120)/2+76, self.frame.size.height/2, 30, 30)];
-    [pointLabel setText:@"."];
-    [pointLabel setFont:[UIFont boldSystemFontOfSize:26.0f]];
-    [pointLabel setTextColor:APP_FONT_COLOR_SEL];
-    [pointLabel setHidden:YES];
-    [contentView addSubview:pointLabel];
     
     weighLabel=[[UILabel alloc]init];
     [weighLabel setText:@"0.0"];
@@ -110,6 +100,10 @@
     [contentView addSubview:sharedButton];
     
     [self addSubview:contentView];
+    
+    bStartScan=false;
+    upOrDown=NO;
+    num=0;
     
     [self reAdjustLayout];
 }
@@ -149,9 +143,6 @@
 
 -(void)setNum:(NSUInteger)number
 {
-    [numView setHidden:NO];
-    [numView setNumber:number withAnimationType:IScrollNumAnimationTypeRand animationTime:5.0f];
-    [pointLabel setHidden:NO];
     [footView setHidden:YES];
     [weighLabel setHidden:YES];
     [infoButton setHidden:YES];
@@ -162,11 +153,10 @@
 -(void)setFoot
 {
     [footView setHidden:NO];
-    [numView setHidden:YES];
-    [pointLabel setHidden:YES];
     [weighLabel setHidden:YES];
     [infoButton setHidden:YES];
     [infoImage setHidden:YES];
+    [line setHidden:YES];
     [self setNeedsDisplay];
 }
 
@@ -175,17 +165,24 @@
     [weighLabel setText:weighValue];
     [weighLabel setHidden:NO];
     [footView setHidden:YES];
-    [numView setHidden:YES];
-    [pointLabel setHidden:YES];
     [infoButton setHidden:NO];
     [infoImage setHidden:NO];
-    
+    [line setHidden:YES];
+    [timer invalidate];
+    bStartScan=false;
     [self setNeedsDisplay];
 }
 
 -(void)setStatusValue:(NSString *)statusValue
 {
     [statusLabel setText:statusValue];
+    if ([statusValue isEqualToString:@"已连接"]) {
+        [self startScan];
+    }
+    if ([statusValue isEqualToString:@"未连接"]) {
+        [timer invalidate];
+        [line setHidden:YES];
+    }
     [self setNeedsDisplay];
 }
 -(void)setFatValue:(NSString *)fatValue
@@ -204,13 +201,11 @@
     
     [scanView setFrame:CGRectMake((contentViewArea.width-170)/2, (contentViewArea.height-170)/2+10, 170, 170)];
 
-    [leftButton setFrame:CGRectMake((contentViewArea.width-120)/2-20, 15, 12, 20)];
+    [leftButton setFrame:CGRectMake((contentViewArea.width-120)/2-40, 15, 32, 20)];
     [dateLabel setFrame:CGRectMake((contentViewArea.width-120)/2, 8, 120, 40)];
-    [rightButton setFrame:CGRectMake((contentViewArea.width-120)/2+120+20, 15, 12, 20)];
+    [rightButton setFrame:CGRectMake((contentViewArea.width-120)/2+120+10, 15, 32, 20)];
     
     [fatLabel setFrame:CGRectMake((contentViewArea.width-120)/2, (contentViewArea.height-120)/2-20, 120, 40)];
-    [numView setFrame:CGRectMake((contentViewArea.width-120)/2, (contentViewArea.height-120)/2+10, 120, 120)];
-
     [footView setFrame:CGRectMake((contentViewArea.width-120)/2, (contentViewArea.height-120)/2+10, 120, 120)];
 
     [weighLabel setFrame:CGRectMake((contentViewArea.width-120)/2, (contentViewArea.height-120)/2+10, 120, 120)];
@@ -220,6 +215,32 @@
     [statusLabel setFrame:CGRectMake((contentViewArea.width-150)/2, contentViewArea.height-70, 150, 40)];
     [sharedButton setFrame:CGRectMake(contentViewArea.width-60, contentViewArea.height-80, 30, 38)];
     
+}
+
+-(void)startScan
+{
+    if (!bStartScan) {
+        timer=[NSTimer scheduledTimerWithTimeInterval:.02 target:self selector:@selector(animationUpOrDown) userInfo:nil repeats:YES];
+        [line setHidden:NO];
+        bStartScan=true;
+    }
+}
+
+-(void)animationUpOrDown
+{
+    if (upOrDown==NO) {
+        num++;
+        line.frame=CGRectMake((self.frame.size.width-170)/2, (self.frame.size.height-170)/2+10+2*num, 170, 2);
+        if (2*num==170) {
+            upOrDown=YES;
+        }
+    }else{
+        num--;
+        line.frame=CGRectMake((self.frame.size.width-170)/2, (self.frame.size.height-170)/2+10+2*num, 170, 2);
+        if (num==0) {
+            upOrDown=NO;
+        }
+    }
 }
 
 

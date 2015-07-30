@@ -29,6 +29,8 @@
 @property (strong, nonatomic) HNetworkEngine*       networkEngine;
 @property(nonatomic,strong)id<GAITracker>       tracker;
 
+@property (nonatomic,strong)NSTimer             *bleReadTimer;
+
 @property float  autoSizeScaleX;
 @property float  autoSizeScaleY;
 
@@ -36,7 +38,7 @@
 -(void)openMainView;
 -(void)openTabMainView;
 -(void)openHomeView;
--(void)writeBLEData:(NSData*)aData;
+-(void)writeBLEData:(NSData*)aData resp:(bool)bResp;
 +(AppDelegate*)getAppelegate;
 
 @end

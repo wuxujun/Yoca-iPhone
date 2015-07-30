@@ -25,11 +25,13 @@
 - (BOOL)insertOrUpdateTargetInfo:(NSDictionary *)info;
 -(NSArray*)queryTargetInfo;
 -(NSString*)queryTargetInfoForType:(NSInteger)type;
+-(NSString*)queryTargetUnitForType:(NSInteger)type;
 
 -(NSInteger)queryWeightCount:(NSInteger)aid;
 -(NSArray*)queryWeights:(NSInteger)aid;
 -(NSInteger)queryWeightCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
 -(NSArray*)queryWeightWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
+-(NSArray*)queryWeightWithAccount:(NSInteger)aid days:(NSInteger)day;
 -(NSInteger)queryWeightHisCountWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
 -(NSArray*)queryWeightHisWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
 -(NSArray*)queryWeightHisWithAccountId:(NSInteger)aid;

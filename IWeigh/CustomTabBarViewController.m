@@ -11,7 +11,7 @@
 #import "HomeViewController.h"
 #import "IAnalysisViewController.h"
 #import "IInfoViewController.h"
-#import "ISettingViewController.h"
+#import "IMyViewController.h"
 
 @implementation CustomTabBarViewController
 
@@ -21,10 +21,10 @@
     [super viewDidLoad];
     
     self.viewControllers = [NSArray arrayWithObjects:
-                            [self viewControllerWithTabTitle:@"测量" image:[UIImage imageNamed:@"Home"]],
-                            [self viewControllerWithTabTitle:@"分析" image:[UIImage imageNamed:@"Home"]],
-                            [self viewControllerWithTabTitle:@"资讯" image:[UIImage imageNamed:@"Home"]],
-                            [self viewControllerWithTabTitle:@"设置" image:[UIImage imageNamed:@"My"]], nil];
+                            [self viewControllerWithTabTitle:@"测量" image:[UIImage imageNamed:@"ic_Weight"]],
+                            [self viewControllerWithTabTitle:@"分析" image:[UIImage imageNamed:@"ic_Chart"]],
+                            [self viewControllerWithTabTitle:@"资讯" image:[UIImage imageNamed:@"ic_Info"]],
+                            [self viewControllerWithTabTitle:@"我的" image:[UIImage imageNamed:@"ic_My"]], nil];
     
 //    [self initCenterButton];
 }
@@ -39,8 +39,8 @@
         viewController=[[CRNavigationController alloc]initWithRootViewController:[[IAnalysisViewController alloc]init]];
     }else if([title isEqualToString:@"资讯"]){
         viewController=[[CRNavigationController alloc]initWithRootViewController:[[IInfoViewController alloc]init]];
-    }else if([title isEqualToString:@"我"]){
-        viewController=[[CRNavigationController alloc]initWithRootViewController:[[ISettingViewController alloc]init]];
+    }else if([title isEqualToString:@"我的"]){
+        viewController=[[CRNavigationController alloc]initWithRootViewController:[[IMyViewController alloc]init]];
     }
     
     viewController.tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:image tag:0];

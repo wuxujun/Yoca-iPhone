@@ -50,13 +50,11 @@
     NSMutableDictionary* params=[NSMutableDictionary dictionaryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:@"0",@"syncid", nil]];
     [self.networkEngine postOperationWithURLString:url params:params success:^(MKNetworkOperation *completedOperation, id result) {
         NSDictionary* rs=(NSDictionary*)result;
-        DLog(@"%@",rs);
         id array=[rs objectForKey:@"root"];
         if ([array isKindOfClass:[NSArray class]]) {
             for (int i=0; i<[array count]; i++) {
                 [self.mDatas addObject:[array objectAtIndex:i]];
             }
-            
         }
         if ([self.mDatas count]>0) {
             [self.mTableView reloadData];

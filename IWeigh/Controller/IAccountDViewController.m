@@ -67,9 +67,6 @@
     }
 
     CGRect frame=self.view.bounds;
-    if (dataType==3) {
-        frame=CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height-64);
-    }
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     if (self.mTableView==nil) {
@@ -172,10 +169,11 @@
                     [dict setObject:mBirthday forKey:@"birthday"];
                     [dict setObject:[NSString stringWithFormat:@"%ld",nAge] forKey:@"age"];
                     [dict setObject:[NSString stringWithFormat:@"%ld",nHeight] forKey:@"height"];
+                    [dict setObject:[NSString stringWithFormat:@"%ld",entity.aid] forKey:@"id"];
                     if (fileName) {
                         [dict setObject:fileName forKey:@"avatar"];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:UPLOAD_AVATAR_NOTIFICATION object:dict];
                     }
-                    [dict setObject:[NSString stringWithFormat:@"%ld",entity.aid] forKey:@"id"];
                     DLog(@"%@",dict);
                     if ([[DBManager getInstance] insertOrUpdateAccount:dict]) {
                         NSLog(@"%@ user account update success.",mUserNick);
@@ -188,15 +186,21 @@
                 NSMutableDictionary *entity=[NSMutableDictionary dictionary];
                 if (rows==0) {
                     [entity setObject:@"1" forKey:@"type"];
+                    [entity setObject:@"1" forKey:@"id"];
                 }
                 [entity setObject:mUserNick?mUserNick:@"" forKey:@"userNick"];
                 [entity setObject:[NSString stringWithFormat:@"%ld",nHeight] forKey:@"height"];
                 [entity setObject:mBirthday?mBirthday:@"" forKey:@"birthday"];
                 [entity setObject:[NSString stringWithFormat:@"%ld",nAge] forKey:@"age"];
                 [entity setObject:[NSString stringWithFormat:@"%d",bSex?1:0] forKey:@"sex"];
+                if (fileName) {
+                    [entity setObject:fileName forKey:@"avatar"];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:UPLOAD_AVATAR_NOTIFICATION object:entity];
+                }
+                
                 if([[DBManager getInstance] insertOrUpdateAccount:entity]){
                     if ([[self.infoDict objectForKey:@"dataType"] integerValue]==3) {
-                        [ApplicationDelegate openMainView];
+                        [ApplicationDelegate openTabMainView];
                     }else{
                         [self.navigationController popViewControllerAnimated:YES];
                     }
@@ -211,7 +215,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 
 -(IBAction)showCamera:(id)sender
@@ -549,12 +552,13 @@
     [field resignFirstResponder];
     if (IOS_VERSION_8_OR_ABOVE) {
         UIAlertController* alertController=[UIAlertController alertControllerWithTitle:nil message:@"\n\n\n\n\n\n\n\n\n\n\n" preferredStyle:UIAlertControllerStyleActionSheet];
+        [alertController.view setBackgroundColor:[UIColor whiteColor]];
         UIDatePicker *datePicker=[[UIDatePicker alloc]init];
         datePicker.datePickerMode=UIDatePickerModeDate;
         datePicker.backgroundColor=[UIColor whiteColor];
         datePicker.tag=101;
         [datePicker setMaximumDate:[NSDate date]];
-        UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+        UIAlertAction * okAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
             NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
             formatter.dateFormat=@"yyyyMMdd";
             NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
@@ -565,9 +569,13 @@
             mBirthday=dateTemp;
             [self.mTableView reloadData];
         }];
+        UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction* action){
+            
+        }];
         
         [alertController.view addSubview:datePicker];
         [alertController addAction:canelAction];
+        [alertController addAction:okAction];
         [self presentViewController:alertController animated:NO completion:nil];
     }else{
         NSString *title = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? @"\n\n\n\n\n\n\n\n\n\n\n" : @"\n\n\n\n\n\n\n\n\n\n\n" ;

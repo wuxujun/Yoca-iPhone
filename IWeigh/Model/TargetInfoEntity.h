@@ -19,6 +19,7 @@ typedef void(^SqlBlock)(NSString* sql,NSArray* arguments);
 @property (nonatomic,assign) NSInteger  status;
 @property (nonatomic,strong) NSString*  addtime;
 @property (nonatomic,strong) NSString*  unit;
+@property (nonatomic,strong) NSString*  unitTitle;
 
 +(void)generateInsertSql:(NSDictionary*)info completion:(SqlBlock)completion;
 +(void)generateUpdateSql:(NSDictionary*)info completion:(SqlBlock)completion;

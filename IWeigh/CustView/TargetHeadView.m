@@ -49,7 +49,7 @@
     [contentView addSubview:recomULabel];
     
     currentLabel=[[UILabel alloc]init];
-    [currentLabel setText:@"当前体重   60Kg"];
+    [currentLabel setText:@"当前体重   无"];
     [currentLabel setTextColor:APP_FONT_COLOR];
     [contentView addSubview:currentLabel];
     

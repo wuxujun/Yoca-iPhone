@@ -54,6 +54,12 @@
     }
 }
 
+-(NSComparisonResult)comparePicktime:(WeightEntity *)entity
+{
+    NSComparisonResult result = [entity.pickTime compare:self.pickTime];
+    return result;
+}
+
 -(void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
     DLog(@"undefined Key: %@",key);

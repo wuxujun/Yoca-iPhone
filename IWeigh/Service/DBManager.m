@@ -209,6 +209,17 @@ static DBManager *sharedDBManager=nil;
     return @"";
 }
 
+-(NSString*)queryTargetUnitForType:(NSInteger)type
+{
+    NSString* sql=[NSString stringWithFormat:@"SELECT * FROM t_target_info WHERE  type=%ld",(long)type];
+    NSArray* array=[DBHelper queryAll:[TargetInfoEntity class] sql:sql params:@[]];
+    if ([array count]>0) {
+        TargetInfoEntity* info=[array objectAtIndex:0];
+        return info.unit;
+    }
+    return @"";
+}
+
 
 -(NSInteger)queryWeightCount:(NSInteger)aid
 {
@@ -239,6 +250,13 @@ static DBManager *sharedDBManager=nil;
 -(NSArray*)queryWeightWithPicktime:(NSString *)pickTime account:(NSInteger)aid
 {
     NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight WHERE aid=%ld and pickTime='%@'",(long)aid,pickTime];
+    return [DBHelper queryAll:[WeightEntity class] sql:sql params:@[]];
+}
+
+-(NSArray*)queryWeightWithAccount:(NSInteger)aid days:(NSInteger)day
+{
+    NSString* sql=[NSString stringWithFormat:@"SELECT * from t_weight WHERE aid=%ld ORDER BY pickTime desc limit %d",(long)aid,day];
+    DLog(@"%@",sql);
     return [DBHelper queryAll:[WeightEntity class] sql:sql params:@[]];
 }
 

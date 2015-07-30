@@ -33,7 +33,7 @@
 
 #define APPKEY_TENCENT      @"100334902"
 
-#define kHttpUrl @"http://y.mchome.cn/index.php?/ums/"
+#define kHttpUrl @"http://121.40.19.136/index.php?/ums/"
 
 
 #define ApplicationDelegate                 ((AppDelegate *)[[UIApplication sharedApplication] delegate])
@@ -96,6 +96,10 @@
 #define BLEDATA_RECVICE_STATUS  @"kBLEDataReceiveStatus"
 #define SYNC_DATA_REFRESH       @"kSyncDataRefresh"
 #define CONFIG_INIT_FLAG        @"CONFIG_INIT_FLAG"
+
+#define UPLOAD_AVATAR_NOTIFICATION  @"kUpload_Avatar"
+
+#define CURRENT_ACCOUNT_ID          @"current_account_id"
 
 
 #define IWEIGH_SERVICE_UUID         @"0000fff0-0000-1000-8000-00805f9b34fb"

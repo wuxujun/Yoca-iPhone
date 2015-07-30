@@ -26,6 +26,8 @@
         self.addtime=value;
     }else if([key isEqualToString:@"unit"]){
         self.unit=value;
+    }else if([key isEqualToString:@"unitTitle"]){
+        self.unitTitle=value;
     }
 }
 -(void)setValue:(id)value forUndefinedKey:(NSString *)key
@@ -40,7 +42,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"id",@"type",@"title",@"content",@"status",@"unit", nil];
+    return [NSArray arrayWithObjects:@"id",@"type",@"title",@"content",@"status",@"unit",@"unitTitle", nil];
 }
 
 +(void)generateInsertSql:(NSDictionary *)info completion:(SqlBlock)completion

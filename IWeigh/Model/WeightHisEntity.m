@@ -53,6 +53,14 @@
     }
     else if([key isEqualToString:@"protein"]){
         self.protein=value;
+    }else if([key isEqualToString:@"bust"]){
+        self.bust=[value intValue];
+    }else if([key isEqualToString:@"waistline"]){
+        self.waistline=[value intValue];
+    }else if([key isEqualToString:@"hips"]){
+        self.hips=[value intValue];
+    }else if([key isEqualToString:@"avatar"]){
+        self.avatar=value;
     }
 }
 
@@ -68,7 +76,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"wid",@"aid",@"pickTime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein", nil];
+    return [NSArray arrayWithObjects:@"wid",@"aid",@"pickTime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein",@"bust",@"waistline",@"hips",@"avatar", nil];
 }
 
 +(void)generateInsertSql:(NSDictionary *)info completion:(SqlBlock)completion
@@ -83,7 +91,7 @@
         NSString *value = values[i];
         NSString *key = keys[i];
         
-        NSArray *integerKeyArray = @[@"wid",@"aid",@"syncid",@"isSync",@"weightTime"];
+        NSArray *integerKeyArray = @[@"wid",@"aid",@"syncid",@"isSync",@"weightTime",@"bust",@"waistline",@"hips"];
         if ([integerKeyArray containsObject:key]) {
             if ([key isEqualToString:@"weightTime"]) {
                 [finalKeys addObject:@"addtime"];
@@ -104,7 +112,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_weight_his (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    
+    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -123,7 +131,7 @@
     for (int i=0; i<values.count; i++) {
         NSString *value = values[i];
         NSString *key = keys[i];
-        NSArray *integerKeyArray = @[@"wid",@"aid",@"syncid",@"isSync",@"weightTime"];
+        NSArray *integerKeyArray = @[@"wid",@"aid",@"syncid",@"isSync",@"weightTime",@"bust",@"waistline",@"hips"];
         if ([integerKeyArray containsObject:key]) {
             if ([key isEqualToString:@"syncid"]) {
                 mID = @([value integerValue]);
@@ -146,7 +154,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_weight_his set %@ WHERE syncid=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    
+    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

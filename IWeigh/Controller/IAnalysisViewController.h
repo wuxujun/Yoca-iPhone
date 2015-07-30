@@ -7,7 +7,8 @@
 //
 
 #import "BaseViewController.h"
+#import "IChartViewCell.h"
 
-@interface IAnalysisViewController : BaseViewController
+@interface IAnalysisViewController : BaseViewController<IChartViewCellDelegate>
 
 @end

@@ -23,9 +23,16 @@
 
 -(MKNetworkOperation *)postDatasWithURLString:(NSString *)urlString datas:(NSMutableDictionary *)dataAndKey process:(MKNKProgressBlock)processBlock success:(OperationSuccessBlock)successBlock error:(MKNKErrorBlock)errorBlock
 {
-    MKNetworkOperation *operation = [self operationWithURLString:urlString params:nil httpMethod:@"POST"];
+    MKNetworkOperation *operation = [self operationWithURLString:urlString params:[dataAndKey objectForKey:@"content"] httpMethod:@"POST"];
     [dataAndKey enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [operation addData:obj forKey:key];
+        DLog(@"%@  %@",obj,key);
+        if ([key isEqualToString:@"content"]) {
+            NSDictionary* dc=[obj objectForKey:@"images"];
+            if ([dc objectForKey:@"image"]) {
+                [operation addFile:[dc objectForKey:@"image"] forKey:@"image" mimeType:@"image/jpeg"];
+            }
+        }
+//        [operation addData:obj forKey:key];
     }];
     [operation onUploadProgressChanged:processBlock];
     

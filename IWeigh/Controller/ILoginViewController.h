@@ -10,7 +10,7 @@
 #import "BaseViewController.h"
 typedef void (^CompletionBlock)(void);
 
-@interface ILoginViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
+@interface ILoginViewController : BaseViewController
 
 @property(nonatomic,strong)UITextField*         userField;
 @property(nonatomic,strong)UITextField*         passField;

@@ -58,7 +58,6 @@
         [self.view addSubview:self.mTableView];
     }
 
-    
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 }
 
@@ -96,17 +95,15 @@
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:errorMeg delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [alertView show];
     } else {
-        
         HCurrentUserContext *userContext = [HCurrentUserContext sharedInstance];
         __weak ILoginViewController *myself = self;
         [self.view showHUDLoadingView:YES];
         [userContext loginWithUserName:usernameStr password:passwordStr success:^(MKNetworkOperation *completedOperation, id result) {
-            [myself.view showHUDLoadingView:NO];
             DLog(@"%@",result);
             [self loadHome:result];
-            if (self.completionBlock) {
-                self.completionBlock();
-            }
+//            if (self.completionBlock) {
+//                self.completionBlock();
+//            }
         } error:^(NSError *error) {
             [myself.view showHUDLoadingView:NO];
             [UIHelper showAlertMessage:error.domain];
@@ -125,14 +122,21 @@
             }
         }
     }
+    [self.view showHUDLoadingView:NO];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(startMain) userInfo:nil repeats:NO];
+}
+
+-(void)startMain
+{
     if ([[DBManager getInstance] queryAccountCountWithType:1]>0) {
-        [ApplicationDelegate openMainView];
+        [ApplicationDelegate openTabMainView];
     }else{
         IAccountDViewController* dController=[[IAccountDViewController alloc]init];
         [dController setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:@"填写用户信息",@"title",@"3",@"dataType",@"开始称重",@"buttonTitle", nil]];
         [self.navigationController pushViewController:dController animated:YES];
     }
 }
+
 
 -(IBAction)regRequest:(id)sender
 {

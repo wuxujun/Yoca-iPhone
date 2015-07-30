@@ -52,6 +52,20 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 }
 
+-(void)addLeftTitleButton:(NSString *)title action:(SEL)action
+{
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.adjustsImageWhenHighlighted = NO;
+    button.frame = CGRectMake(10, 0, 44.0f, 44.0f);
+    button.titleLabel.textColor=[UIColor whiteColor];
+    button.titleLabel.font=[UIFont systemFontOfSize:16.0f];
+    [button setTitle:title forState:UIControlStateNormal];
+    [button setTitleColor:RGBCOLOR(60, 193, 102) forState:UIControlStateHighlighted];
+    [self adjustButtonForiOS7:button left:YES];
+    [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+}
+
 - (void)gotoBack {
     [self.navigationController popViewControllerAnimated:YES];
 }

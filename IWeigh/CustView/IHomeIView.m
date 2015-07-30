@@ -131,18 +131,18 @@
     [titleLabel setFrame:CGRectMake(5, 10, contentViewArea.width/7*2+10, 30)];
     [statusLabel setFrame:CGRectMake(5, 36, contentViewArea.width/7*2+10, 30)];
     
-    [yLine setFrame:CGRectMake(contentViewArea.width/7*2+20, contentViewArea.height-25, contentViewArea.width/7, 2)];
-    [gLine setFrame:CGRectMake(contentViewArea.width/7*3+20, contentViewArea.height-25, contentViewArea.width/7, 2)];
-    [rLine setFrame:CGRectMake(contentViewArea.width/7*4+20, contentViewArea.height-25, contentViewArea.width/7, 2)];
+    [yLine setFrame:CGRectMake(contentViewArea.width/7*2+30, contentViewArea.height-25, contentViewArea.width/7, 2)];
+    [gLine setFrame:CGRectMake(contentViewArea.width/7*3+30, contentViewArea.height-25, contentViewArea.width/7, 2)];
+    [rLine setFrame:CGRectMake(contentViewArea.width/7*4+30, contentViewArea.height-25, contentViewArea.width/7, 2)];
     
-    [sliderView setFrame:CGRectMake(contentViewArea.width/7*2+20, contentViewArea.height-24, contentViewArea.width/7*3, 1)];
+    [sliderView setFrame:CGRectMake(contentViewArea.width/7*2+30, contentViewArea.height-24, contentViewArea.width/7*3, 1)];
     
     [chartBtn setFrame:CGRectMake(contentViewArea.width-50, (contentViewArea.height-32)/2, 32, 32)];
     [editBtn setFrame:CGRectMake(contentViewArea.width-50, (contentViewArea.height-32)/2, 32, 32)];
     
     
-    [valueLabel setFrame:CGRectMake(contentViewArea.width/7*3+20, 15, contentViewArea.width/7*2, 30)];
-    [unitLabel setFrame:CGRectMake(contentViewArea.width/7*5+20, 30, contentViewArea.width/7, 30)];
+    [valueLabel setFrame:CGRectMake(contentViewArea.width/7*3+30, 15, contentViewArea.width/7*2, 30)];
+    [unitLabel setFrame:CGRectMake(contentViewArea.width/7*5+30, 30, contentViewArea.width/7, 30)];
 }
 
 -(void)setInfoDict:(NSDictionary *)aInfoDict

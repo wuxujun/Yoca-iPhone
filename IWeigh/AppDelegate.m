@@ -16,7 +16,9 @@
 #import "MobClick.h"
 #import "BLEViewController.h"
 #import "DBHelper.h"
+#import "AppConfig.h"
 #import "DBManager.h"
+#import "PathHelper.h"
 #import "BLEViewController.h"
 #import "UserDefaultHelper.h"
 #import "HCurrentUserContext.h"
@@ -102,7 +104,7 @@ static NSString *const kAllowTracking=@"allowTracking";
         [DBHelper addColumnToTable:@"t_home_target" ColumnName:@"isShow"];
     }
     
-    [SMS_SDK registerApp:@"12a614ceb40a" withSecret:@"bc5c19f196ac4e9c52e96d3a4fbfda63"];
+    [SMS_SDK registerApp:@"6de96e7d9e78" withSecret:@"ee6510b139aa06a0a403dd4410646bef"];
     [UMSocialData setAppKey:@"52649a7e56240b87b6169d13"];
     
     [self initializePlat];
@@ -110,7 +112,7 @@ static NSString *const kAllowTracking=@"allowTracking";
     [NSThread sleepForTimeInterval:2.0];
     [application setStatusBarStyle:UIStatusBarStyleLightContent];
     [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"ic_nav"] forBarMetrics:UIBarMetricsDefault];
-    UIColor* navigationTextColor=APP_FONT_COLOR;
+    UIColor* navigationTextColor=APP_FONT_COLOR_SEL;
     self.window.tintColor=navigationTextColor;
     
     
@@ -241,9 +243,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
         }
     }
     [BluetoothLEManager sharedManagerWithDelegate:self];
-    
     [self syncWeight];
-    
     INavigationController* navController;
     HomeViewController* dController=[[HomeViewController alloc]init];
     NSArray* array=[[DBManager getInstance] queryAccountForType:1];
@@ -281,8 +281,8 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     [self.viewController.tabBar setBarStyle:UIBarStyleBlack];
     self.window.rootViewController=self.viewController;
     [self.window makeKeyAndVisible];
-//    UIColor* navigationTextColor=RGBCOLOR(188, 117, 255);
-//    self.window.tintColor=navigationTextColor;
+    UIColor* navigationTextColor=APP_FONT_COLOR_SEL;
+    self.window.tintColor=navigationTextColor;
 }
 
 -(void)syncWeight
@@ -291,7 +291,6 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     NSMutableDictionary* params=[NSMutableDictionary dictionaryWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:@"0",@"syncid", nil]];
     [self.networkEngine postOperationWithURLString:url params:params success:^(MKNetworkOperation *completedOperation, id result) {
         NSDictionary* rs=(NSDictionary*)result;
-        DLog(@"%@",rs);
         id array=[rs objectForKey:@"root"];
         if ([array isKindOfClass:[NSArray class]]) {
             for (int i=0; i<[array count]; i++) {
@@ -317,6 +316,37 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     } error:^(NSError *error) {
         DLog(@"%@",error);
     }];
+    
+}
+
+-(void)onUploadFile:(NSNotification*)notification
+{
+    NSDictionary* dict=(NSDictionary*)notification.object;
+    if ([dict objectForKey:@"type"]) {
+        DLog(@"%@",[dict objectForKey:@"fileName"]);
+    
+    }else{
+        NSString *url = [NSString stringWithFormat:@"%@upImage",kHttpUrl];
+        NSMutableDictionary* params=[[NSMutableDictionary alloc]init ];
+        NSMutableDictionary* dic=[[NSMutableDictionary alloc ]init ];
+        [dic setObject:@"0" forKey:@"type"];
+        [dic setObject:[dict objectForKey:@"id"] forKey:@"aid"];
+        [dic setObject:@"0" forKey:@"wid"];
+        NSMutableDictionary* imgs=[[NSMutableDictionary alloc]init];
+        [imgs setObject:[PathHelper filePathInDocument:[dict objectForKey:@"avatar"]] forKey:@"image"];
+        [params setObject:[dict objectForKey:@"avatar"] forKey:@"image"];
+        [dic setObject:imgs forKey:@"images"];
+        [params setObject:dic forKey:@"content"];
+        
+        DLog(@"%@",params);
+        
+        [self.networkEngine postDatasWithURLString:url datas:params process:^(double progress) {
+        } success:^(MKNetworkOperation *completedOperation, id result) {
+            DLog(@"%@",result);
+        } error:^(NSError *error) {
+            DLog(@"%@",error);
+        }];
+    }
     
 }
 
@@ -368,8 +398,12 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     });
     
     application.applicationIconBadgeNumber=0;
-    
+    if (_bleReadTimer) {
+        [_bleReadTimer invalidate];
+        _bleReadTimer=nil;
+    }
     [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createEventWithCategory:@"Yoca" action:@"Close" label:@"Close Yoca" value:[NSNumber numberWithInt:2]] build]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UPLOAD_AVATAR_NOTIFICATION object:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -390,6 +424,9 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     [GAI sharedInstance].optOut=![[NSUserDefaults standardUserDefaults]boolForKey:kAllowTracking];
     [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createEventWithCategory:@"Yoca" action:@"Open" label:@"Open Yoca" value:[NSNumber numberWithInt:1]] build]];
     [MobClick checkUpdate];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUploadFile:) name:UPLOAD_AVATAR_NOTIFICATION object:nil];
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -580,7 +617,10 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     char data=0x01;
     NSData* d=[[NSData alloc]initWithBytes:&data length:1];
     if (self.bleService) {
-        [self.bleService setValue:d forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
+//        [self.bleService setValue:d forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2" resp:false];
+//        if (_bleReadTimer==nil) {
+//            _bleReadTimer=[NSTimer scheduledTimerWithTimeInterval:.5f target:self selector:@selector(readBLEData) userInfo:nil repeats:YES];
+//        }
         [self.bleService startNotifyingForServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF1"];
     }
 }
@@ -596,9 +636,14 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     [[BluetoothLEManager sharedManager] discoverDevices];
 }
 
--(void)writeBLEData:(NSData *)aData
+-(void)readBLEData
 {
-    [self.bleService setValue:aData forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
+    [self.bleService readValueForServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2"];
+}
+
+-(void)writeBLEData:(NSData *)aData resp:(bool)bResp
+{
+    [self.bleService setValue:aData forServiceUUID:@"FFF0" andCharacteristicUUID:@"FFF2" resp:bResp];
 }
 
 @end

@@ -29,6 +29,6 @@
 - (void) discoverServices;
 - (void) startNotifyingForServiceUUID:(NSString *) serviceUUID andCharacteristicUUID:(NSString *) charUUID;
 - (void) stopNotifyingForServiceUUID:(NSString *) serviceUUID andCharacteristicUUID:(NSString *) charUUID;
-- (void) setValue:(NSData *) data forServiceUUID:(NSString *) serviceUUID andCharacteristicUUID:(NSString *) charUUID;
+- (void) setValue:(NSData *)data forServiceUUID:(NSString *) serviceUUID andCharacteristicUUID:(NSString *) charUUID resp:(bool)bResp;
 - (void) readValueForServiceUUID:(NSString *) serviceUUID andCharacteristicUUID:(NSString *) charUUID;
 @end

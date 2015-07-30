@@ -136,7 +136,7 @@
             NSArray* types=@[@"减重",@"减脂",@"保持"];
             ISegmentView* segmentView=[[ISegmentView alloc]initWithFrame:CGRectMake(5, (80-44)/2, bounds.size.width-10, 44) items:types];
             [segmentView selectForItem:currentType];
-            segmentView.tintColor=[UIColor grayColor];
+            segmentView.tintColor=APP_FONT_COLOR_SEL;
             segmentView.delegate=self;
             [cell addSubview:segmentView];
             UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 79.5, bounds.size.width, 0.5)];
@@ -240,7 +240,7 @@
 -(void)segmentViewSelectIndex:(NSInteger)index
 {
     targetType=index;
-    DLog(@"%d",targetType);
+    DLog(@"%ld",targetType);
 }
 
 #pragma mark - 日期选择框
@@ -250,12 +250,13 @@
     [field resignFirstResponder];
     if (IOS_VERSION_8_OR_ABOVE) {
         UIAlertController* alertController=[UIAlertController alertControllerWithTitle:nil message:@"\n\n\n\n\n\n\n\n\n\n\n" preferredStyle:UIAlertControllerStyleActionSheet];
+        [alertController.view setBackgroundColor:[UIColor whiteColor]];
         UIDatePicker *datePicker=[[UIDatePicker alloc]init];
         datePicker.datePickerMode=UIDatePickerModeDate;
         datePicker.backgroundColor=[UIColor whiteColor];
         datePicker.tag=101;
         [datePicker setMinimumDate:[NSDate date]];
-        UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action){
+        UIAlertAction* okAction=[UIAlertAction actionWithTitle:@"选择" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
             NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
             formatter.dateFormat=@"yyyyMMdd";
             NSTimeZone *timezone=[NSTimeZone timeZoneWithName:@"Asia/Shanghai"];
@@ -266,8 +267,13 @@
             [self.mTableView reloadData];
         }];
         
+        UIAlertAction * canelAction=[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction* action){
+           
+        }];
+        
         [alertController.view addSubview:datePicker];
         [alertController addAction:canelAction];
+        [alertController addAction:okAction];
         [self presentViewController:alertController animated:NO completion:nil];
     }else{
         NSString *title = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? @"\n\n\n\n\n\n\n\n\n\n\n" : @"\n\n\n\n\n\n\n\n\n\n\n" ;

@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "DBManager.h"
 #import "AccountEntity.h"
+#import "PathHelper.h"
 
 @interface IUserViewController()
 
@@ -36,7 +37,8 @@
     
     [_scranButton addTarget:self action:@selector(touchAnyPoint:) forControlEvents:UIControlEventTouchUpInside];
     
-    self.mTableView=[[UITableView alloc]initWithFrame:CGRectMake(10, 10, SCREEN_WIDTH/2-20, SCREEN_HEIGHT-20) style:UITableViewStylePlain];
+    self.mTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 10, SCREEN_WIDTH/2, SCREEN_HEIGHT-20) style:UITableViewStylePlain];
+    self.mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     [_leftGroup addSubview:self.mTableView];
     [self.mTableView setDataSource:self];
     [self.mTableView setDelegate:self];
@@ -95,7 +97,7 @@
 {
     switch (indexPath.section) {
         case 0:
-            return 120.0f;
+            return 60.0f;
         default:
             return 60.0f;
     }
@@ -115,11 +117,14 @@
         case 0:
         {
             if (_account) {
-                UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH/2-100)/2, 10, 80, 80)];
-                avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+                UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(10, 6, 48, 48)];
+                if (_account.avatar&&[PathHelper fileExistsAtPath:_account.avatar]) {
+                    [avatarImg setImage:[UIImage imageNamed:[PathHelper filePathInDocument:_account.avatar]]];
+                }else{
+                    avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+                }
                 [cell addSubview:avatarImg];
-            
-                UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(0, 90, SCREEN_WIDTH/2-20, 30)];
+                UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(60, 15, SCREEN_WIDTH/2-20-60, 30)];
                 lb.text=_account.userNick;
                 lb.textAlignment=NSTextAlignmentCenter;
                 
@@ -132,11 +137,16 @@
             AccountEntity * entity=[self.mDatas objectAtIndex:indexPath.row];
             if (entity) {
                 UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(10, 6, 48, 48)];
-                avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+                if (entity.avatar&&[PathHelper fileExistsAtPath:entity.avatar]) {
+                    [avatarImg setImage:[UIImage imageNamed:[PathHelper filePathInDocument:entity.avatar]]];
+                }else{
+                    avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+                }
                 [cell addSubview:avatarImg];
                 
                 UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(60, 15, SCREEN_WIDTH/2-20-60, 30)];
                 lb.text=entity.userNick;
+                lb.textAlignment=NSTextAlignmentCenter;
                 [cell addSubview:lb];
             }
         }

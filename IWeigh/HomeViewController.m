@@ -29,7 +29,7 @@
 #import "IYocaViewController.h"
 #import "IContentEViewController.h"
 #import "IUserViewController.h"
-
+#import "AppConfig.h"
 
 static const int kSegmentedControlWidth  = 85;
 
@@ -83,17 +83,17 @@ static const int kSegmentedControlWidth  = 85;
     nIndex=0;
     nLastIndex=-1;
     
-    if ([CLLocationManager locationServicesEnabled]) {
-        locManager=[[CLLocationManager alloc]init];
-        locManager.delegate=self;
-        locManager.desiredAccuracy=kCLLocationAccuracyBest;
-        locManager.distanceFilter=1000;
-        if (IOS_VERSION_8_OR_ABOVE) {
-//            [locManager requestAlwaysAuthorization];  //一直在后台位置服务
-            [locManager requestWhenInUseAuthorization];//使用时获取位置信息
-            
-        }
-    }
+//    if ([CLLocationManager locationServicesEnabled]) {
+//        locManager=[[CLLocationManager alloc]init];
+//        locManager.delegate=self;
+//        locManager.desiredAccuracy=kCLLocationAccuracyBest;
+//        locManager.distanceFilter=1000;
+//        if (IOS_VERSION_8_OR_ABOVE) {
+////            [locManager requestAlwaysAuthorization];  //一直在后台位置服务
+//            [locManager requestWhenInUseAuthorization];//使用时获取位置信息
+//            
+//        }
+//    }
     
     [self setCenterTitle:@"Home"];
     
@@ -101,9 +101,9 @@ static const int kSegmentedControlWidth  = 85;
 #ifdef NAV_LEFT_MENU
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_left"] style:UIBarButtonItemStylePlain target:(INavigationController*)self.navigationController action:@selector(showMenu)];
 #else
-    self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithTitle:@"切换" style:UIBarButtonItemStylePlain target:self action:@selector(switchAccount:)];
+    [self addLeftTitleButton:@"切换" action:@selector(switchAccount:)];
 #endif
-    NSLog(@"%f",self.tabBarController.tabBar.frame.size.height);
+    DLog(@"%f",self.tabBarController.tabBar.frame.size.height);
     
     [self addRightButtonWithTitle:@"编辑" withSel:@selector(edit:)];
     
@@ -113,12 +113,16 @@ static const int kSegmentedControlWidth  = 85;
     [formatter setTimeZone:timezone];
     self.today=[formatter stringFromDate:[NSDate date]];
  
-    if (self.infoDict) {
-        [self setCenterTitle:[self.infoDict objectForKey:@"title"]];
-        int index=[[self.infoDict objectForKey:@"dataIndex"] intValue];
-        NSArray *array=[[DBManager getInstance] queryAccountForID:index];
+//    if (self.infoDict) {
+//        [self setCenterTitle:[self.infoDict objectForKey:@"title"]];
+//        int index=[[self.infoDict objectForKey:@"dataIndex"] intValue];
+        NSArray *array=[[DBManager getInstance] queryAccountForType:1];
         if ([array count]>0) {
             self.accountEntity=[array objectAtIndex:0];
+            [[AppConfig getInstance] setPrefValue:[NSString stringWithFormat:@"%d",self.accountEntity.aid] key:CURRENT_ACCOUNT_ID];
+            if (self.accountEntity.userNick) {
+                [self setCenterTitle:self.accountEntity.userNick];
+            }
             nHeight=self.accountEntity.height;
             nSex= self.accountEntity.sex;
             nAge=self.accountEntity.age;
@@ -126,12 +130,12 @@ static const int kSegmentedControlWidth  = 85;
                 [self initHomeTargetInfo];
             }
         }
-        if ([self.infoDict objectForKey:@"type"]) {
-            nHeight=[[self.infoDict objectForKey:@"height"] integerValue];
-            nSex=[[self.infoDict objectForKey:@"sex"] integerValue];
-            nAge=[[self.infoDict objectForKey:@"age"] integerValue];
-        }
-    }
+//        if ([self.infoDict objectForKey:@"type"]) {
+//            nHeight=[[self.infoDict objectForKey:@"height"] integerValue];
+//            nSex=[[self.infoDict objectForKey:@"sex"] integerValue];
+//            nAge=[[self.infoDict objectForKey:@"age"] integerValue];
+//        }
+//    }
     
     if (self.mTableView==nil) {
         self.mTableView=[[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
@@ -188,12 +192,20 @@ static const int kSegmentedControlWidth  = 85;
 
 -(void)refreshAccountData:(int)index
 {
-    DLog("refreshAccountData %d",index);
     
     NSArray* array=[[DBManager getInstance] queryAccountForID:index];
     if ([array count]>0) {
         self.accountEntity=[array objectAtIndex:0];
+        [[AppConfig getInstance] setPrefValue:[NSString stringWithFormat:@"%d",self.accountEntity.aid] key:CURRENT_ACCOUNT_ID];
         [self setCenterTitle:self.accountEntity.userNick];
+        DLog("refreshAccountData %d  %@   %d",index,self.accountEntity.userNick,self.accountEntity.height);
+        nHeight=self.accountEntity.height;
+        nSex= self.accountEntity.sex;
+        nAge=self.accountEntity.age;
+        if ([[DBManager getInstance] queryHomeTargetCountWithAId:self.accountEntity.aid]==0) {
+            [self initHomeTargetInfo];
+        }
+        [self loadHistoryData];
     }
 }
 
@@ -329,7 +341,7 @@ static const int kSegmentedControlWidth  = 85;
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if ([self.infoDict objectForKey:@"dataIndex"]) {
+    if (self.accountEntity) {
         [self loadHistoryData];
     }
 }
@@ -339,6 +351,9 @@ static const int kSegmentedControlWidth  = 85;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BLEDATA_RECVICE_STATUS object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BLEDATA_RECVICE object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SYNC_DATA_REFRESH object:nil];
+    if (locManager) {
+        [locManager stopUpdatingLocation];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -372,7 +387,7 @@ static const int kSegmentedControlWidth  = 85;
 //        [self.scanView setWeighValue:@"72.5"];
     }
     
-    
+    DLog(@"%d",self.accountEntity.aid);
     
     [datas removeAllObjects];
     NSArray* array1=[[DBManager getInstance] queryWeights:self.accountEntity.aid];
@@ -391,12 +406,14 @@ static const int kSegmentedControlWidth  = 85;
     if (count>0) {
         [self loadHomeTarget];
     }
+    DLog(@"............");
+    [_mTableView reloadData];
 }
 
 -(void)loadHomeTarget
 {
     [targetDatas removeAllObjects];
-    NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:1];
+    NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:0];
     [targetDatas addObjectsFromArray:ary];
     [self.mTableView reloadData];
 }
@@ -406,13 +423,16 @@ static const int kSegmentedControlWidth  = 85;
     NSDictionary* dict=(NSDictionary*)notification.object;
     if (dict&&[dict objectForKey:@"status"]) {
         [self.scanView setStatusValue:[dict objectForKey:@"status"]];
+        if ([[dict objectForKey:@"status"] isEqualToString:@"已连接"]) {
+//            Byte byte[]={9,8,18,21,5,1,0,27};
+//            [ApplicationDelegate writeBLEData:[[NSData alloc] initWithBytes:byte length:8] resp:true];
+        }
     }
 }
 
 -(void)onBLEDataReceive:(NSNotification*)notification
 {
     NSData* data=(NSData*)notification.object;
-    [self.scanView setNum:888];
     [self dealWeightValue:data];
 }
 
@@ -439,7 +459,6 @@ static const int kSegmentedControlWidth  = 85;
     
     NSString* cmd=[NSString stringWithFormat:@"%x",testByte[0]&0xff];
     if ([cmd isEqualToString:@"10"]) {
-       
         int deviceType=testByte[2];
         int weightH=testByte[3];
         int weightL=testByte[4];
@@ -462,7 +481,8 @@ static const int kSegmentedControlWidth  = 85;
         DLog(@"%x === %x",testByte[0]+testByte[1]+testByte[2]+testByte[3]+testByte[4]+testByte[5]+testByte[6]+testByte[7]+testByte[8]+testByte[9]+testByte[10]+testByte[11]+testByte[12]+testByte[13]+testByte[14]+testByte[15]+testByte[16]+testByte[17]+testByte[18],testByte[19]);
         DLog(@"%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x",testByte[0]&0xff,testByte[1]&0xff,testByte[2]&0xff,testByte[3]&0xff,testByte[4]&0xff,testByte[5]&0xff,testByte[6]&0xff,testByte[7]&0xff,testByte[8]&0xff,testByte[9]&0xff,testByte[10]&0xff,testByte[11]&0xff,testByte[12]&0xff,testByte[13]&0xff,testByte[14]&0xff,testByte[15]&0xff,testByte[16]&0xff,testByte[17]&0xff,testByte[18]&0xff,testByte[19]&0xff);
 //        DLog(@"cmd=%d len=%d   %d  %d %d  %d  %d  %d  %d",testByte[0],testByte[1],deviceType,weightH,weightL,requestID,testByte[19],total,(total+weightH+fatH+subFatH+waterH+BMRH+muscleH));
-        float weight=(weightH*256+weightL)/10.0;
+        float weight=(((weightH*256+weightL)/5)+1)/2;
+        DLog(@"%.1f",weight);
 //        float fat=(fatH*256+fatL)/10.0;
         if (weight<200.0) {
             NSString * strWeight=[NSString stringWithFormat:@"%.1f",weight];
@@ -477,11 +497,11 @@ static const int kSegmentedControlWidth  = 85;
                 DLog(@"height=%d   age=%d   sex=%d",self.accountEntity.height,self.accountEntity.age,self.accountEntity.sex);
             }
             Byte byte[]={9,11,18,17,13,1,nHeight,nAge,nSex,1,0,0,0,0,0,(32+nHeight+nAge+nSex)};
-            [ApplicationDelegate writeBLEData:[[NSData alloc]initWithBytes:byte length:11]];
+            [ApplicationDelegate writeBLEData:[[NSData alloc] initWithBytes:byte length:16] resp:false];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }else if(requestID==2){
             DLog(@"Fat:%d %d  SubFat:%d %d VisFat:%d Water:%d %d BMRH:%d %d BodyAge:%d  Muscle:%d  %d  Bone:%d",fatH,fatL,subFatH,subFatL,visFat,waterH,waterL,BMRH,BMRL,bodyAge,muscleH,muscleL,bone);
-            DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/10.0,(subFatH*256+subFatL)/10.0,(waterH*256+waterL)/10.0,(BMRH*256+BMRL)/10.0,(muscleH*256+muscleL)/10.0);
+            DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/100.0,(subFatH*256+subFatL)/100.0,(waterH*256+waterL)/100.0,(BMRH*256+BMRL)/100.0,(muscleH*256+muscleL)/100.0);
             
             NSMutableDictionary *entity=[[NSMutableDictionary alloc] init];
             [entity setObject:self.today forKey:@"picktime"];
@@ -494,23 +514,23 @@ static const int kSegmentedControlWidth  = 85;
             }
             [entity setObject:[NSString stringWithFormat:@"%.1f",weight] forKey:@"weight"];
             
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/10.0] forKey:@"fat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/10.0] forKey:@"subFat"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/100.0] forKey:@"fat"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/100.0] forKey:@"subFat"];
             [entity setObject:[NSString stringWithFormat:@"%d",visFat] forKey:@"visFat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/10.0] forKey:@"water"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(BMRH*256+BMRL)/10.0] forKey:@"BMR"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/100.0] forKey:@"water"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(BMRH*256+BMRL)/100.0] forKey:@"BMR"];
             [entity setObject:[NSString stringWithFormat:@"%d",bodyAge] forKey:@"bodyAge"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/10.0] forKey:@"muscle"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",bone/10.0] forKey:@"bone"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/100.0] forKey:@"muscle"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",bone/100.0] forKey:@"bone"];
             [entity setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
-            DLog(@"%@",entity);
-            [[DBManager getInstance] insertOrUpdateWeightHis:entity];
+            if ([[DBManager getInstance] insertOrUpdateWeightHis:entity]){
+                DLog(@"insertOrUpdateWeightHis success %@",entity);
+            }
             
             [self countData:entity];
-            
             //10h =>16  14h=>20
             Byte byte[]={9,11,18,31,5,1,16,53};
-            [ApplicationDelegate writeBLEData:[[NSData alloc]initWithBytes:byte length:8]];
+            [ApplicationDelegate writeBLEData:[[NSData alloc]initWithBytes:byte length:8] resp:false];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }
     }
@@ -524,7 +544,7 @@ static const int kSegmentedControlWidth  = 85;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.accountEntity&&self.accountEntity.targetType==0) {
+    if (self.accountEntity&&self.accountEntity.targetType<0) {
         return 1;
     }
     return [targetDatas count]+1;
@@ -546,7 +566,7 @@ static const int kSegmentedControlWidth  = 85;
     cell.backgroundColor=APP_TABLEBG_COLOR;
     CGRect bounds=self.view.frame;
     if (indexPath.row==0) {
-        if (self.accountEntity&&self.accountEntity.targetType==0) {
+        if (self.accountEntity&&self.accountEntity.targetType<0) {
             UIImageView* edit=[[UIImageView alloc]initWithFrame:CGRectMake(20, 9, 36, 36)];
             [edit setContentMode:UIViewContentModeScaleAspectFill];
             [edit setImage:[UIImage imageNamed:@"edit"]];
@@ -560,7 +580,12 @@ static const int kSegmentedControlWidth  = 85;
             IHomeTView* item=[[IHomeTView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 80)];
             [item setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:@"1",@"weight",self.accountEntity.targetWeight,@"targetWeight",self.accountEntity.doneTime,@"doneTime", nil]];
             [cell addSubview:item];
+            
         }
+        UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 79.5, bounds.size.width, 0.5)];
+        [img setBackgroundColor:[UIColor blackColor]];
+        [cell addSubview:img];
+        [cell sendSubviewToBack:img];
     }else{
         if (indexPath.row<=[targetDatas count]) {
             HomeTargetEntity* entity=[targetDatas objectAtIndex:indexPath.row-1];
@@ -582,10 +607,15 @@ static const int kSegmentedControlWidth  = 85;
                 [dict setObject:entity.progres forKey:@"progres"];
             }
             
-            [dict setObject:@"1" forKey:@"isChart"];
+//            [dict setObject:@"1" forKey:@"isChart"];
             IHomeIView* item=[[IHomeIView alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 70) delegate:self];
             [item setInfoDict:dict];
             [cell addSubview:item];
+            
+            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 69.5, bounds.size.width, 0.5)];
+            [img setBackgroundColor:[UIColor blackColor]];
+            [cell addSubview:img];
+            [cell sendSubviewToBack:img];
         }
     }
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
@@ -635,13 +665,15 @@ static const int kSegmentedControlWidth  = 85;
             if (nIndex<0) {
                 nIndex=0;
                 [self.scanView setDateTitle:@"今日"];
-                WeightEntity *entity=[datas objectAtIndex:nIndex];
-                if (entity!=NULL) {
-                    if ([entity.pickTime isEqualToString:self.today]) {
-                        [self.scanView setWeighValue:entity.weight];
-                        [self resetHomeTargetInfo:entity];
-                    }else{
-                        [self.scanView setFoot];
+                if ([datas count]>0) {
+                    WeightEntity *entity=[datas objectAtIndex:nIndex];
+                    if (entity!=NULL) {
+                        if ([entity.pickTime isEqualToString:self.today]) {
+                            [self.scanView setWeighValue:entity.weight];
+                            [self resetHomeTargetInfo:entity];
+                        }else{
+                            [self.scanView setFoot];
+                        }
                     }
                 }
             }else{
@@ -725,7 +757,7 @@ static const int kSegmentedControlWidth  = 85;
         [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
         
         if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
-            DLog(@"HomeTargetInfo insert or update Success.");
+            DLog(@"HomeTargetInfo insert or update Success.  %@",dict);
         }
     }
     [self loadHomeTarget];

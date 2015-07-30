@@ -133,7 +133,7 @@
             for (NSInteger i =0; i<items.count; i++) {
                 ISegmentItem *item = [[ISegmentItem alloc] initWithFrame:CGRectMake(init_x, init_y, itemWidth, itemHeight)
                                                                      index:i title:items[i]
-                                                                  norColor:[UIColor whiteColor]
+                                                                  norColor:APP_TABLEBG_COLOR
                                                                   selColor:kDefaultTintColor
                                                                 isSelected:(i == 0)? YES: NO];
                 init_x += itemWidth;

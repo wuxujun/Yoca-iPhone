@@ -1,38 +1,32 @@
 //
-//  IAnalysisViewController.m
+//  IAnalysisDViewController.m
 //  IWeigh
 //
-//  Created by xujunwu on 7/7/15.
-//  Copyright (c) 2015 ___xujun___. All rights reserved.
+//  Created by xujunwu on 15/7/26.
+//  Copyright (c) 2015年 ___xujun___. All rights reserved.
 //
 
-#import "IAnalysisViewController.h"
+#import "IAnalysisDViewController.h"
 #import "UIViewController+NavigationBarButton.h"
 #import "UIView+LoadingView.h"
-#import "IAnalysisDViewController.h"
 #import "ISegmentView.h"
-#import "DBManager.h"
-#import "TargetInfoEntity.h"
-#import "AppConfig.h"
 
-@interface IAnalysisViewController()<ISegmentViewDelegate>
+@interface IAnalysisDViewController()<ISegmentViewDelegate>
 {
     int             dayCounts;
-    int             currentAccountId;
-
 }
-
+@property(nonatomic,strong)IChartViewCell*  headView;
 @property(nonatomic,strong)ISegmentView* segmentView;
 @end
 
 
-@implementation IAnalysisViewController
+@implementation IAnalysisDViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.view setBackgroundColor:APP_TABLEBG_COLOR];
-    [self setCenterTitle:@"图表汇总"];
+    [self setCenterTitle:@"分析"];
     dayCounts=7;
     if (_segmentView==nil) {
         NSArray* items=@[@"日",@"周",@"月",@"年"];
@@ -54,6 +48,11 @@
         [self.view addSubview:self.mTableView];
     }
     
+    if (_headView==nil) {
+        _headView=[[IChartViewCell alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200) delegate:self];
+        [self.mTableView setTableHeaderView:_headView];
+    }
+    [self loadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -61,22 +60,11 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self loadData];
-}
-
 -(void)loadData
 {
-//    [self.view showHUDLoadingView:YES];
-    currentAccountId=[[[AppConfig getInstance] getPrefValue:CURRENT_ACCOUNT_ID] intValue];
-    
-    NSArray* array=[[DBManager getInstance] queryTargetInfo];
-    if ([array count]>0) {
-        [self.mDatas addObjectsFromArray:array];
-    }
-    [self.mTableView reloadData];
+    //    [self.view showHUDLoadingView:YES];
+    [self.mDatas addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"显示所有数据",@"title",@"",@"desc",nil]];
+    [self.mDatas addObject:[NSDictionary dictionaryWithObjectsAndKeys:@"单位",@"title",@"Kg",@"desc", nil]];
 }
 
 #pragma mark - Table view data source
@@ -91,7 +79,10 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 200.0f;
+    if (indexPath.row==2) {
+        return 110.0;
+    }
+    return 44.0f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -101,10 +92,28 @@
     }
     cell.backgroundColor=APP_TABLEBG_COLOR;
     CGRect bounds=self.view.frame;
-    TargetInfoEntity* entity=[self.mDatas objectAtIndex:indexPath.row];
-    IChartViewCell* item=[[IChartViewCell alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 200) delegate:self];
-    [item setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:entity.title,@"title",[NSNumber numberWithInteger:entity.type],@"type",[NSNumber numberWithInt:dayCounts],@"dayCounts",[NSString stringWithFormat:@"%d",currentAccountId],@"aid", nil]];
-    [cell addSubview:item];
+    NSDictionary* dic=[self.mDatas objectAtIndex:indexPath.row];
+    if (indexPath.row<2) {
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(20, 7, SCREEN_WIDTH-40, 30)];
+        [lb setTextColor:APP_FONT_COLOR];
+        [lb setFont:[UIFont systemFontOfSize:18.0f]];
+        [lb setText:[dic objectForKey:@"title"]];
+        [cell addSubview:lb];
+        cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+    }
+    if (indexPath.row==1) {
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-120, 7, 100, 30)];
+        [lb setTextColor:APP_FONT_COLOR];
+        [lb setTextAlignment:NSTextAlignmentRight];
+        [lb setText:[dic objectForKey:@"desc"]];
+        [cell addSubview:lb];
+        cell.accessoryType=UITableViewCellAccessoryNone;
+    }
+    UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 43.5, bounds.size.width, 0.5)];
+    [img setBackgroundColor:[UIColor blackColor]];
+    [cell addSubview:img];
+    [cell sendSubviewToBack:img];
+
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
     return cell;
 }
@@ -138,8 +147,7 @@
 #pragma mark - IChartViewCellDelegate
 -(void)onIChartViewCellClicked:(IChartViewCell *)view
 {
-    IAnalysisDViewController* dController=[[IAnalysisDViewController alloc]init];
-    [self.navigationController pushViewController:dController animated:YES];
+    
 }
 
 @end
