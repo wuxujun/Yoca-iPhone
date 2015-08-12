@@ -13,7 +13,6 @@
 #import "HomeTargetEntity.h"
 #import "TargetHeadView.h"
 #import "AccountEntity.h"
-#import "IHisPagesViewController.h"
 #import "VerticallyAlignedLabel.h"
 
 #define isOpen   @"75.0f"
@@ -77,9 +76,6 @@
 
 -(IBAction)history:(id)sender
 {
-    IHisPagesViewController* dController=[[IHisPagesViewController alloc]init];
-    dController.infoDict=self.infoDict;
-    [self.navigationController pushViewController:dController animated:YES];
 }
 
 -(void)loadData

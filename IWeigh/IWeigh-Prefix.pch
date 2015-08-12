@@ -96,6 +96,7 @@
 #define BLEDATA_RECVICE_STATUS  @"kBLEDataReceiveStatus"
 #define SYNC_DATA_REFRESH       @"kSyncDataRefresh"
 #define CONFIG_INIT_FLAG        @"CONFIG_INIT_FLAG"
+#define NOTIFICATION_OPEN_INFO  @"kNotificationOpenInfo"
 
 #define UPLOAD_AVATAR_NOTIFICATION  @"kUpload_Avatar"
 

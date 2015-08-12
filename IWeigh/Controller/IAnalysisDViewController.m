@@ -10,6 +10,7 @@
 #import "UIViewController+NavigationBarButton.h"
 #import "UIView+LoadingView.h"
 #import "ISegmentView.h"
+#import "IHisViewController.h"
 
 @interface IAnalysisDViewController()<ISegmentViewDelegate>
 {
@@ -29,9 +30,9 @@
     [self setCenterTitle:@"分析"];
     dayCounts=7;
     if (_segmentView==nil) {
-        NSArray* items=@[@"日",@"周",@"月",@"年"];
+        NSArray* items=@[@"周",@"月",@"年"];
         _segmentView=[[ISegmentView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44) items:items];
-        [_segmentView selectForItem:1];
+        [_segmentView selectForItem:0];
         
         _segmentView.tintColor=APP_FONT_COLOR_SEL;
         _segmentView.delegate=self;
@@ -51,6 +52,21 @@
     if (_headView==nil) {
         _headView=[[IChartViewCell alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200) delegate:self];
         [self.mTableView setTableHeaderView:_headView];
+    }
+    
+    if (self.infoDict) {
+        _headView.infoDict=self.infoDict;
+        switch ([[self.infoDict objectForKey:@"dayCounts"] intValue]) {
+            case 7:
+                [_segmentView selectForItem:0];
+                break;
+            case 365:
+                [_segmentView selectForItem:2];
+                break;
+            default:
+                [_segmentView selectForItem:1];
+                break;
+        }
     }
     [self loadData];
 }
@@ -82,7 +98,7 @@
     if (indexPath.row==2) {
         return 110.0;
     }
-    return 44.0f;
+    return 64.0f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -94,7 +110,7 @@
     CGRect bounds=self.view.frame;
     NSDictionary* dic=[self.mDatas objectAtIndex:indexPath.row];
     if (indexPath.row<2) {
-        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(20, 7, SCREEN_WIDTH-40, 30)];
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(20, (64-30)/2, SCREEN_WIDTH-40, 30)];
         [lb setTextColor:APP_FONT_COLOR];
         [lb setFont:[UIFont systemFontOfSize:18.0f]];
         [lb setText:[dic objectForKey:@"title"]];
@@ -102,14 +118,14 @@
         cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
     }
     if (indexPath.row==1) {
-        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-120, 7, 100, 30)];
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(SCREEN_WIDTH-120, (64-30)/2, 100, 30)];
         [lb setTextColor:APP_FONT_COLOR];
         [lb setTextAlignment:NSTextAlignmentRight];
         [lb setText:[dic objectForKey:@"desc"]];
         [cell addSubview:lb];
         cell.accessoryType=UITableViewCellAccessoryNone;
     }
-    UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 43.5, bounds.size.width, 0.5)];
+    UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
     [img setBackgroundColor:[UIColor blackColor]];
     [cell addSubview:img];
     [cell sendSubviewToBack:img];
@@ -121,19 +137,24 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (indexPath.row==0) {
+        IHisViewController* dController=[[IHisViewController alloc]init];
+        dController.infoDict=self.infoDict;
+        [self.navigationController pushViewController:dController animated:YES];
+    }
 }
 
 -(void)segmentViewSelectIndex:(NSInteger)index
 {
     switch (index) {
         case 0:
-            dayCounts=1;
-            break;
-        case 1:
             dayCounts=7;
             break;
-        case 2:
+        case 1:
             dayCounts=30;
+            break;
+        case 2:
+            dayCounts=365;
             break;
         case 3:
             dayCounts=365;
@@ -141,7 +162,9 @@
         default:
             break;
     }
-    [self.mTableView reloadData];
+    if (self.infoDict) {
+        [_headView loadData:[[self.infoDict objectForKey:@"aid"] intValue] targetType:[[self.infoDict objectForKey:@"type"] intValue] days:dayCounts];
+    }
 }
 
 #pragma mark - IChartViewCellDelegate

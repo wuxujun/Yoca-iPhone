@@ -27,6 +27,9 @@
 +(NSString*)currentTime:(NSDateFormatter*)formatter;
 +(NSInteger)ageWithDateOfBirth:(NSDate*)date;
 +(NSInteger)dateWithForDays:(NSString*)newDate;
++(NSString*)dateToDay:(NSString*)pickTime;
++(NSString*)dateToMonth:(NSString*)pickTime;
++(NSInteger)dateWithPickTimeDays:(NSString*)pickTime;
 
 +(NSString *)ToHex:(int)tmpid;
 @end

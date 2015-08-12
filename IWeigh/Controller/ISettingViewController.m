@@ -10,10 +10,12 @@
 #import "UIViewController+NavigationBarButton.h"
 #import "INavigationController.h"
 #import "IWarnViewController.h"
+#import "IAboutViewController.h"
 #import "HCurrentUserContext.h"
 #import "UserDefaultHelper.h"
 #import "DMPasscode.h"
 #import "AppDelegate.h"
+#import "MobClick.h"
 
 @interface ISettingViewController ()
 
@@ -78,7 +80,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return 3;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -91,29 +93,29 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
-    NSArray *titles = @[@"称重提醒", @"设备管理", @"隐私密码",@"版本更新",@"关于我们"];
+    NSArray *titles = @[@"称重提醒",@"版本更新",@"关于我们"];
     CGRect bounds=self.view.frame;
     cell.backgroundColor=APP_TABLEBG_COLOR;
     switch (indexPath.row) {
-        case 2:
-        {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
-            [uLabel setText:titles[indexPath.row]];
-            [uLabel setTextColor:APP_FONT_COLOR];
-            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-            [cell addSubview:uLabel];
-            
-            UISwitch* sw=[[UISwitch alloc]initWithFrame:CGRectMake(bounds.size.width-70, (64-28)/2, 100, 28)];
-            [sw addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
-            [cell addSubview:sw];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
-            [img setBackgroundColor:[UIColor blackColor]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
-        }
-            break;
-        case 3:
+//        case 2:
+//        {
+//            UILabel* uLabel=[[UILabel alloc]init];
+//            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
+//            [uLabel setText:titles[indexPath.row]];
+//            [uLabel setTextColor:APP_FONT_COLOR];
+//            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
+//            [cell addSubview:uLabel];
+//            
+//            UISwitch* sw=[[UISwitch alloc]initWithFrame:CGRectMake(bounds.size.width-70, (64-28)/2, 100, 28)];
+//            [sw addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
+//            [cell addSubview:sw];
+//            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
+//            [img setBackgroundColor:[UIColor blackColor]];
+//            [cell addSubview:img];
+//            [cell sendSubviewToBack:img];
+//        }
+//            break;
+        case 1:
         {
             UILabel* uLabel=[[UILabel alloc]init];
             [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
@@ -155,6 +157,20 @@
     if (indexPath.row==0) {
         IWarnViewController *dController=[[IWarnViewController alloc]init];
         [self.navigationController pushViewController:dController animated:YES];
+    }else if(indexPath.row==1){
+        [MobClick checkUpdateWithDelegate:self selector:@selector(appUpdate:)];
+    }else if(indexPath.row==2){
+        IAboutViewController* dController=[[IAboutViewController alloc]init];
+        dController.hidesBottomBarWhenPushed=YES;
+        [self.navigationController pushViewController:dController animated:YES];
+    }
+}
+
+-(void)appUpdate:(NSDictionary*)appInfo
+{
+    DLog(@"%@",appInfo);
+    if (![[appInfo objectForKey:@"update"] boolValue]) {
+        [self alertRequestResult:@"已经是最新版了!" isPop:NO];
     }
 }
 

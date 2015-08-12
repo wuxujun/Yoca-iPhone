@@ -11,4 +11,5 @@
 
 @interface IAnalysisDViewController : BaseViewController<IChartViewCellDelegate>
 
+@property(nonatomic,strong)NSDictionary*    infoDict;
 @end

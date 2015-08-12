@@ -95,7 +95,7 @@
     if (section==0) {
         return 1;
     }
-    return 3;
+    return 2;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -143,9 +143,10 @@
         
     }else{
         NSArray *titles = @[@"用户管理", @"设置",@"减服相册"];
+        NSArray* images=@[@"ic_Item_My",@"ic_Item_Setting",@"ic_Item_My"];
         
         UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 44, 44)];
-        avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+        avatarImg.image = [UIImage imageNamed:images[indexPath.row]];
         [cell addSubview:avatarImg];
         
         UILabel* uLabel=[[UILabel alloc]init];

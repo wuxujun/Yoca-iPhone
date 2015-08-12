@@ -1,0 +1,256 @@
+//
+//  HSwipeTableCell.h
+//  IWeigh
+//
+//  Created by xujunwu on 15/8/2.
+//  Copyright (c) 2015年 ___xujun___. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+/** Transition types */
+typedef NS_ENUM(NSInteger, HSwipeTransition) {
+    HSwipeTransitionBorder = 0,
+    HSwipeTransitionStatic,
+    HSwipeTransitionDrag,
+    HSwipeTransitionClipCenter,
+    HSwipeTransitionRotate3D
+};
+
+/** Compatibility with older versions */
+#define HSwipeTransition3D HSwipeTransitionRotate3D
+#define HSwipeStateSwippingLeftToRight HSwipeStateSwipingLeftToRight
+#define HSwipeStateSwippingRightToLeft HSwipeStateSwipingRightToLeft
+
+/** Swipe directions */
+typedef NS_ENUM(NSInteger, HSwipeDirection) {
+    HSwipeDirectionLeftToRight = 0,
+    HSwipeDirectionRightToLeft
+};
+
+/** Swipe state */
+typedef NS_ENUM(NSInteger, HSwipeState) {
+    HSwipeStateNone = 0,
+    HSwipeStateSwipingLeftToRight,
+    HSwipeStateSwipingRightToLeft,
+    HSwipeStateExpandingLeftToRight,
+    HSwipeStateExpandingRightToLeft,
+};
+
+/** Swipe state */
+typedef NS_ENUM(NSInteger, HSwipeExpansionLayout) {
+    HSwipeExpansionLayoutBorder = 0,
+    HSwipeExpansionLayoutCenter
+};
+
+/** Swipe Easing Function */
+typedef NS_ENUM(NSInteger, HSwipeEasingFunction) {
+    HSwipeEasingFunctionLinear = 0,
+    HSwipeEasingFunctionQuadIn,
+    HSwipeEasingFunctionQuadOut,
+    HSwipeEasingFunctionQuadInOut,
+    HSwipeEasingFunctionCubicIn,
+    HSwipeEasingFunctionCubicOut,
+    HSwipeEasingFunctionCubicInOut,
+    HSwipeEasingFunctionBounceIn,
+    HSwipeEasingFunctionBounceOut,
+    HSwipeEasingFunctionBounceInOut
+};
+
+/**
+ * Swipe animation settings
+ **/
+@interface HSwipeAnimation : NSObject
+/** Animation duration in seconds. Default value 0.3 */
+@property (nonatomic, assign) CGFloat duration;
+/** Animation easing function. Default value EaseOutBounce */
+@property (nonatomic, assign) HSwipeEasingFunction easingFunction;
+/** Override this method to implement custom easing functions */
+-(CGFloat) value:(CGFloat) elapsed duration:(CGFloat) duration from:(CGFloat) from to:(CGFloat) to;
+
+@end
+
+/**
+ * Swipe settings
+ **/
+@interface HSwipeSettings: NSObject
+/** Transition used while swiping buttons */
+@property (nonatomic, assign) HSwipeTransition transition;
+/** Size proportional threshold to hide/keep the buttons when the user ends swiping. Default value 0.5 */
+@property (nonatomic, assign) CGFloat threshold;
+/** Optional offset to change the swipe buttons position. Relative to the cell border position. Default value: 0
+ ** For example it can be used to avoid cropped buttons when sectionIndexTitlesForTableView is used in the UITableView
+ **/
+@property (nonatomic, assign) CGFloat offset;
+/** Animation settings when the swipe buttons are shown */
+@property (nonatomic, strong) HSwipeAnimation * showAnimation;
+/** Animation settings when the swipe buttons are hided */
+@property (nonatomic, strong) HSwipeAnimation * hideAnimation;
+/** Animation settings when the cell is stretched from the swipe buttons */
+@property (nonatomic, strong) HSwipeAnimation * stretchAnimation;
+
+/** Property to read or change swipe animation durations. Default value 0.3 */
+@property (nonatomic, assign) CGFloat animationDuration DEPRECATED_ATTRIBUTE;
+
+/** If true the buttons are kept swiped when the threshold is reached and the user ends the gesture
+ * If false, the buttons are always hidden when the user ends the swipe gesture
+ */
+@property (nonatomic, assign) BOOL keepButtonsSwiped;
+
+/** If true the table cell is not swiped, just the buttons **/
+@property (nonatomic, assign) BOOL onlySwipeButtons;
+
+@end
+
+
+/**
+ * Expansion settings to make expandable buttons
+ * Swipe button are not expandable by default
+ **/
+@interface HSwipeExpansionSettings: NSObject
+/** index of the expandable button (in the left or right buttons arrays) */
+@property (nonatomic, assign) NSInteger buttonIndex;
+/** if true the button fills the cell on trigger, else it bounces back to its initial position */
+@property (nonatomic, assign) BOOL fillOnTrigger;
+/** Size proportional threshold to trigger the expansion button. Default value 1.5 */
+@property (nonatomic, assign) CGFloat threshold;
+/** Optional expansion color. Expanded button's background color is used by default **/
+@property (nonatomic, strong) UIColor * expansionColor;
+/** Defines the layout of the expanded button **/
+@property (nonatomic, assign) HSwipeExpansionLayout expansionLayout;
+/** Animation settings when the expansion is triggered **/
+@property (nonatomic, strong) HSwipeAnimation * triggerAnimation;
+
+/** Property to read or change expansion animation durations. Default value 0.2
+ * The target animation is the change of a button from normal state to expanded state
+ */
+@property (nonatomic, assign) CGFloat animationDuration;
+@end
+
+
+/** helper forward declaration */
+@class HSwipeTableCell;
+
+/**
+ * Optional delegate to configure swipe buttons or to receive triggered actions.
+ * Buttons can be configured inline when the cell is created instead of using this delegate,
+ * but using the delegate improves memory usage because buttons are only created in demand
+ */
+@protocol HSwipeTableCellDelegate <NSObject>
+
+@optional
+/**
+ * Delegate method to enable/disable swipe gestures
+ * @return YES if swipe is allowed
+ **/
+-(BOOL) swipeTableCell:(HSwipeTableCell*) cell canSwipe:(HSwipeDirection) direction fromPoint:(CGPoint) point;
+-(BOOL) swipeTableCell:(HSwipeTableCell*) cell canSwipe:(HSwipeDirection) direction DEPRECATED_ATTRIBUTE; //backwards compatibility
+
+/**
+ * Delegate method invoked when the current swipe state changes
+ @param state the current Swipe State
+ @param gestureIsActive YES if the user swipe gesture is active. No if the uses has already ended the gesture
+ **/
+-(void) swipeTableCell:(HSwipeTableCell*) cell didChangeSwipeState:(HSwipeState) state gestureIsActive:(BOOL) gestureIsActive;
+
+/**
+ * Called when the user clicks a swipe button or when a expandable button is automatically triggered
+ * @return YES to autohide the current swipe buttons
+ **/
+-(BOOL) swipeTableCell:(HSwipeTableCell*) cell tappedButtonAtIndex:(NSInteger) index direction:(HSwipeDirection)direction fromExpansion:(BOOL) fromExpansion;
+/**
+ * Delegate method to setup the swipe buttons and swipe/expansion settings
+ * Buttons can be any kind of UIView but it's recommended to use the convenience HSwipeButton class
+ * Setting up buttons with this delegate instead of using cell properties improves memory usage because buttons are only created in demand
+ * @param swipeTableCell the UITableVieCel to configure. You can get the indexPath using [tableView indexPathForCell:cell]
+ * @param direction The swipe direction (left to right or right to left)
+ * @param swipeSettings instance to configure the swipe transition and setting (optional)
+ * @param expansionSettings instance to configure button expansions (optional)
+ * @return Buttons array
+ **/
+-(NSArray*) swipeTableCell:(HSwipeTableCell*) cell swipeButtonsForDirection:(HSwipeDirection)direction
+             swipeSettings:(HSwipeSettings*) swipeSettings expansionSettings:(HSwipeExpansionSettings*) expansionSettings;
+
+/**
+ * Called when the user taps on a swiped cell
+ * @return YES to autohide the current swipe buttons
+ **/
+-(BOOL) swipeTableCell:(HSwipeTableCell *)cell shouldHideSwipeOnTap:(CGPoint) point;
+
+/**
+ * Called when the cell will begin swiping
+ * Useful to make cell changes that only are shown after the cell is swiped open
+ **/
+-(void) swipeTableCellWillBeginSwiping:(HSwipeTableCell *) cell;
+
+/**
+ * Called when the cell will end swiping
+ **/
+-(void) swipeTableCellWillEndSwiping:(HSwipeTableCell *) cell;
+
+@end
+
+
+/**
+ * Swipe Cell class
+ * To implement swipe cells you have to override from this class
+ * You can create the cells programmatically, using xibs or storyboards
+ */
+@interface HSwipeTableCell : UITableViewCell
+
+/** optional delegate (not retained) */
+@property (nonatomic, weak) id<HSwipeTableCellDelegate> delegate;
+
+/** optional to use contentView alternative. Use this property instead of contentView to support animated views while swiping */
+@property (nonatomic, strong, readonly) UIView * swipeContentView;
+
+/**
+ * Left and right swipe buttons and its settings.
+ * Buttons can be any kind of UIView but it's recommended to use the convenience HSwipeButton class
+ */
+@property (nonatomic, copy) NSArray * leftButtons;
+@property (nonatomic, copy) NSArray * rightButtons;
+@property (nonatomic, strong) HSwipeSettings * leftSwipeSettings;
+@property (nonatomic, strong) HSwipeSettings * rightSwipeSettings;
+
+/** Optional settings to allow expandable buttons */
+@property (nonatomic, strong) HSwipeExpansionSettings * leftExpansion;
+@property (nonatomic, strong) HSwipeExpansionSettings * rightExpansion;
+
+/** Readonly property to fetch the current swipe state */
+@property (nonatomic, readonly) HSwipeState swipeState;
+/** Readonly property to check if the user swipe gesture is currently active */
+@property (nonatomic, readonly) BOOL isSwipeGestureActive;
+
+// default is NO. Controls whether multiple cells can be swiped simultaneously
+@property (nonatomic) BOOL allowsMultipleSwipe;
+// default is NO. Controls whether buttons with different width are allowed. Buttons are resized to have the same size by default.
+@property (nonatomic) BOOL allowsButtonsWithDifferentWidth;
+//default is YES. Controls wheter swipe gesture is allowed when the touch starts into the swiped buttons
+@property (nonatomic) BOOL allowsSwipeWhenTappingButtons;
+// default is NO.  Controls whether the cell selection/highlight status is preserved when expansion occurs
+@property (nonatomic) BOOL preservesSelectionStatus;
+
+/** Optional background color for swipe overlay. If not set, its inferred automatically from the cell contentView */
+@property (nonatomic, strong) UIColor * swipeBackgroundColor;
+/** Property to read or change the current swipe offset programmatically */
+@property (nonatomic, assign) CGFloat swipeOffset;
+
+/** Utility methods to show or hide swipe buttons programmatically */
+-(void) hideSwipeAnimated: (BOOL) animated;
+-(void) hideSwipeAnimated: (BOOL) animated completion:(void(^)()) completion;
+-(void) showSwipe: (HSwipeDirection) direction animated: (BOOL) animated;
+-(void) showSwipe: (HSwipeDirection) direction animated: (BOOL) animated completion:(void(^)()) completion;
+-(void) setSwipeOffset:(CGFloat)offset animated: (BOOL) animated completion:(void(^)()) completion;
+-(void) setSwipeOffset:(CGFloat)offset animation: (HSwipeAnimation *) animation completion:(void(^)()) completion;
+-(void) expandSwipe: (HSwipeDirection) direction animated: (BOOL) animated;
+
+/** Refresh method to be used when you want to update the cell contents while the user is swiping */
+-(void) refreshContentView;
+/** Refresh method to be used when you want to dinamically change the left or right buttons (add or remove)
+ * If you only want to change the title or the backgroundColor of a button you can change it's properties (get the button instance from leftButtons or rightButtons arrays)
+ * @param usingDelegate if YES new buttons will be fetched using the HSwipeTableCellDelegate. Otherwise new buttons will be fetched from leftButtons/rightButtons properties.
+ */
+-(void) refreshButtons: (BOOL) usingDelegate;
+
+
+@end

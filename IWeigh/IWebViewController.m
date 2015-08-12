@@ -24,7 +24,7 @@
     [super viewDidLoad];
     [self addBackBarButton];
     if (mWebView==nil) {
-        mWebView=[[UIWebView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-20-self.navHeight-self.tabBarHeight)];
+        mWebView=[[UIWebView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-20-self.navHeight/*-self.tabBarHeight*/)];
         mWebView.delegate=self;
         mWebView.scalesPageToFit=NO;
         mWebView.backgroundColor=[UIColor whiteColor];
@@ -45,6 +45,12 @@
         }
         [mWebView loadHTMLString:[self htmlForContent:[self.infoDict objectForKey:@"content"]] baseURL:nil];
     }
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+//    [self setHidesBottomBarWhenPushed:NO];
+//    [super viewDidDisappear:animated];
 }
 
 - (NSString *)htmlForContent:(NSString *)content

@@ -11,6 +11,7 @@
 #import "DBManager.h"
 #import "WeightUtils.h"
 #import "WeightEntity.h"
+#import "StringUtil.h"
 
 @implementation IChartViewCell
 @synthesize infoDict;
@@ -73,17 +74,21 @@
     chartView.colorXaxisLabel=[UIColor whiteColor];
     chartView.colorYaxisLabel=[UIColor whiteColor];
     chartView.widthLine=2.0;
-    chartView.colorPoint=[UIColor grayColor];
+    chartView.colorPoint=[UIColor whiteColor];
+    
     chartView.enableTouchReport = YES;
     chartView.enablePopUpReport = YES;
     chartView.enableBezierCurve = YES;
-    chartView.enableYAxisLabel = NO;
+    chartView.enableYAxisLabel = YES;
     chartView.autoScaleYAxis=YES;
     chartView.alwaysDisplayDots=NO;
     chartView.enableReferenceXAxisLines=YES;
     chartView.enableReferenceYAxisLines=YES;
     chartView.enableReferenceAxisFrame=YES;
     chartView.animationGraphStyle=BEMLineAnimationDraw;
+    chartView.alwaysDisplayDots=YES;
+    chartView.sizePoint=5.0;
+    
 
 //    [chartView.layer setMasksToBounds:YES];
 //    [chartView.layer setCornerRadius:5.0f];
@@ -146,11 +151,13 @@
     if ([array count]>0) {
         NSArray* sortedArray=[array sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             NSComparisonResult result=[((WeightEntity*)obj1).pickTime compare:((WeightEntity*)obj2).pickTime];
-            return result;
+            return result==NSOrderedDescending;
         }];
+        [titles removeAllObjects];
+        [datas removeAllObjects];
         float total=0.0;
-        for (int i=0; i<[array count]; i++) {
-            WeightEntity* entity=[array objectAtIndex:i];
+        for (int i=0; i<[sortedArray count]; i++) {
+            WeightEntity* entity=[sortedArray objectAtIndex:i];
             if (entity) {
                 [titles addObject:entity.pickTime];
                 switch (type) {
@@ -228,16 +235,13 @@
 
 -(NSString*)lineGraph:(BEMSimpleLineGraphView *)graph labelOnXAxisForIndex:(NSInteger)index
 {
-    DLog(@"%ld %@",index,[titles objectAtIndex:index]);
+    NSString* pickTime=[titles objectAtIndex:index];
+    DLog(@"%ld %@",[datas count],[NSString dateToMonth:pickTime]);
     switch (index) {
         case 1:
-            return @"周一";
-        case 3:
-            return @"周三";
-        case 5:
-            return @"周五";
+            return [NSString dateToMonth:pickTime];
         default:
-            break;
+            return [NSString dateToMonth:pickTime];
     }
     return @"周日";
 }

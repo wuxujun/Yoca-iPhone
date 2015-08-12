@@ -18,12 +18,8 @@
     self=[super initWithFrame:frame];
     if (self) {
         delegate=aDelegate;
+        datas=[[NSMutableArray alloc]init];
         [self initializeFields];
-        
-        UITapGestureRecognizer *tapRecognizer=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handelSingleTap:)];
-        [tapRecognizer setNumberOfTapsRequired:1];
-        [tapRecognizer setNumberOfTouchesRequired:1];
-        [self addGestureRecognizer:tapRecognizer];
     }
     return self;
 }
@@ -31,62 +27,31 @@
 -(void)initializeFields
 {
     contentView=[[UIView alloc]init];
-    [contentView setBackgroundColor:[UIColor whiteColor]];
+    [contentView setBackgroundColor:[UIColor clearColor]];
     [contentView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
     
-    [contentView.layer setCornerRadius:8.0f];
-    [contentView.layer setMasksToBounds:YES];
-    
-    titleLabel=[[UILabel alloc]init];
-    [titleLabel setFont:[UIFont boldSystemFontOfSize:16.0f]];
-    [titleLabel setText:@"资讯标题"];
-    [titleLabel setTextColor:[UIColor blackColor]];
-    [contentView addSubview:titleLabel];
-    
-    iconView=[[UIImageView alloc]init];
-    iconView.contentMode=UIViewContentModeScaleToFill;
-    [contentView addSubview:iconView];
-    
-    
-    descLabel=[[UILabel alloc]init];
-    [descLabel setText:@"....."];
-    [descLabel setFont:[UIFont systemFontOfSize:14.0f]];
-    [descLabel setLineBreakMode:NSLineBreakByWordWrapping];
-    [descLabel setNumberOfLines:0];
-    [descLabel setTextColor:[UIColor blackColor]];
-    [contentView addSubview:descLabel];
-    
     timeLabel=[[UILabel alloc]init];
+    [timeLabel setTextAlignment:NSTextAlignmentCenter];
     [timeLabel setText:@"2015-07-10"];
-    [timeLabel setTextColor:APP_FONT_COLOR];
+    [timeLabel setFont:[UIFont systemFontOfSize:12.0f]];
+    [timeLabel setTextColor:[UIColor whiteColor]];
     [contentView addSubview:timeLabel];
     
+    mTableView=[[UITableView alloc]initWithFrame:CGRectMake(15, 40, self.frame.size.width-30,self.frame.size.height-40) style:UITableViewStylePlain];
+    mTableView.delegate = (id<UITableViewDelegate>)self;
+    mTableView.dataSource = (id<UITableViewDataSource>)self;
+    mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
+    mTableView.backgroundColor=[UIColor whiteColor];
+    mTableView.scrollEnabled=NO;
+    mTableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [mTableView.layer setCornerRadius:4.0f];
+    [mTableView.layer setMasksToBounds:YES];
+    [contentView addSubview:mTableView];
+
     [self addSubview:contentView];
     [self reAdjustLayout];
     
 }
-
-
--(void)handelSingleTap:(UITapGestureRecognizer*)recognizer
-{
-    [contentView setBackgroundColor:[UIColor grayColor]];
-    [self performSelector:@selector(singleTap:) withObject:nil afterDelay:0.2];
-    [self performSelector:@selector(clearViewColor:) withObject:nil afterDelay:0.6];
-}
-
--(void)singleTap:(id)sender
-{
-    if ([delegate respondsToSelector:@selector(onIInfoViewCellClicked:)]) {
-        [delegate onIInfoViewCellClicked:self];
-    }
-}
-
--(void)clearViewColor:(id)sender
-{
-    [contentView setBackgroundColor:[UIColor whiteColor]];
-    [self setNeedsDisplay];
-}
-
 
 -(void)rotate:(UIInterfaceOrientation)interfaceOrientation animation:(BOOL)animation
 {
@@ -96,30 +61,104 @@
 
 -(void)reAdjustLayout
 {
-    [contentView setFrame:CGRectMake(5, 5, self.frame.size.width-10, self.frame.size.height-10)];
+    [contentView setFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
     
     CGSize contentViewArea=CGSizeMake(contentView.frame.size.width, contentView.frame.size.height);
     
-    [titleLabel setFrame:CGRectMake(5, 5,contentViewArea.width-10, 30)];
-    [iconView setFrame:CGRectMake(5, 35, contentViewArea.width-10, 120)];
-    [descLabel setFrame:CGRectMake(5, 140, contentViewArea.width-10,50)];
-    
+    [timeLabel setFrame:CGRectMake(5, 10,contentViewArea.width-10, 20)];
+    [mTableView setFrame:CGRectMake(15, 40, contentViewArea.width-30, contentViewArea.height-40)];
 }
 
 
 -(void)setInfoDict:(NSDictionary *)aInfoDict
 {
     infoDict=aInfoDict;
-    if ([infoDict objectForKey:@"title"]) {
-        [titleLabel setText:[infoDict objectForKey:@"title"]];
+    if ([infoDict objectForKey:@"groupName"]) {
+        [timeLabel setText:[infoDict objectForKey:@"groupName"]];
     }
-    
-    if ([infoDict objectForKey:@"note"]) {
-        [descLabel setText:[infoDict objectForKey:@"note"]];
+    id array=[infoDict objectForKey:@"infos"];
+    if ([array isKindOfClass:[NSArray class]]) {
+        for (int i=0; i<[array count]; i++) {
+            [datas addObject:[array objectAtIndex:i]];
+        }
     }
-    
-    if ([infoDict objectForKey:@"image"]) {
-        [iconView setImageWithURL:[NSURL URLWithString:[infoDict objectForKey:@"image"]] ];
-    }
+    [mTableView reloadData];
 }
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [datas count];
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==0) {
+        return 120;
+    }
+    return 64.0f;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (cell==nil) {
+        cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+    }
+    CGRect bounds=mTableView.frame;
+    
+    NSDictionary* dic=[datas objectAtIndex:indexPath.row];
+    
+    if (indexPath.row==0) {
+        UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(5, 5, bounds.size.width-10, 110)];
+        avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+        if ([dic objectForKey:@"image"]) {
+            [avatarImg setImageWithURL:[NSURL URLWithString:[dic objectForKey:@"image"]]];
+        }
+        avatarImg.contentMode=UIViewContentModeScaleToFill;
+        
+        [cell addSubview:avatarImg];
+        
+        UIImageView * bg=[[UIImageView alloc]initWithFrame:CGRectMake(5, 85, bounds.size.width-10, 30)];
+        [bg setBackgroundColor:[UIColor blackColor]];
+        [cell addSubview:bg];
+        
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(10, 90, bounds.size.width-20, 20)];
+        lb.text=[dic objectForKey:@"title"];
+        [lb setTextColor:[UIColor whiteColor]];
+        lb.textAlignment=NSTextAlignmentLeft;
+        [cell addSubview:lb];
+    }else{
+        UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(bounds.size.width-60, 6, 48, 48)];
+        avatarImg.image = [UIImage imageNamed:@"userbig.png"];
+        if ([dic objectForKey:@"image"]) {
+            [avatarImg setImageWithURL:[NSURL URLWithString:[dic objectForKey:@"image"]]];
+        }
+        [cell addSubview:avatarImg];
+        
+        UILabel* lb=[[UILabel alloc]initWithFrame:CGRectMake(10, 6, bounds.size.width-80, 52)];
+        lb.text=[dic objectForKey:@"title"];
+        lb.numberOfLines=2;
+        lb.lineBreakMode=NSLineBreakByWordWrapping;
+        lb.textAlignment=NSTextAlignmentLeft;
+        [cell addSubview:lb];
+    }
+    
+    cell.selectionStyle=UITableViewCellSelectionStyleBlue;
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+     NSDictionary* dic=[datas objectAtIndex:indexPath.row];
+    if (dic) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OPEN_INFO object:dic];
+    }
+    
+}
+
+
+
 @end

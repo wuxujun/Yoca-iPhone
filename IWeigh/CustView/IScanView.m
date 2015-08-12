@@ -98,6 +98,7 @@
     [sharedButton setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
     [sharedButton addTarget:self action:@selector(shared:) forControlEvents:UIControlEventTouchUpInside];
     [contentView addSubview:sharedButton];
+    [sharedButton setHidden:YES];
     
     [self addSubview:contentView];
     

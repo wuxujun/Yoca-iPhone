@@ -11,15 +11,14 @@
 #import "INavigationController.h"
 #import "IMenuViewController.h"
 #import "IHomeViewController.h"
+#import "IStartViewController.h"
 #import "AccountEntity.h"
 #import "IAccountDViewController.h"
 #import "MobClick.h"
-#import "BLEViewController.h"
 #import "DBHelper.h"
 #import "AppConfig.h"
 #import "DBManager.h"
 #import "PathHelper.h"
-#import "BLEViewController.h"
 #import "UserDefaultHelper.h"
 #import "HCurrentUserContext.h"
 
@@ -117,11 +116,9 @@ static NSString *const kAllowTracking=@"allowTracking";
     
     
     self.window=[[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
-    IHomeViewController* homeView=[[IHomeViewController alloc]init];
-//    BLEViewController* homeView=[[BLEViewController alloc]init];
-    UINavigationController *navController=[[UINavigationController alloc] initWithRootViewController:homeView];
-    
-    [self.window setRootViewController:navController];
+    IStartViewController* homeView=[[IStartViewController alloc]init];
+//    UINavigationController *navController=[[UINavigationController alloc] initWithRootViewController:homeView];
+    [self.window setRootViewController:homeView];
     [self.window makeKeyAndVisible];
     
     return YES;
@@ -206,18 +203,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 
 -(void)openBLEView
 {
-    for (UIView* view in self.window.subviews) {
-        if ([view isKindOfClass:[UIView class]]) {
-            [view removeFromSuperview];
-        }
-    }
-    BLEViewController* homeView=[[BLEViewController alloc]init];
-    
-    UINavigationController *navController=[[UINavigationController alloc] initWithRootViewController:homeView];
-    
-    [self.window setRootViewController:navController];
-    [self.window makeKeyAndVisible];
-    
+   
 }
 
 -(void)openHomeView

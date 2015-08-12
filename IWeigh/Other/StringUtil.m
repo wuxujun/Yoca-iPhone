@@ -231,6 +231,34 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSInteger days = [components day] + 1;
     return days;
 }
++(NSString*)dateToDay:(NSString *)pickTime
+{
+    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSDate* newDate=[dateFormatter dateFromString:pickTime];
+    [dateFormatter setDateFormat:@"d"];
+    return [dateFormatter stringFromDate:newDate];
+}
+
++(NSString*)dateToMonth:(NSString *)pickTime
+{
+    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSDate* newDate=[dateFormatter dateFromString:pickTime];
+    [dateFormatter setDateFormat:@"M/d"];
+    return [dateFormatter stringFromDate:newDate];
+}
++(NSInteger)dateWithPickTimeDays:(NSString *)pickTime
+{
+    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSDate* endDate=[dateFormatter dateFromString:pickTime];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    unsigned int unitFlag = NSDayCalendarUnit;
+    NSDateComponents *components = [calendar components:unitFlag fromDate:[NSDate date] toDate:endDate options:0];
+    NSInteger days = [components day] + 1;
+    return days;
+}
 
 +(NSString *)ToHex:(int)tmpid
 {

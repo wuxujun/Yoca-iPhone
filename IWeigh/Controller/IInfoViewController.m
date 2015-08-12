@@ -24,6 +24,7 @@
     // Do any additional setup after loading the view.
     
     [self setCenterTitle:@"资讯"];
+    self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh:)];
     
     if (self.mTableView==nil) {
         self.mTableView=[[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
@@ -41,6 +42,34 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOpenInfoDetail:) name:NOTIFICATION_OPEN_INFO object:nil];
+}
+
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_OPEN_INFO object:nil];
+
+}
+
+-(void)onOpenInfoDetail:(NSNotification*)notification
+{
+    NSDictionary* dict=(NSDictionary*)notification.object;
+    IWebViewController* dController=[[IWebViewController alloc]init];
+    dController.infoDict=dict;
+    dController.hidesBottomBarWhenPushed=YES;
+    [self.navigationController pushViewController:dController animated:YES];
+}
+
+-(IBAction)refresh:(id)sender
+{
+    [self.mDatas removeAllObjects];
+    [self loadData];
 }
 
 -(void)loadData
@@ -78,7 +107,12 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 200.0f;
+    NSDictionary *dic=[self.mDatas objectAtIndex:indexPath.row];
+    id array=[dic objectForKey:@"infos"];
+    if ([array isKindOfClass:[NSArray class]]) {
+        return ([array count]-1)*64+160;
+    }
+    return 160.0f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -88,14 +122,17 @@
     }
     cell.backgroundColor=APP_TABLEBG_COLOR;
     CGRect bounds=self.view.frame;
-    
+    float itemHeight=160.0;
     NSDictionary* dic=[self.mDatas objectAtIndex:indexPath.row];
     if (dic) {
-        IInfoViewCell* infoView=[[IInfoViewCell alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, 200) delegate:self];
+        id array=[dic objectForKey:@"infos"];
+        if ([array isKindOfClass:[NSArray class]]) {
+            itemHeight=([array count]-1)*64+160;
+        }
+        IInfoViewCell* infoView=[[IInfoViewCell alloc]initWithFrame:CGRectMake(0, 0, bounds.size.width, itemHeight) delegate:self];
         infoView.infoDict=dic;
         [cell addSubview:infoView];
     }
-
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
     return cell;
 }

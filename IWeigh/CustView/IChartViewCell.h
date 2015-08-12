@@ -31,6 +31,7 @@
 
 -(void)initializeFields;
 
+-(void)loadData:(NSInteger)aid targetType:(NSInteger)type days:(NSInteger)day;
 
 @end
 

@@ -131,8 +131,8 @@
         week=[NSString stringWithFormat:@"%@ 周日",week];
     }
     
-    UILabel* weekLb=[[UILabel alloc]initWithFrame:CGRectMake(10, 50, bounds.size.width-100, 30)];
-    [weekLb setFont:[UIFont systemFontOfSize:14.0f]];
+    UILabel* weekLb=[[UILabel alloc]initWithFrame:CGRectMake(10, 50, bounds.size.width-80, 30)];
+    [weekLb setFont:[UIFont systemFontOfSize:12.0f]];
     [weekLb setText:week];
     [weekLb setTextColor:APP_FONT_COLOR];
     [cell addSubview:weekLb];

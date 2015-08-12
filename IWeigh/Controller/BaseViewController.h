@@ -21,4 +21,7 @@
 
 -(void)alertRequestResult:(NSString*)msg isPop:(BOOL)flag;
 -(void)alertRequestResult:(NSString *)msg isDisses:(BOOL)flag;
+
+
+-(NSArray*)createRightButtons:(int)nums;
 @end

@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface IHisViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate>
+@interface IHisViewController : BaseViewController
 
 
 @property(nonatomic,strong)NSDictionary*        infoDict;

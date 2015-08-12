@@ -12,6 +12,7 @@
 #import <TencentOpenAPI/TencentOAuth.h>
 //#import "INavigationController.h"
 #import "StringUtil.h"
+#import "MobClick.h"
 #import "IScanView.h"
 #import "IHomeTView.h"
 #import "AccountEntity.h"
@@ -105,7 +106,7 @@ static const int kSegmentedControlWidth  = 85;
 #endif
     DLog(@"%f",self.tabBarController.tabBar.frame.size.height);
     
-    [self addRightButtonWithTitle:@"编辑" withSel:@selector(edit:)];
+//    [self addRightButtonWithTitle:@"编辑" withSel:@selector(edit:)];
     
     NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
     formatter.dateFormat=@"yyyy-MM-dd";
@@ -336,6 +337,8 @@ static const int kSegmentedControlWidth  = 85;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEStatusUpdate:) name:BLEDATA_RECVICE_STATUS object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onBLEDataReceive:) name:BLEDATA_RECVICE object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRefresh:) name:SYNC_DATA_REFRESH object:nil];
+    
+    [MobClick event:@"123"];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -351,9 +354,9 @@ static const int kSegmentedControlWidth  = 85;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BLEDATA_RECVICE_STATUS object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:BLEDATA_RECVICE object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:SYNC_DATA_REFRESH object:nil];
-    if (locManager) {
-        [locManager stopUpdatingLocation];
-    }
+//    if (locManager) {
+//        [locManager stopUpdatingLocation];
+//    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -481,7 +484,7 @@ static const int kSegmentedControlWidth  = 85;
         DLog(@"%x === %x",testByte[0]+testByte[1]+testByte[2]+testByte[3]+testByte[4]+testByte[5]+testByte[6]+testByte[7]+testByte[8]+testByte[9]+testByte[10]+testByte[11]+testByte[12]+testByte[13]+testByte[14]+testByte[15]+testByte[16]+testByte[17]+testByte[18],testByte[19]);
         DLog(@"%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x",testByte[0]&0xff,testByte[1]&0xff,testByte[2]&0xff,testByte[3]&0xff,testByte[4]&0xff,testByte[5]&0xff,testByte[6]&0xff,testByte[7]&0xff,testByte[8]&0xff,testByte[9]&0xff,testByte[10]&0xff,testByte[11]&0xff,testByte[12]&0xff,testByte[13]&0xff,testByte[14]&0xff,testByte[15]&0xff,testByte[16]&0xff,testByte[17]&0xff,testByte[18]&0xff,testByte[19]&0xff);
 //        DLog(@"cmd=%d len=%d   %d  %d %d  %d  %d  %d  %d",testByte[0],testByte[1],deviceType,weightH,weightL,requestID,testByte[19],total,(total+weightH+fatH+subFatH+waterH+BMRH+muscleH));
-        float weight=(((weightH*256+weightL)/5)+1)/2;
+        float weight=(((weightH*256+weightL)/5)+1)/2/10.0;
         DLog(@"%.1f",weight);
 //        float fat=(fatH*256+fatL)/10.0;
         if (weight<200.0) {
@@ -501,7 +504,7 @@ static const int kSegmentedControlWidth  = 85;
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }else if(requestID==2){
             DLog(@"Fat:%d %d  SubFat:%d %d VisFat:%d Water:%d %d BMRH:%d %d BodyAge:%d  Muscle:%d  %d  Bone:%d",fatH,fatL,subFatH,subFatL,visFat,waterH,waterL,BMRH,BMRL,bodyAge,muscleH,muscleL,bone);
-            DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/100.0,(subFatH*256+subFatL)/100.0,(waterH*256+waterL)/100.0,(BMRH*256+BMRL)/100.0,(muscleH*256+muscleL)/100.0);
+            DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/10.0,(subFatH*256+subFatL)/10.0,(waterH*256+waterL)/10.0,(BMRH*256+BMRL)/10.0,(muscleH*256+muscleL)/10.0);
             
             NSMutableDictionary *entity=[[NSMutableDictionary alloc] init];
             [entity setObject:self.today forKey:@"picktime"];
@@ -513,15 +516,14 @@ static const int kSegmentedControlWidth  = 85;
                 [entity setObject:@"1" forKey:@"aid"];
             }
             [entity setObject:[NSString stringWithFormat:@"%.1f",weight] forKey:@"weight"];
-            
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/100.0] forKey:@"fat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/100.0] forKey:@"subFat"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/10.0] forKey:@"fat"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/10.0] forKey:@"subFat"];
             [entity setObject:[NSString stringWithFormat:@"%d",visFat] forKey:@"visFat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/100.0] forKey:@"water"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(BMRH*256+BMRL)/100.0] forKey:@"BMR"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/10.0] forKey:@"water"];
+            [entity setObject:[NSString stringWithFormat:@"%d",(BMRH*256+BMRL)] forKey:@"BMR"];
             [entity setObject:[NSString stringWithFormat:@"%d",bodyAge] forKey:@"bodyAge"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/100.0] forKey:@"muscle"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",bone/100.0] forKey:@"bone"];
+            [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/10.0] forKey:@"muscle"];
+            [entity setObject:[NSString stringWithFormat:@"%d",bone] forKey:@"bone"];
             [entity setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
             if ([[DBManager getInstance] insertOrUpdateWeightHis:entity]){
                 DLog(@"insertOrUpdateWeightHis success %@",entity);
@@ -697,9 +699,9 @@ static const int kSegmentedControlWidth  = 85;
 
 -(void)onScanViewClicked:(IScanView *)view
 {
-    IYocaViewController* dController=[[IYocaViewController alloc]init];
-    dController.infoDict=self.infoDict;
-    [self.navigationController pushViewController:dController animated:YES];
+//    IYocaViewController* dController=[[IYocaViewController alloc]init];
+//    dController.infoDict=self.infoDict;
+//    [self.navigationController pushViewController:dController animated:YES];
 }
 
 -(void)onChartClicked:(IHomeIView *)view

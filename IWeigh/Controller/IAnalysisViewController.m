@@ -35,9 +35,9 @@
     [self setCenterTitle:@"图表汇总"];
     dayCounts=7;
     if (_segmentView==nil) {
-        NSArray* items=@[@"日",@"周",@"月",@"年"];
+        NSArray* items=@[@"周",@"月",@"年"];
         _segmentView=[[ISegmentView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44) items:items];
-        [_segmentView selectForItem:1];
+        [_segmentView selectForItem:0];
         
         _segmentView.tintColor=APP_FONT_COLOR_SEL;
         _segmentView.delegate=self;
@@ -45,7 +45,7 @@
     [self.view addSubview:_segmentView];
     
     if (self.mTableView==nil) {
-        self.mTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height-44) style:UITableViewStylePlain];
+        self.mTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 44, self.view.frame.size.width, self.view.frame.size.height-88) style:UITableViewStylePlain];
         self.mTableView.backgroundColor=APP_TABLEBG_COLOR;
         self.mTableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.mTableView.delegate = (id<UITableViewDelegate>)self;
@@ -118,13 +118,13 @@
 {
     switch (index) {
         case 0:
-            dayCounts=1;
-            break;
-        case 1:
             dayCounts=7;
             break;
-        case 2:
+        case 1:
             dayCounts=30;
+            break;
+        case 2:
+            dayCounts=365;
             break;
         case 3:
             dayCounts=365;
@@ -139,6 +139,7 @@
 -(void)onIChartViewCellClicked:(IChartViewCell *)view
 {
     IAnalysisDViewController* dController=[[IAnalysisDViewController alloc]init];
+    dController.infoDict=view.infoDict;
     [self.navigationController pushViewController:dController animated:YES];
 }
 

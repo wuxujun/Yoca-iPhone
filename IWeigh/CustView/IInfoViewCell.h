@@ -14,11 +14,12 @@
 {
     UIView                  *contentView;
     
-    UIImageView             *iconView;
-    UILabel                 *titleLabel;
-    UILabel                 *descLabel;
     UILabel                 *timeLabel;
+    UITableView*            mTableView;
+    
     id<IInfoViewCellDelegate>           delegate;
+    
+    NSMutableArray          *datas;
     
 }
 

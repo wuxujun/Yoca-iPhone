@@ -13,8 +13,9 @@
 #import "AccountEntity.h"
 #import "DBManager.h"
 #import "PathHelper.h"
+#import "IAccoutTableCell.h"
 
-@interface IAccountViewController ()
+@interface IAccountViewController ()<HSwipeTableCellDelegate>
 
 @end
 
@@ -92,44 +93,35 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    IAccoutTableCell *cell =(IAccoutTableCell*)[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (cell==nil) {
-        cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+        cell=[[IAccoutTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
     cell.backgroundColor=APP_TABLEBG_COLOR;
     CGRect bounds=self.view.frame;
     
-    UIImageView* icon=[[UIImageView alloc]initWithFrame:CGRectMake(20, 10, 64, 64)];
-    [icon setImage:[UIImage imageNamed:@"userbig.png"]];
-    [cell addSubview:icon];
-    
     AccountEntity* entity=[self.mDatas objectAtIndex:indexPath.row];
-    
     if (entity.avatar&&[PathHelper fileExistsAtPath:entity.avatar]) {
-        [icon setImage:[UIImage imageNamed:[PathHelper filePathInDocument:entity.avatar]]];
+        [cell.avatar setImage:[UIImage imageNamed:[PathHelper filePathInDocument:entity.avatar]]];
     }
+    [cell.userNick setText:entity.userNick];
+    [cell.userNick setTextColor:APP_FONT_COLOR];
+    [cell.userNick setFont:[UIFont systemFontOfSize:18.0f]];
     
     
-    UILabel* uLabel=[[UILabel alloc]init];
-    [uLabel setFrame:CGRectMake(100, 8, 200, 44)];
-    [uLabel setText:entity.userNick];
-    [uLabel setTextColor:APP_FONT_COLOR];
-    [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-    [cell addSubview:uLabel];
-    
-    
-    UILabel* dLabel=[[UILabel alloc]init];
-    [dLabel setFrame:CGRectMake(100, 40, 200, 44)];
-    [dLabel setText:entity.birthday];
-    [dLabel setTextColor:APP_FONT_COLOR];
-    [dLabel setFont:[UIFont systemFontOfSize:14.0f]];
-    [cell addSubview:dLabel];
+    [cell.birthday setText:entity.birthday];
+    [cell.birthday setTextColor:APP_FONT_COLOR];
+    [cell.birthday setFont:[UIFont systemFontOfSize:14.0f]];
+    cell.delegate=self;
     
     UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 79.5, bounds.size.width, 0.5)];
     [img setBackgroundColor:[UIColor blackColor]];
     [cell addSubview:img];
     [cell sendSubviewToBack:img];
     
+    if (entity.type!=1) {
+        cell.rightButtons=[self createRightButtons:1];
+    }
     return cell;
 }
 
@@ -146,4 +138,41 @@
         [self.navigationController pushViewController:dController animated:YES];
     }
 }
+
+-(BOOL)swipeTableCell:(HSwipeTableCell *)cell tappedButtonAtIndex:(NSInteger)index direction:(HSwipeDirection)direction fromExpansion:(BOOL)fromExpansion
+{
+    if (direction==HSwipeDirectionRightToLeft) {
+        NSIndexPath *path=[self.mTableView indexPathForCell:cell];
+        AccountEntity *entity=[self.mDatas objectAtIndex:path.row];
+        if (entity) {
+            
+        }
+        [self.mTableView beginUpdates];
+        [self.mDatas removeObjectAtIndex:path.row];
+        [self.mTableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationLeft];
+        [self.mTableView endUpdates];
+        return NO;
+    }
+    
+    return YES;
+}
+
+-(NSArray*)swipeTableCell:(HSwipeTableCell *)cell swipeButtonsForDirection:(HSwipeDirection)direction swipeSettings:(HSwipeSettings *)swipeSettings expansionSettings:(HSwipeExpansionSettings *)expansionSettings
+{
+    if (direction==HSwipeDirectionRightToLeft) {
+        NSIndexPath *path=[self.mTableView indexPathForCell:cell];
+        expansionSettings.buttonIndex=path.row;
+        expansionSettings.fillOnTrigger=YES;
+        AccountEntity *entity=[self.mDatas objectAtIndex:path.row];
+        if (entity) {
+            if (entity.type!=1) {
+                return [self createRightButtons:1];
+            }
+        }
+        return nil;
+    }
+    return nil;
+}
+
+
 @end
