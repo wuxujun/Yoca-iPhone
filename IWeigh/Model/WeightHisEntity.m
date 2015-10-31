@@ -112,7 +112,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_weight_his (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -154,7 +154,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_weight_his set %@ WHERE syncid=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

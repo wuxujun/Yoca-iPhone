@@ -147,7 +147,6 @@
 
 -(void)setInfoDict:(NSDictionary *)aInfoDict
 {
-    NSLog(@"%@",aInfoDict);
     infoDict=aInfoDict;
     if ([infoDict objectForKey:@"title"]) {
         [titleLabel setText:[infoDict objectForKey:@"title"]];

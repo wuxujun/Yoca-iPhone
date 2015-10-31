@@ -87,10 +87,10 @@
 	
 	if ([uuidArray count])
 	{
-        [self.centralManager retrievePeripherals:uuidArray];
+        [self.centralManager retrievePeripheralsWithIdentifiers:uuidArray];
 	}
-	
 }
+
 
 // If we connect a device with the service we want, add it to our device list
 // so that we can automatically restore it later.
@@ -145,13 +145,52 @@
 	}
 }
 
+
+- (void) reconnectSavedDevices
+{
+    NSArray	*storedDevices	= [[NSUserDefaults standardUserDefaults] arrayForKey:@"StoredDevices"];
+    
+    if (![storedDevices isKindOfClass:[NSArray class]])
+    {
+        return;
+    }
+    
+    NSMutableArray *uuidArray = [[NSMutableArray alloc] init];
+    
+    for (id deviceUUIDString in storedDevices)
+    {
+        
+        if (![deviceUUIDString isKindOfClass:[NSString class]])
+        {
+            continue;
+        }
+        
+        CFUUIDRef uuid = CFUUIDCreateFromString(NULL, (CFStringRef)deviceUUIDString);
+        if (!uuid)
+        {
+            continue;
+        }
+        
+        if (![uuidArray containsObject:(__bridge id)uuid])
+        {
+            [uuidArray addObject:(__bridge id)uuid];
+        }
+        CFRelease(uuid);
+    }
+    
+    if ([uuidArray count])
+    {
+        [self.centralManager retrieveConnectedPeripheralsWithServices:uuidArray];
+    }
+}
+
 // Callback from retrieveConnectedPeripherals
 - (void) centralManager:(CBCentralManager *)central didRetrieveConnectedPeripherals:(NSArray *)peripherals
 {
 	/* Add to list. */
 	for (CBPeripheral *peripheral in peripherals)
 	{
-		if ([peripheral isConnected])
+		if (peripheral.state==CBPeripheralStateConnected)
 		{
 			// Basically retain the peripheral
 			if (![self.foundPeripherals containsObject:peripheral])
@@ -183,7 +222,7 @@
 			[self.foundPeripherals addObject:peripheral];
 		}
 		
-		if (![peripheral isConnected])
+		if (peripheral.state!=CBPeripheralStateConnected)
 		{
 			[self connectPeripheral:peripheral];
 		}
@@ -236,7 +275,7 @@
 /****************************************************************************/
 - (void) connectPeripheral:(CBPeripheral *) peripheral
 {
-	if (![peripheral isConnected])
+	if (peripheral.state!=CBPeripheralStateConnected)
 	{
 		peripheral.delegate = self;
         NSDictionary* option=[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES],CBConnectPeripheralOptionNotifyOnConnectionKey,[NSNumber numberWithBool:YES],CBConnectPeripheralOptionNotifyOnDisconnectionKey,[NSNumber numberWithBool:YES],CBConnectPeripheralOptionNotifyOnNotificationKey,nil];
@@ -253,7 +292,7 @@
 
 - (void) disconnectPeripheral:(CBPeripheral*)peripheral
 {
-	[self removeSavedDevice:peripheral.UUID]; // Only remove if we explictly disconnected
+	[self removeSavedDevice:(__bridge CFUUIDRef)(peripheral.identifier.UUIDString)]; // Only remove if we explictly disconnected
 	[self.centralManager cancelPeripheralConnection:peripheral];
 }
 
@@ -266,7 +305,7 @@
 	}
 	
     DLog(@"%@",self.foundPeripherals);
-	[self addSavedDevice:peripheral.UUID];
+	[self addSavedDevice:(__bridge CFUUIDRef)(peripheral.identifier.UUIDString)];
     
     
 	[self.delegate didConnectPeripheral:peripheral error:nil];
@@ -321,7 +360,7 @@
 		case CBCentralManagerStatePoweredOn:
 		{
 			self.pendingInit = NO;
-			[self.centralManager retrieveConnectedPeripherals];
+            [self reconnectSavedDevices];
 			break;
 		}
             

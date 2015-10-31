@@ -81,7 +81,6 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_home_target (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -120,7 +119,6 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_home_target set %@ WHERE id=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

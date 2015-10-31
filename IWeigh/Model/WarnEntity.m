@@ -88,7 +88,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_warn (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -127,7 +127,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_warn set %@ WHERE wid=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

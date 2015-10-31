@@ -102,6 +102,7 @@
 
 #define CURRENT_ACCOUNT_ID          @"current_account_id"
 
+#define CONF_FIRST_START            @"conf_first_start"
 
 #define IWEIGH_SERVICE_UUID         @"0000fff0-0000-1000-8000-00805f9b34fb"
 #define IWEIGH_CHARACTERISTIC_UUID  @"00002902-0000-1000-8000-00805f9b34fb"

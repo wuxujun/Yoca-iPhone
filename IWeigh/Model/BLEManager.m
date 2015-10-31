@@ -117,7 +117,7 @@ static BLEManager *sharedManager=nil;
     }else{
         for (int i=0; i<self.peripherals.count; i++) {
             CBPeripheral *p=[self.peripherals objectAtIndex:i];
-            if ([self UUIDSAreEqual:p.UUID u2:peripheral.UUID]) {
+            if ([self UUIDSAreEqual:(__bridge CFUUIDRef)(p.identifier.UUIDString) u2:(__bridge CFUUIDRef)(peripheral.identifier.UUIDString)]) {
                 [self.peripherals replaceObjectAtIndex:i withObject:peripheral];
                 return;
             }
@@ -144,7 +144,7 @@ static BLEManager *sharedManager=nil;
         [activePeripheral discoverServices:nil];
     }
     DLog(@"%@",peripheral);
-    [deleagte BLEConnected:[self UUIDToNString:peripheral.UUID]];
+    [deleagte BLEConnected:[self UUIDToNString:(__bridge CFUUIDRef)(peripheral.identifier.UUIDString)]];
     [central stopScan];
 }
 

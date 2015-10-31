@@ -11,6 +11,7 @@
 #import "INavigationController.h"
 #import "IMenuViewController.h"
 #import "IHomeViewController.h"
+#import "IIntruduceViewController.h"
 #import "IStartViewController.h"
 #import "AccountEntity.h"
 #import "IAccountDViewController.h"
@@ -155,6 +156,11 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     int buildVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey] intValue];
     DLog(@"%d",buildVersion);
     NSInteger   isInit=[[UserDefaultHelper objectForKey:CONFIG_INIT_FLAG] integerValue];
+    if (![UserDefaultHelper objectForKey:CONF_FIRST_START]) {
+        [UserDefaultHelper setObject:[NSNumber numberWithBool:true] forKey:CONF_FIRST_START];
+    }
+    
+    BOOL firstStart=[[UserDefaultHelper objectForKey:CONF_FIRST_START] boolValue];
     
     self.networkEngine =  [[HNetworkEngine alloc]initWithHostName:nil customHeaderFields:nil];
     NSString *url = [NSString stringWithFormat:@"%@getConfig",kHttpUrl];
@@ -168,7 +174,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
             if ((isInit==1&&sVersion>buildVersion)||isInit==0) {
                 for (int i=0; i<[array count]; i++) {
                     if ([[DBManager getInstance] insertOrUpdateConfig:[array objectAtIndex:i]]) {
-                        DLog(@"Config insert or update success %d",i);
+//                        DLog(@"Config insert or update success %d",i);
                     }
                 }
                 [UserDefaultHelper setObject:@"1" forKey:CONFIG_INIT_FLAG];
@@ -180,20 +186,22 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
             if (sVersion>buildVersion||isInit==0) {
                 for (int i=0; i<[array1 count]; i++) {
                     if ([[DBManager getInstance] insertOrUpdateTargetInfo:[array1 objectAtIndex:i]]) {
-                        DLog(@"TargetInfo insert or update success %d",i);
+//                        DLog(@"TargetInfo insert or update success %d",i);
                     }
                 }
             }
         }
         
-//        [ApplicationDelegate openBLEView];
-        
-        if ([[HCurrentUserContext sharedInstance] uid]) {
-            DLog(@"%@",[[HCurrentUserContext sharedInstance] uid]);
-//            [ApplicationDelegate openMainView];
-            [ApplicationDelegate openTabMainView];
+        if (firstStart) {
+            [ApplicationDelegate openIntruduceView];
         }else{
-            [ApplicationDelegate openHomeView];
+            if ([[HCurrentUserContext sharedInstance] uid]) {
+                DLog(@"%@",[[HCurrentUserContext sharedInstance] uid]);
+//              [ApplicationDelegate openMainView];
+                [ApplicationDelegate openTabMainView];
+            }else{
+                [ApplicationDelegate openHomeView];
+            }
         }
         
     } error:^(NSError *error) {
@@ -201,9 +209,16 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     }];
 }
 
--(void)openBLEView
+-(void)openIntruduceView
 {
-   
+    for (UIView* view in self.window.subviews) {
+        if ([view isKindOfClass:[UIView class]]) {
+            [view removeFromSuperview];
+        }
+    }
+    IIntruduceViewController* homeView=[[IIntruduceViewController alloc]init];
+    [self.window setRootViewController:homeView];
+    [self.window makeKeyAndVisible];
 }
 
 -(void)openHomeView
@@ -548,7 +563,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 
                 }else{
                     //ios <7
-                    if ([self.peripheral isConnected]) {
+                    if (self.peripheral.state==CBPeripheralStateConnected) {
                         DLog(@"Connected.");
                     }else{
                         [[BluetoothLEManager sharedManager] connectPeripheral:peripheral];

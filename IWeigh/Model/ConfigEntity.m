@@ -70,7 +70,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_config (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -108,7 +108,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_config set %@ WHERE id=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

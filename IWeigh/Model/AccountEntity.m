@@ -96,7 +96,7 @@
     for (int i=0; i<values.count; i++) {
         NSString *value = values[i];
         NSString *key = keys[i];
-        DLog(@"%@:%@",key,value);
+//        DLog(@"%@:%@",key,value);
         NSArray *integerKeyArray = @[@"id", @"type", @"sex",@"height",@"age",@"targetType",@"isSync",@"status"];
         if ([integerKeyArray containsObject:key]) {
             [finalKeys addObject:key];
@@ -115,7 +115,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO t_account (%@) values (%@)", [finalKeys componentsJoinedByString:@", "], [placeholder componentsJoinedByString:@", "]];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }
@@ -154,7 +154,7 @@
     }
     
     NSString *sql = [NSString stringWithFormat:@"UPDATE t_account set %@ WHERE id=%@", [kvPairs componentsJoinedByString:@", " ], mID];
-    DLog(@"%@",sql);
+//    DLog(@"%@",sql);
     if (completion) {
         completion(sql, finalValues);
     }

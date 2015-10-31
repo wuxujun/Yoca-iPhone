@@ -458,7 +458,6 @@ static const int kSegmentedControlWidth  = 85;
         DLog(@"检验码错误  %x   %x",total,testByte[19]);
         return;
     }
-    DLog(@"检验码正确 %x======%x",total,testByte[19]);
     
     NSString* cmd=[NSString stringWithFormat:@"%x",testByte[0]&0xff];
     if ([cmd isEqualToString:@"10"]) {
@@ -481,11 +480,12 @@ static const int kSegmentedControlWidth  = 85;
         int bone=testByte[18];
         int total=testByte[0]+testByte[1]+deviceType+weightL+requestID+fatL+subFatL+visFat+waterL+BMRL+bodyAge+muscleL+bone;
         
-        DLog(@"%x === %x",testByte[0]+testByte[1]+testByte[2]+testByte[3]+testByte[4]+testByte[5]+testByte[6]+testByte[7]+testByte[8]+testByte[9]+testByte[10]+testByte[11]+testByte[12]+testByte[13]+testByte[14]+testByte[15]+testByte[16]+testByte[17]+testByte[18],testByte[19]);
+//        DLog(@"%x === %x",testByte[0]+testByte[1]+testByte[2]+testByte[3]+testByte[4]+testByte[5]+testByte[6]+testByte[7]+testByte[8]+testByte[9]+testByte[10]+testByte[11]+testByte[12]+testByte[13]+testByte[14]+testByte[15]+testByte[16]+testByte[17]+testByte[18],testByte[19]);
+        
         DLog(@"%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x",testByte[0]&0xff,testByte[1]&0xff,testByte[2]&0xff,testByte[3]&0xff,testByte[4]&0xff,testByte[5]&0xff,testByte[6]&0xff,testByte[7]&0xff,testByte[8]&0xff,testByte[9]&0xff,testByte[10]&0xff,testByte[11]&0xff,testByte[12]&0xff,testByte[13]&0xff,testByte[14]&0xff,testByte[15]&0xff,testByte[16]&0xff,testByte[17]&0xff,testByte[18]&0xff,testByte[19]&0xff);
 //        DLog(@"cmd=%d len=%d   %d  %d %d  %d  %d  %d  %d",testByte[0],testByte[1],deviceType,weightH,weightL,requestID,testByte[19],total,(total+weightH+fatH+subFatH+waterH+BMRH+muscleH));
-        float weight=(((weightH*256+weightL)/5)+1)/2/10.0;
-        DLog(@"%.1f",weight);
+        float weight=((weightH*256+weightL)/5)/2/10.0;
+        DLog(@"当前体重值 ===> %.1f",weight);
 //        float fat=(fatH*256+fatL)/10.0;
         if (weight<200.0) {
             NSString * strWeight=[NSString stringWithFormat:@"%.1f",weight];
@@ -503,7 +503,7 @@ static const int kSegmentedControlWidth  = 85;
             [ApplicationDelegate writeBLEData:[[NSData alloc] initWithBytes:byte length:16] resp:false];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }else if(requestID==2){
-            DLog(@"Fat:%d %d  SubFat:%d %d VisFat:%d Water:%d %d BMRH:%d %d BodyAge:%d  Muscle:%d  %d  Bone:%d",fatH,fatL,subFatH,subFatL,visFat,waterH,waterL,BMRH,BMRL,bodyAge,muscleH,muscleL,bone);
+//            DLog(@"Fat:%d %d  SubFat:%d %d VisFat:%d Water:%d %d BMRH:%d %d BodyAge:%d  Muscle:%d  %d  Bone:%d",fatH,fatL,subFatH,subFatL,visFat,waterH,waterL,BMRH,BMRL,bodyAge,muscleH,muscleL,bone);
             DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/10.0,(subFatH*256+subFatL)/10.0,(waterH*256+waterL)/10.0,(BMRH*256+BMRL)/10.0,(muscleH*256+muscleL)/10.0);
             
             NSMutableDictionary *entity=[[NSMutableDictionary alloc] init];
@@ -526,7 +526,7 @@ static const int kSegmentedControlWidth  = 85;
             [entity setObject:[NSString stringWithFormat:@"%d",bone] forKey:@"bone"];
             [entity setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
             if ([[DBManager getInstance] insertOrUpdateWeightHis:entity]){
-                DLog(@"insertOrUpdateWeightHis success %@",entity);
+                DLog(@"insertOrUpdateWeightHis success");
             }
             
             [self countData:entity];
@@ -759,7 +759,7 @@ static const int kSegmentedControlWidth  = 85;
         [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
         
         if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
-            DLog(@"HomeTargetInfo insert or update Success.  %@",dict);
+            DLog(@"HomeTargetInfo insert or update Success.");
         }
     }
     [self loadHomeTarget];
