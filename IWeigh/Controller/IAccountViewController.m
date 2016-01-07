@@ -61,7 +61,7 @@
 -(IBAction)addAccount:(id)sender
 {
     IAccountDViewController* dController=[[IAccountDViewController alloc]init];
-    [dController setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:@"1",@"dataType",@"添加成员信息",@"title",@"保存",@"buttonTitle", nil]];
+    [dController setInfoDict:[NSDictionary dictionaryWithObjectsAndKeys:@"1",@"dataType",@"添加成员信息",@"title",@"保 存",@"buttonTitle", nil]];
     [self.navigationController pushViewController:dController animated:YES];
 }
 
@@ -101,12 +101,12 @@
     CGRect bounds=self.view.frame;
     
     AccountEntity* entity=[self.mDatas objectAtIndex:indexPath.row];
-    if (entity.avatar&&[PathHelper fileExistsAtPath:entity.avatar]) {
+    if (entity.avatar&&entity.avatar.length>1&&[PathHelper fileExistsAtPath:entity.avatar]) {
         [cell.avatar setImage:[UIImage imageNamed:[PathHelper filePathInDocument:entity.avatar]]];
     }
     [cell.userNick setText:entity.userNick];
     [cell.userNick setTextColor:APP_FONT_COLOR];
-    [cell.userNick setFont:[UIFont systemFontOfSize:18.0f]];
+    [cell.userNick setFont:[UIFont boldSystemFontOfSize:18.0f]];
     
     
     [cell.birthday setText:entity.birthday];

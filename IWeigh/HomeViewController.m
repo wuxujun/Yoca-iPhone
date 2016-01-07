@@ -10,7 +10,6 @@
 #import "AppDelegate.h"
 #import "UIViewController+NavigationBarButton.h"
 #import <TencentOpenAPI/TencentOAuth.h>
-//#import "INavigationController.h"
 #import "StringUtil.h"
 #import "MobClick.h"
 #import "IScanView.h"
@@ -31,6 +30,7 @@
 #import "IContentEViewController.h"
 #import "IUserViewController.h"
 #import "AppConfig.h"
+#import "AvatarEViewController.h"
 
 static const int kSegmentedControlWidth  = 85;
 
@@ -49,6 +49,8 @@ static const int kSegmentedControlWidth  = 85;
     NSInteger               nLastIndex;
     
     NSMutableArray          *targetDatas;
+    
+    long                    startWeightTime;
     
 }
 @property (nonatomic,strong)IScanView   *scanView;
@@ -103,6 +105,7 @@ static const int kSegmentedControlWidth  = 85;
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_left"] style:UIBarButtonItemStylePlain target:(INavigationController*)self.navigationController action:@selector(showMenu)];
 #else
     [self addLeftTitleButton:@"切换" action:@selector(switchAccount:)];
+    [self addRightTitleButton:@"分享" action:@selector(onShare:)];
 #endif
     DLog(@"%f",self.tabBarController.tabBar.frame.size.height);
     
@@ -157,6 +160,11 @@ static const int kSegmentedControlWidth  = 85;
     [self.accountDatas addObjectsFromArray:[[DBManager getInstance] queryAccountForType:0]];
 }
 
+-(IBAction)onShare:(id)sender
+{
+    [UMSocialSnsService presentSnsIconSheetView:self appKey:@"52649a7e56240b87b6169d13" shareText:@"Sholai" shareImage:nil shareToSnsNames:[NSArray arrayWithObjects: UMShareToSina,UMShareToTencent,UMShareToQQ,UMShareToQzone,UMShareToWechatSession,UMShareToWechatTimeline,UMShareToSms,UMShareToEmail,nil] delegate:self];
+}
+
 -(IBAction)switchAccount:(id)sender
 {
     UIBarButtonItem* btn=(UIBarButtonItem*)sender;
@@ -199,7 +207,7 @@ static const int kSegmentedControlWidth  = 85;
         self.accountEntity=[array objectAtIndex:0];
         [[AppConfig getInstance] setPrefValue:[NSString stringWithFormat:@"%d",self.accountEntity.aid] key:CURRENT_ACCOUNT_ID];
         [self setCenterTitle:self.accountEntity.userNick];
-        DLog("refreshAccountData %d  %@   %d",index,self.accountEntity.userNick,self.accountEntity.height);
+        DLog("refreshAccountData %d  %@   %d   sex:%d" ,index,self.accountEntity.userNick,self.accountEntity.height,self.accountEntity.sex);
         nHeight=self.accountEntity.height;
         nSex= self.accountEntity.sex;
         nAge=self.accountEntity.age;
@@ -224,7 +232,7 @@ static const int kSegmentedControlWidth  = 85;
             [dict setObject:@"1" forKey:@"state"];
         }
         if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
-            DLog(@"HomeTargetInfo insert or update Success.");
+//            DLog(@"HomeTargetInfo insert or update Success.");
         }
     }
 }
@@ -236,7 +244,7 @@ static const int kSegmentedControlWidth  = 85;
         HomeTargetEntity* entity=[array objectAtIndex:i];
         NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
         switch (entity.type) {
-            case 0:
+            case 2:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.bmi] forKey:@"value"];
                 [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBMIStatus:[weight.bmi doubleValue]]] forKey:@"state"];
@@ -253,7 +261,7 @@ static const int kSegmentedControlWidth  = 85;
                 [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getWeightStatusValue:self.accountEntity.height sex:self.accountEntity.sex value:[weight.weight doubleValue]]] forKey:@"progres"];
             }
                 break;
-            case 2:
+            case 3:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.fat] forKey:@"value"];
                 [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getFatStatus:self.accountEntity.age sex:self.accountEntity.sex value:[weight.fat doubleValue]]] forKey:@"state"];
@@ -261,14 +269,14 @@ static const int kSegmentedControlWidth  = 85;
                 [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getFatStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[weight.fat doubleValue]]] forKey:@"progres"];
             }
                 break;
-            case 3:
+            case 4:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.subFat] forKey:@"value"];[dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getSufFatStatus:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"state"];
                 [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getSubFatStatusTitle:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"valueTitle"];
                 [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getSubFatStatusValue:self.accountEntity.sex value:[weight.subFat doubleValue]]] forKey:@"progres"];
             }
                 break;
-            case 4:
+            case 5:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.visFat] forKey:@"value"];
                 [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getVisFatStatus:[weight.visFat doubleValue]]] forKey:@"state"];
@@ -276,7 +284,7 @@ static const int kSegmentedControlWidth  = 85;
                 [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getVisFatStatusValue:[weight.visFat doubleValue]]] forKey:@"progres"];
             }
                 break;
-            case 5:
+            case 7:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.water] forKey:@"value"];
                 [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getWaterStatus:self.accountEntity.sex value:[weight.water doubleValue]]] forKey:@"state"];
@@ -292,7 +300,7 @@ static const int kSegmentedControlWidth  = 85;
                 [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBMRStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[weight.BMR doubleValue]]] forKey:@"progres"];
             }
                 break;
-            case 7:
+            case 11:
             {
                 [dict setObject:[NSString stringWithFormat:@"%@",weight.bodyAge] forKey:@"value"];
                 [dict setObject:@"1" forKey:@"state"];
@@ -316,7 +324,12 @@ static const int kSegmentedControlWidth  = 85;
             }
                 break;
             case 10:
-                [dict setObject:[NSString stringWithFormat:@"0.0"] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",weight.protein] forKey:@"value"];
+                [dict setObject:@"1" forKey:@"state"];
+                [dict setObject:@"正常" forKey:@"valueTitle"];
+                [dict setObject:@"0.5" forKey:@"progres"];
+            }
                 break;
             default:
                 break;
@@ -416,7 +429,7 @@ static const int kSegmentedControlWidth  = 85;
 -(void)loadHomeTarget
 {
     [targetDatas removeAllObjects];
-    NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:0];
+    NSArray* ary=[[DBManager getInstance] queryHomeTargetWithAId:self.accountEntity.aid status:2];
     [targetDatas addObjectsFromArray:ary];
     [self.mTableView reloadData];
 }
@@ -427,6 +440,7 @@ static const int kSegmentedControlWidth  = 85;
     if (dict&&[dict objectForKey:@"status"]) {
         [self.scanView setStatusValue:[dict objectForKey:@"status"]];
         if ([[dict objectForKey:@"status"] isEqualToString:@"已连接"]) {
+           startWeightTime=(long)[[NSDate date] timeIntervalSince1970];
 //            Byte byte[]={9,8,18,21,5,1,0,27};
 //            [ApplicationDelegate writeBLEData:[[NSData alloc] initWithBytes:byte length:8] resp:true];
         }
@@ -487,13 +501,13 @@ static const int kSegmentedControlWidth  = 85;
         float weight=((weightH*256+weightL)/5)/2/10.0;
         DLog(@"当前体重值 ===> %.1f",weight);
 //        float fat=(fatH*256+fatL)/10.0;
-        if (weight<200.0) {
-            NSString * strWeight=[NSString stringWithFormat:@"%.1f",weight];
-            if (self.scanView) {
+//        if (weight<200.0) {
+//            NSString * strWeight=[NSString stringWithFormat:@"%.1f",weight];
+//            if (self.scanView) {
 //                [self.scanView setFatValue:[NSString stringWithFormat:@"%.1f",fat]];
-                [self.scanView setWeighValue:strWeight];
-            }
-        }
+//                [self.scanView setWeighValue:strWeight];
+//            }
+//        }
         
         if (requestID==1) {
             if (self.accountEntity) {
@@ -503,37 +517,86 @@ static const int kSegmentedControlWidth  = 85;
             [ApplicationDelegate writeBLEData:[[NSData alloc] initWithBytes:byte length:16] resp:false];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
         }else if(requestID==2){
-//            DLog(@"Fat:%d %d  SubFat:%d %d VisFat:%d Water:%d %d BMRH:%d %d BodyAge:%d  Muscle:%d  %d  Bone:%d",fatH,fatL,subFatH,subFatL,visFat,waterH,waterL,BMRH,BMRL,bodyAge,muscleH,muscleL,bone);
             DLog(@"Fat=%.1f  SubFat=%.1f Water=%.1f BMR=%.1f Muscle=%.1f",(fatH*256+fatL)/10.0,(subFatH*256+subFatL)/10.0,(waterH*256+waterL)/10.0,(BMRH*256+BMRL)/10.0,(muscleH*256+muscleL)/10.0);
-            
-            NSMutableDictionary *entity=[[NSMutableDictionary alloc] init];
-            [entity setObject:self.today forKey:@"picktime"];
-            if (self.accountEntity) {
-                [entity setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
-                float height=powf(self.accountEntity.height/100.0,2.0);
-                [entity setObject:[NSString stringWithFormat:@"%.1f",weight/height] forKey:@"bmi"];
-            }else{
-                [entity setObject:@"1" forKey:@"aid"];
+            NSString * strWeight=[NSString stringWithFormat:@"%.1f",weight];
+            if (self.scanView) {
+                [self.scanView setWeighValue:strWeight];
             }
-            [entity setObject:[NSString stringWithFormat:@"%.1f",weight] forKey:@"weight"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/10.0] forKey:@"fat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/10.0] forKey:@"subFat"];
-            [entity setObject:[NSString stringWithFormat:@"%d",visFat] forKey:@"visFat"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/10.0] forKey:@"water"];
-            [entity setObject:[NSString stringWithFormat:@"%d",(BMRH*256+BMRL)] forKey:@"BMR"];
-            [entity setObject:[NSString stringWithFormat:@"%d",bodyAge] forKey:@"bodyAge"];
-            [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/10.0] forKey:@"muscle"];
-            [entity setObject:[NSString stringWithFormat:@"%d",bone] forKey:@"bone"];
-            [entity setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
-            if ([[DBManager getInstance] insertOrUpdateWeightHis:entity]){
-                DLog(@"insertOrUpdateWeightHis success");
+            long endTime=(long)[[NSDate date] timeIntervalSince1970];
+            DLog(@"-------------------------%ld#############################",(startWeightTime-endTime));
+            if ((endTime-startWeightTime)>2) {
+                startWeightTime=endTime;
+                NSMutableDictionary *entity=[[NSMutableDictionary alloc] init];
+                [entity setObject:self.today forKey:@"pickTime"];
+                if (self.accountEntity) {
+                    [entity setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
+                    float height=powf(self.accountEntity.height/100.0,2.0);
+                    [entity setObject:[NSString stringWithFormat:@"%.1f",weight/height] forKey:@"bmi"];
+                }else{
+                    [entity setObject:@"1" forKey:@"aid"];
+                }
+                [entity setObject:[NSString stringWithFormat:@"%ld",(long)[[NSDate date] timeIntervalSince1970]] forKey:@"wid"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",weight] forKey:@"weight"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",(fatH*256+fatL)/10.0] forKey:@"fat"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",(subFatH*256+subFatL)/10.0] forKey:@"subFat"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",visFat/10.0] forKey:@"visFat"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",(waterH*256+waterL)/10.0] forKey:@"water"];
+                [entity setObject:[NSString stringWithFormat:@"%d",(BMRH*256+BMRL)] forKey:@"BMR"];
+                [entity setObject:[NSString stringWithFormat:@"%d",bodyAge] forKey:@"bodyAge"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",(muscleH*256+muscleL)/10.0] forKey:@"muscle"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",bone/10.0] forKey:@"bone"];
+                [entity setObject:[NSString stringWithFormat:@"%.1f",((muscleH*256+muscleL)/10.0)*0.27+0.02*((fatH*256+fatL)/10.0)] forKey:@"protein"];
+                [entity setObject:@"0" forKey:@"sholai"];
+                [entity setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
+                if ([[DBManager getInstance] insertOrUpdateWeightHis:entity]){
+                    DLog(@"insertOrUpdateWeightHis success");
+                    [self updateWeightData:entity];
+                    [entity setObject:@"syncweighthis" forKey:@"requestUrl"];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:SYNC_WEIGHT_NOTIFICATION object:entity];
+                }
+                [self countData:entity];
             }
             
-            [self countData:entity];
             //10h =>16  14h=>20
             Byte byte[]={9,11,18,31,5,1,16,53};
             [ApplicationDelegate writeBLEData:[[NSData alloc]initWithBytes:byte length:8] resp:false];
 //            [self.bleService setValue:[[NSData alloc] initWithBytes:byte length:11] forServiceUUID:@"0xFFF0" andCharacteristicUUID:@"0xFFF1"];
+        }
+    }
+}
+
+-(void)updateWeightData:(NSMutableDictionary*)dict
+{
+    NSArray* array=[[DBManager getInstance] queryWeightHisWithWeight:[dict objectForKey:@"pickTime"] account:[[dict objectForKey:@"aid"] integerValue]];
+    if ([array count]>0) {
+        WeightEntity * entity=[array objectAtIndex:0];
+        
+        NSArray* a=[[DBManager getInstance] queryWeightWithPicktime:[dict objectForKey:@"pickTime"] account:[[dict objectForKey:@"aid"] integerValue]];
+        NSMutableDictionary* params=[[NSMutableDictionary alloc] init];
+        [params setObject:entity.weight forKey:@"weight"];
+        [params setObject:entity.fat forKey:@"fat"];
+        [params setObject:entity.subFat forKey:@"subFat"];
+        [params setObject:entity.BMR forKey:@"BMR"];
+        [params setObject:entity.bmi forKey:@"bmi"];
+        [params setObject:entity.water forKey:@"water"];
+        [params setObject:entity.bodyAge forKey:@"bodyAge"];
+        [params setObject:entity.muscle forKey:@"muscle"];
+        [params setObject:entity.bone forKey:@"bone"];
+        [params setObject:entity.protein forKey:@"protein"];
+        [params setObject:entity.visFat forKey:@"visFat"];
+        [params setObject:[dict objectForKey:@"aid"] forKey:@"aid"];
+        [params setObject:[dict objectForKey:@"pickTime"] forKey:@"pickTime"];
+        if ([a count]>0) {
+            WeightEntity *we=[a objectAtIndex:0];
+            [params setObject:[NSString stringWithFormat:@"%d",we.wid] forKey:@"wid"];
+            
+        }else{
+            [params setObject:[NSString stringWithFormat:@"%ld",(long)[[NSDate date] timeIntervalSince1970]] forKey:@"wid"];
+        }
+        [params setObject:[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]] forKey:@"addtime"];
+        if ([[DBManager getInstance] insertOrUpdateWeight:params]) {
+            [params setObject:@"syncweight" forKey:@"requestUrl"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:SYNC_WEIGHT_NOTIFICATION object:params];
         }
     }
 }
@@ -641,8 +704,10 @@ static const int kSegmentedControlWidth  = 85;
 #pragma mark - IScanViewDelegate
 -(void)onScanViewShared:(IScanView *)view
 {
-
-    [UMSocialSnsService presentSnsIconSheetView:self appKey:@"52649a7e56240b87b6169d13" shareText:@"分享文件" shareImage:nil shareToSnsNames:[NSArray arrayWithObjects: UMShareToSina,UMShareToTencent,UMShareToQQ,UMShareToQzone,UMShareToWechatSession,UMShareToWechatTimeline,UMShareToSms,UMShareToEmail,nil] delegate:self];
+//    [UMSocialSnsService presentSnsIconSheetView:self appKey:@"52649a7e56240b87b6169d13" shareText:@"分享文件" shareImage:nil shareToSnsNames:[NSArray arrayWithObjects: UMShareToSina,UMShareToTencent,UMShareToQQ,UMShareToQzone,UMShareToWechatSession,UMShareToWechatTimeline,UMShareToSms,UMShareToEmail,nil] delegate:self];
+    AvatarEViewController *dController=[[AvatarEViewController alloc]init];
+    dController.hidesBottomBarWhenPushed=YES;
+    [self.navigationController pushViewController:dController animated:YES];
 }
 
 -(void)onScanViewSelected:(UIButton *)btn
@@ -650,15 +715,16 @@ static const int kSegmentedControlWidth  = 85;
     if (self.scanView) {
         if(btn.tag==100){
             nIndex++;
-            if (nIndex>[datas count]) {
+            if (nIndex>=[datas count]) {
                 nIndex=[datas count]-1;
             }
-            if ([datas count]>0&&nIndex>=0) {
+            if ([datas count]>0&&nIndex>=0&&nIndex<[datas count]) {
                 WeightEntity* entity=[datas objectAtIndex:nIndex];
                 if (entity!=NULL) {
                     [self.scanView setDateTitle:[NSString stringWithFormat:@"%@",entity.pickTime]];
                     [self.scanView setWeighValue:[NSString stringWithFormat:@"%.1f",[entity.weight floatValue]]];
                     [self resetHomeTargetInfo:entity];
+                    [self loadHomeTarget];
                 }
             }
             nLastIndex=nIndex;
@@ -673,6 +739,7 @@ static const int kSegmentedControlWidth  = 85;
                         if ([entity.pickTime isEqualToString:self.today]) {
                             [self.scanView setWeighValue:entity.weight];
                             [self resetHomeTargetInfo:entity];
+                            [self loadHomeTarget];
                         }else{
                             [self.scanView setFoot];
                         }
@@ -688,13 +755,13 @@ static const int kSegmentedControlWidth  = 85;
                     }
                     [self.scanView setWeighValue:[NSString stringWithFormat:@"%.1f",[entity.weight floatValue]]];
                     [self resetHomeTargetInfo:entity];
+                    [self loadHomeTarget];
                     DLog(@"%@  %@",entity.pickTime,entity.weight);
                 }
             }
             nLastIndex=nIndex;
         }
     }
-    [self loadHomeTarget];
 }
 
 -(void)onScanViewClicked:(IScanView *)view
@@ -718,46 +785,98 @@ static const int kSegmentedControlWidth  = 85;
         HomeTargetEntity* entity=[array objectAtIndex:i];
         NSMutableDictionary* dict=[[NSMutableDictionary alloc] init];
         switch (entity.type) {
-            case 0:
+            case 2:
+            {
                 [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bmi"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBMIStatus:[[aDict objectForKey:@"bmi"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBMIStatusTitle:[[aDict objectForKey:@"bmi"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBMIStatusValue:[[aDict objectForKey:@"bmi"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 1:
+            {
                 [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"weight"]] forKey:@"value"];
-                break;
-            case 2:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"fat"]] forKey:@"value"];
+                
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getWeightStatus:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"weight"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getWeightStatusTitle:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"weight"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getWeightStatusValue:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"weight"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 3:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"subFat"]] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"fat"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getFatStatus:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"fat"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getFatStatusTitle:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"fat"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getFatStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"fat"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 4:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"visFat"]] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"subFat"]] forKey:@"value"];[dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getSufFatStatus:self.accountEntity.sex value:[[aDict objectForKey:@"subFat"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getSubFatStatusTitle:self.accountEntity.sex value:[[aDict objectForKey:@"subFat"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getSubFatStatusValue:self.accountEntity.sex value:[[aDict objectForKey:@"subFat"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 5:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"water"]] forKey:@"value"];
-                break;
-            case 6:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"BMR"]] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"visFat"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getVisFatStatus:[[aDict objectForKey:@"visFat"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getVisFatStatusTitle:[[aDict objectForKey:@"visFat"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getVisFatStatusValue:[[aDict objectForKey:@"visFat"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 7:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"water"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getWaterStatus:self.accountEntity.sex value:[[aDict objectForKey:@"water"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getWaterStatusTitle:self.accountEntity.sex value:[[aDict objectForKey:@"water"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getWaterStatusValue:self.accountEntity.sex value:[[aDict objectForKey:@"water"] doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 6:
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"BMR"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBMRStatus:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"BMR"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBMRStatusTitle:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"BMR"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBMRStatusValue:self.accountEntity.age sex:self.accountEntity.sex value:[[aDict objectForKey:@"BMR"] doubleValue]]] forKey:@"progres"];
+            }
+                break;
+            case 11:
+            {
                 [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bodyAge"]] forKey:@"value"];
+                [dict setObject:@"1" forKey:@"state"];
+                [dict setObject:@"正常" forKey:@"valueTitle"];
+                [dict setObject:@"0.50" forKey:@"progres"];
+            }
                 break;
             case 8:
-                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"muscle"]] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"muscle"]] forKey:@"value"];[dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getMuscleStatus:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"muscle"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getMuscleStatusTitle:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"muscle"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getMuscleStatusValue:self.accountEntity.height sex:self.accountEntity.sex value:[[aDict objectForKey:@"muscle"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 9:
-                
+            {
                 [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"bone"]] forKey:@"value"];
+                [dict setObject:[NSString stringWithFormat:@"%d",[WeightUtils getBoneStatus:[[aDict objectForKey:@"weight"] doubleValue] sex:self.accountEntity.sex value:[[aDict objectForKey:@"bone"] doubleValue]]] forKey:@"state"];
+                [dict setObject:[NSString stringWithFormat:@"%@",[WeightUtils getBoneStatusTitle:[[aDict objectForKey:@"weight"] doubleValue] sex:self.accountEntity.sex value:[[aDict objectForKey:@"bone"] doubleValue]]] forKey:@"valueTitle"];
+                [dict setObject:[NSString stringWithFormat:@"%f",[WeightUtils getBoneStatusValue:[[aDict objectForKey:@"weight"] doubleValue] sex:self.accountEntity.sex value:[[aDict objectForKey:@"bone"] doubleValue]]] forKey:@"progres"];
+            }
                 break;
             case 10:
-                [dict setObject:[NSString stringWithFormat:@"0.0"] forKey:@"value"];
+            {
+                [dict setObject:[NSString stringWithFormat:@"%@",[aDict objectForKey:@"protein"]] forKey:@"value"];
+                [dict setObject:@"1" forKey:@"state"];
+                [dict setObject:@"正常" forKey:@"valueTitle"];
+                [dict setObject:@"0.5" forKey:@"progres"];
+            }
                 break;
             default:
                 break;
         }
         [dict setObject:[NSString stringWithFormat:@"%d",entity.tid] forKey:@"id"];
         [dict setObject:[NSString stringWithFormat:@"%d",self.accountEntity.aid] forKey:@"aid"];
-        
         if([[DBManager getInstance] insertOrUpdateHomeTarget:dict]){
             DLog(@"HomeTargetInfo insert or update Success.");
         }

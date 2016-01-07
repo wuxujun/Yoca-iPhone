@@ -89,6 +89,18 @@
 
 -(IBAction)weixinLogin:(id)sender
 {
+    UMSocialSnsPlatform *snsPlatform = [UMSocialSnsPlatformManager getSocialPlatformWithName:UMShareToWechatSession];
+    
+    snsPlatform.loginClickHandler(self,[UMSocialControllerService defaultControllerService],YES,^(UMSocialResponseEntity *response){
+        
+        if (response.responseCode == UMSResponseCodeSuccess) {
+            
+            UMSocialAccountEntity *snsAccount = [[UMSocialAccountManager socialAccountDictionary]valueForKey:UMShareToWechatSession];
+            
+            NSLog(@"username is %@, uid is %@, token is %@ url is %@",snsAccount.userName,snsAccount.usid,snsAccount.accessToken,snsAccount.iconURL);
+            
+        }
+    });
 }
 
 -(IBAction)weiboLogin:(id)sender
@@ -112,7 +124,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return 6;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -150,7 +162,7 @@
         {
             self.loginBtn=[UIButton buttonWithType:UIButtonTypeCustom];
             [self.loginBtn setFrame:CGRectMake(20, 6, bounds.size.width-40, 48)];
-            [self.loginBtn setTitle:@"登录" forState:UIControlStateNormal];
+            [self.loginBtn setTitle:@"登  录" forState:UIControlStateNormal];
             [self.loginBtn setBackgroundColor:[UIColor grayColor]];
             [self.loginBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
             [self.loginBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
@@ -166,7 +178,7 @@
             self.registerBtn=[UIButton buttonWithType:UIButtonTypeCustom];
             [self.registerBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
             [self.registerBtn setFrame:CGRectMake(20, 6, bounds.size.width-40, 48)];
-            [self.registerBtn setTitle:@"注册" forState:UIControlStateNormal];
+            [self.registerBtn setTitle:@"注  册" forState:UIControlStateNormal];
             [self.registerBtn setBackgroundColor:[UIColor grayColor]];
             [self.registerBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
             [self.registerBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

@@ -119,6 +119,9 @@
 		4268E7C81A90F19400AA9EE9 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E7C41A90F19400AA9EE9 /* NSString+FontAwesome.m */; };
 		4268E7C91A90F19400AA9EE9 /* UIButton+Bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E7C61A90F19400AA9EE9 /* UIButton+Bootstrap.m */; };
 		4268E7CC1A90F1B300AA9EE9 /* ISegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4268E7CB1A90F1B300AA9EE9 /* ISegmentView.m */; };
+		426966DB1C3C09220008274F /* AvatarEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 426966DA1C3C09220008274F /* AvatarEViewController.m */; };
+		426C2B581BF61D9800E7B752 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 426C2B561BF61D9800E7B752 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		426C2B591BF61D9800E7B752 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 426C2B571BF61D9800E7B752 /* README.md */; };
 		427036EF1AB9C67E00342CC2 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 427036EE1AB9C67E00342CC2 /* CoreBluetooth.framework */; };
 		427293001B61162100422A30 /* ic_Weight.png in Resources */ = {isa = PBXBuildFile; fileRef = 427292F81B61162100422A30 /* ic_Weight.png */; };
 		427293011B61162100422A30 /* ic_Weight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 427292F91B61162100422A30 /* ic_Weight@2x.png */; };
@@ -417,6 +420,11 @@
 		4268E7C61A90F19400AA9EE9 /* UIButton+Bootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bootstrap.m"; sourceTree = "<group>"; };
 		4268E7CA1A90F1B300AA9EE9 /* ISegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISegmentView.h; sourceTree = "<group>"; };
 		4268E7CB1A90F1B300AA9EE9 /* ISegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISegmentView.m; sourceTree = "<group>"; };
+		426966D91C3C09220008274F /* AvatarEViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AvatarEViewController.h; sourceTree = "<group>"; };
+		426966DA1C3C09220008274F /* AvatarEViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AvatarEViewController.m; sourceTree = "<group>"; };
+		426C2B551BF61D9800E7B752 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		426C2B561BF61D9800E7B752 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
+		426C2B571BF61D9800E7B752 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		427036EE1AB9C67E00342CC2 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		427292F81B61162100422A30 /* ic_Weight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_Weight.png; sourceTree = "<group>"; };
 		427292F91B61162100422A30 /* ic_Weight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_Weight@2x.png"; sourceTree = "<group>"; };
@@ -922,6 +930,16 @@
 			path = StrapButton;
 			sourceTree = "<group>";
 		};
+		426C2B541BF61D9800E7B752 /* JSONKit */ = {
+			isa = PBXGroup;
+			children = (
+				426C2B551BF61D9800E7B752 /* JSONKit.h */,
+				426C2B561BF61D9800E7B752 /* JSONKit.m */,
+				426C2B571BF61D9800E7B752 /* README.md */,
+			);
+			path = JSONKit;
+			sourceTree = "<group>";
+		};
 		429CE30A1BD71DB90008B193 /* DMLazyScrollView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1001,6 +1019,8 @@
 				428B34A81B71AC6700B1ED0A /* IStartViewController.m */,
 				429CE3071BD71C270008B193 /* IIntruduceViewController.h */,
 				429CE3081BD71C270008B193 /* IIntruduceViewController.m */,
+				426966D91C3C09220008274F /* AvatarEViewController.h */,
+				426966DA1C3C09220008274F /* AvatarEViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1008,6 +1028,7 @@
 		42CAF21D1A014B8000BF2067 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				426C2B541BF61D9800E7B752 /* JSONKit */,
 				429CE30A1BD71DB90008B193 /* DMLazyScrollView */,
 				42BC5A0D1B6E629F0056951B /* HSwipeTableCell */,
 				4208E0801B4D83CE002DDF0E /* SegmentedControl */,
@@ -1283,6 +1304,7 @@
 				4219239819B214C600681FCA /* Frameworks */,
 				4219239919B214C600681FCA /* Resources */,
 				488482F493A044E694AFC5B3 /* Copy Pods Resources */,
+				6E05ED794DC838F140083363 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1450,6 +1472,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		6E05ED794DC838F140083363 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		8AF4765A99184560BB52681C /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1496,6 +1533,8 @@
 				4268E7BA1A90E6D600AA9EE9 /* BEMCircle.m in Sources */,
 				429DBFE71B5D54A6006A0AB1 /* IChartViewCell.m in Sources */,
 				429FD3511B51577F00E88713 /* IInfoViewCell.m in Sources */,
+				426C2B591BF61D9800E7B752 /* README.md in Sources */,
+				426C2B581BF61D9800E7B752 /* JSONKit.m in Sources */,
 				4254EC891B00F04F0008E43F /* IHomeIView.m in Sources */,
 				42CEEB401B0D7365002C0494 /* IDatePicker.m in Sources */,
 				4268E7C81A90F19400AA9EE9 /* NSString+FontAwesome.m in Sources */,
@@ -1565,6 +1604,7 @@
 				429DBFE41B5D52FF006A0AB1 /* IMyViewController.m in Sources */,
 				42B9D87C1AF9044400C22C23 /* StringUtils.m in Sources */,
 				42E9D10F1A8A3AF000F92F45 /* UserDefaultHelper.m in Sources */,
+				426966DB1C3C09220008274F /* AvatarEViewController.m in Sources */,
 				4254EC8F1B0100600008E43F /* IValuePopupView.m in Sources */,
 				42E9D12F1A8A465600F92F45 /* UIImage+Custome.m in Sources */,
 				4267184E1B307E8000ED125D /* CRNavigationController.m in Sources */,

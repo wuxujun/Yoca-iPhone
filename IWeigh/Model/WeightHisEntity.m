@@ -53,6 +53,8 @@
     }
     else if([key isEqualToString:@"protein"]){
         self.protein=value;
+    }else if([key isEqualToString:@"sholai"]){
+        self.sholai=value;
     }else if([key isEqualToString:@"bust"]){
         self.bust=[value intValue];
     }else if([key isEqualToString:@"waistline"]){
@@ -76,7 +78,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"wid",@"aid",@"pickTime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein",@"bust",@"waistline",@"hips",@"avatar", nil];
+    return [NSArray arrayWithObjects:@"wid",@"aid",@"pickTime",@"weight",@"fat",@"subFat",@"visFat",@"water",@"BMR",@"bodyAge",@"muscle",@"bone",@"bmi",@"isSync",@"addtime",@"protein",@"bust",@"waistline",@"hips",@"avatar",@"sholai", nil];
 }
 
 +(void)generateInsertSql:(NSDictionary *)info completion:(SqlBlock)completion

@@ -227,9 +227,9 @@
             CGRect frame=self.userField.frame;
             frame.size.width=60;
             [leftView setFrame:frame];
-            self.userLabel=[[UILabel alloc]initWithFrame:CGRectMake(5, 10, 60, 26)];
+            self.userLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
             [self.userLabel setText:@"手机号"];
-            [self.userLabel setTextAlignment:NSTextAlignmentCenter];
+            [self.userLabel setTextAlignment:NSTextAlignmentLeft];
             [self.userLabel setTextColor:APP_FONT_COLOR];
             [leftView addSubview:self.userLabel];
             
@@ -268,8 +268,8 @@
             CGRect frame=self.passField.frame;
             frame.size.width=60;
             [leftView setFrame:frame];
-            self.passLabel=[[UILabel alloc]initWithFrame:CGRectMake(5, 10, 60, 26)];
-            self.passLabel.textAlignment=NSTextAlignmentCenter;
+            self.passLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
+            self.passLabel.textAlignment=NSTextAlignmentLeft;
             self.passLabel.text=@"密码";
             [self.passLabel setTextColor:[UIColor grayColor]];
             [leftView addSubview:self.passLabel];
@@ -308,8 +308,8 @@
             CGRect frame=self.codeField.frame;
             frame.size.width=60;
             [leftView setFrame:frame];
-            self.codeLabel=[[UILabel alloc]initWithFrame:CGRectMake(5, 10, 60, 26)];
-            self.codeLabel.textAlignment=NSTextAlignmentCenter;
+            self.codeLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
+            self.codeLabel.textAlignment=NSTextAlignmentLeft;
             self.codeLabel.text=@"验证码";
             [self.codeLabel setTextColor:[UIColor grayColor]];
             [leftView addSubview:self.codeLabel];
@@ -318,7 +318,7 @@
             [cell addSubview:self.codeField];
             
             self.codeButton=[UIButton buttonWithType:UIButtonTypeCustom];
-            [self.codeButton.titleLabel setFont:[UIFont boldSystemFontOfSize:16.0f]];
+            [self.codeButton.titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
             [self.codeButton setFrame:CGRectMake(bounds.size.width-100, (80-46)/2, 80, 46)];
             [self.codeButton setTitle:@"点击获取" forState:UIControlStateNormal];
             [self.codeButton greenStyle];
@@ -337,7 +337,7 @@
             self.regButton=[UIButton buttonWithType:UIButtonTypeCustom];
             [self.regButton.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
             [self.regButton setFrame:CGRectMake(20, (80-46)/2, bounds.size.width-40, 46)];
-            [self.regButton setTitle:@"注册" forState:UIControlStateNormal];
+            [self.regButton setTitle:@"注  册" forState:UIControlStateNormal];
             [self.regButton greenStyle];
             if (isCodeSender) {
                 [self.regButton setEnabled:YES];

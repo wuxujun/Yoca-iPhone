@@ -207,9 +207,9 @@
             CGRect frame=self.userField.frame;
             frame.size.width=60;
             [leftView setFrame:frame];
-            self.userLabel=[[UILabel alloc]initWithFrame:CGRectMake(5, 10, 60, 26)];
+            self.userLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
             [self.userLabel setText:@"帐号"];
-            [self.userLabel setTextAlignment:NSTextAlignmentCenter];
+            [self.userLabel setTextAlignment:NSTextAlignmentLeft];
             [self.userLabel setTextColor:APP_FONT_COLOR];
             [leftView addSubview:self.userLabel];
             
@@ -248,9 +248,9 @@
             CGRect frame=self.passField.frame;
             frame.size.width=60;
             [leftView setFrame:frame];
-            self.passLabel=[[UILabel alloc]initWithFrame:CGRectMake(5, 10, 60, 26)];
+            self.passLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
             [self.passLabel setText:@"密码"];
-            [self.passLabel setTextAlignment:NSTextAlignmentCenter];
+            [self.passLabel setTextAlignment:NSTextAlignmentLeft];
             [self.passLabel setTextColor:APP_FONT_COLOR];
             [leftView addSubview:self.passLabel];
             
@@ -266,7 +266,7 @@
             self.loginButton=[UIButton buttonWithType:UIButtonTypeCustom];
             [self.loginButton.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
             [self.loginButton setFrame:CGRectMake(20, (80-48)/2, bounds.size.width-40, 48)];
-            [self.loginButton setTitle:@"登录" forState:UIControlStateNormal];
+            [self.loginButton setTitle:@"登  录" forState:UIControlStateNormal];
             [self.loginButton setBackgroundColor:[UIColor greenColor]];
             [self.loginButton addTarget:self action:@selector(loginRequest:) forControlEvents:UIControlEventTouchUpInside];
             [self.loginButton greenStyle];

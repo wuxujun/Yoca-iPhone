@@ -40,11 +40,16 @@ static DBManager *sharedDBManager=nil;
     return [DBHelper queryAll:[AccountEntity class] conditions:@"WHERE type=? order by id " params:@[@(type)]];
 }
 
--(NSArray*)queryAccountForID:(NSInteger)aId
+-(NSArray*)queryAccountForID:(long)aId
 {
     return [DBHelper queryAll:[AccountEntity class] conditions:@"WHERE id=?" params:@[@(aId)]];
 }
 
+-(BOOL)updateAccountStatus:(long)aId
+{
+    NSString* sql=[NSString stringWithFormat:@"UPDATE t_account set isSync=1 WHERE id=%ld",(long)aId];
+    return [DBHelper excuteSql:sql withArguments:@[]];
+}
 
 - (NSInteger)queryWeightHisCountWithId:(NSString *)mId
 {
@@ -195,7 +200,7 @@ static DBManager *sharedDBManager=nil;
 
 -(NSArray*)queryTargetInfo
 {
-    NSString* sql=@"SELECT * FROM t_target_info ORDER BY type desc";
+    NSString* sql=@"SELECT * FROM t_target_info where type>0 ORDER BY type asc";
     return [DBHelper queryAll:[TargetInfoEntity class] sql:sql params:@[]];
 }
 -(NSString*)queryTargetInfoForType:(NSInteger)type
@@ -276,6 +281,25 @@ static DBManager *sharedDBManager=nil;
     return [DBHelper excuteSql:sql withArguments:@[]];
 }
 
+-(BOOL)updateWeightHisStatus:(NSInteger)wid
+{
+    NSString* sql=[NSString stringWithFormat:@"UPDATE t_weight_his SET isSync=1 WHERE wid=%ld",(long)wid];
+    return [DBHelper excuteSql:sql withArguments:@[]];
+}
+
+-(BOOL)updateWeightStatus:(NSInteger)wid
+{
+    NSString* sql=[NSString stringWithFormat:@"UPDATE t_weight SET isSync=1 WHERE wid=%ld",(long)wid];
+    return [DBHelper excuteSql:sql withArguments:@[]];
+}
+
+-(NSArray*)queryWeightHisWithWeight:(NSString *)pickTime account:(NSInteger)aid
+{
+    NSString* sql=[NSString stringWithFormat:@"SELECT pickTime,sum(weight)/count(1) as weight,sum(fat)/count(1) as fat,sum(subFat)/count(1) as subFat,sum(visFat)/count(1) as visFat,sum(water)/count(1) as water,sum(bmr)/count(1) as BMR,sum(bodyAge)/count(1) as bodyAge,sum(muscle)/count(1) as muscle,sum(bone)/count(1) as bone,sum(bmi)/count(1) as bmi,sum(protein)/count(1) as protein FROM t_weight_his where pickTime='%@' and aid=%d",pickTime,aid];
+//    DLog(@"%@",sql);
+    return [DBHelper queryAll:[WeightEntity class] sql:sql params:@[]];
+}
+
 -(NSArray*)queryWeightHisWithAccountId:(NSInteger)aid
 {
     NSString *sql = [NSString stringWithFormat:@"SELECT * from t_weight_his WHERE aid=%ld ORDER BY pickTime DESC ",(long)aid];
@@ -331,6 +355,8 @@ static DBManager *sharedDBManager=nil;
     NSString *sql = [NSString stringWithFormat:@"SELECT * from t_home_target WHERE aid=%ld ORDER BY TYPE ASC",(long)aid];
     if (state==1) {
         sql=[NSString stringWithFormat:@"SELECT * FROM t_home_target WHERE aid=%ld and isShow=1 ORDER BY TYPE ASC",(long)aid];
+    }else if (state==2){
+        sql=[NSString stringWithFormat:@"SELECT * FROM t_home_target WHERE aid=%ld and type<>0 ORDER BY TYPE ASC",(long)aid];
     }
     return [DBHelper queryAll:[HomeTargetEntity class] sql:sql params:@[]];
 }

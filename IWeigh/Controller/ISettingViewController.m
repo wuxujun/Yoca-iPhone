@@ -80,7 +80,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    return 3;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -93,28 +93,31 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
-    NSArray *titles = @[@"称重提醒",@"关于我们"];
+    NSArray *titles = @[@"称重提醒",@"目标显示",@"关于我们"];
     CGRect bounds=self.view.frame;
     cell.backgroundColor=APP_TABLEBG_COLOR;
-//    switch (indexPath.row) {
-//        case 2:
-//        {
-//            UILabel* uLabel=[[UILabel alloc]init];
-//            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
-//            [uLabel setText:titles[indexPath.row]];
-//            [uLabel setTextColor:APP_FONT_COLOR];
-//            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
-//            [cell addSubview:uLabel];
-//            
-//            UISwitch* sw=[[UISwitch alloc]initWithFrame:CGRectMake(bounds.size.width-70, (64-28)/2, 100, 28)];
-//            [sw addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
-//            [cell addSubview:sw];
-//            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
-//            [img setBackgroundColor:[UIColor blackColor]];
-//            [cell addSubview:img];
-//            [cell sendSubviewToBack:img];
-//        }
-//            break;
+    switch (indexPath.row) {
+        case 1:
+        {
+            UILabel* uLabel=[[UILabel alloc]init];
+            [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
+            [uLabel setText:titles[indexPath.row]];
+            [uLabel setTextColor:APP_FONT_COLOR];
+            [uLabel setFont:[UIFont systemFontOfSize:18.0f]];
+            [cell addSubview:uLabel];
+            
+            UISwitch* sw=[[UISwitch alloc]initWithFrame:CGRectMake(bounds.size.width-70, (64-28)/2, 100, 28)];
+            [sw addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
+            bool on=[[UserDefaultHelper objectForKey:CONF_SHOW_TARGET_VALUE] boolValue];
+            [sw setOn:on];
+            [cell addSubview:sw];
+            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 63.5, bounds.size.width, 0.5)];
+            [img setBackgroundColor:[UIColor blackColor]];
+            [cell addSubview:img];
+            [cell sendSubviewToBack:img];
+            cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        }
+            break;
 //        case 1:
 //        {
 //            UILabel* uLabel=[[UILabel alloc]init];
@@ -129,8 +132,8 @@
 //            [cell sendSubviewToBack:img];
 //        }
 //            break;
-//        default:
-//        {
+        default:
+        {
             UILabel* uLabel=[[UILabel alloc]init];
             [uLabel setFrame:CGRectMake(10, 10, 200, 44)];
             [uLabel setText:titles[indexPath.row]];
@@ -141,11 +144,11 @@
             [img setBackgroundColor:[UIColor blackColor]];
             [cell addSubview:img];
             [cell sendSubviewToBack:img];
-            
+
             [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-//        }
-//            break;
-//    }
+        }
+            break;
+    }
     
     return cell;
 }
@@ -161,7 +164,7 @@
 //    else if(indexPath.row==1){
 //        [MobClick checkUpdateWithDelegate:self selector:@selector(appUpdate:)];
 //    }
-    else if(indexPath.row==1){
+    else if(indexPath.row==2){
         IAboutViewController* dController=[[IAboutViewController alloc]init];
         dController.hidesBottomBarWhenPushed=YES;
         [self.navigationController pushViewController:dController animated:YES];
@@ -179,14 +182,14 @@
 -(IBAction)switchAction:(id)sender
 {
     UISwitch* sw=(UISwitch*)sender;
-    [UserDefaultHelper setObject:[NSNumber numberWithBool:sw.on] forKey:APP_OPEN_PASSWORD];
-    if(sw.on){
-        [DMPasscode setupPasscodeInViewController:self completion:^(BOOL success) {
-            DLog(@"SUCCESS");
-        }];
-    }else{
-        [DMPasscode removePasscode];
-    }
+    [UserDefaultHelper setObject:[NSNumber numberWithBool:sw.on] forKey:CONF_SHOW_TARGET_VALUE];
+//    if(sw.on){
+//        [DMPasscode setupPasscodeInViewController:self completion:^(BOOL success) {
+//            DLog(@"SUCCESS");
+//        }];
+//    }else{
+//        [DMPasscode removePasscode];
+//    }
     
 }
 

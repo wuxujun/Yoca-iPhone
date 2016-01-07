@@ -9,9 +9,14 @@
 #import "IForgotPwdViewController.h"
 #import "HKeyboardTableView.h"
 #import <SMS_SDK/SMS_SDK.h>
+#import "UIButton+Bootstrap.h"
 #import "UIViewController+NavigationBarButton.h"
+#import "StringUtils.h"
 
 @interface IForgotPwdViewController ()<UITextFieldDelegate>
+{
+    bool            isCodeSender;
+}
 
 @end
 
@@ -27,7 +32,8 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
- 
+    
+    isCodeSender=false;
     [self addRightButtonWithTitle:@"下一步" withSel:@selector(pwdRequest)];
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -62,12 +68,58 @@
     
 }
 
+-(IBAction)codeRequest:(id)sender
+{
+    [self codeRequest];
+}
 -(void)codeRequest
 {
-    [SMS_SDK getVerifyCodeByPhoneNumber:@"13958197001" AndZone:@"+86" result:^(enum SMS_GetVerifyCodeResponseState state) {
-        DLog(@"%d",state);
+    NSString* userStr=[self.userField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSString* errorMsg;
+    if (userStr.length==0) {
+        errorMsg=@"请输入手机号";
+        [self alertRequestResult:errorMsg isPop:NO];
+        return;
+    }
+    if (![StringUtils checkTelNumber:userStr]) {
+        errorMsg=@"手机号格式错误";
+        [self alertRequestResult:errorMsg isPop:NO];
+        return;
+    }
+    [SMS_SDK getVerificationCodeBySMSWithPhone:userStr zone:@"86" result:^(SMS_SDKError *error) {
+        if (error) {
+            [self alertRequestResult:error.errorDescription isPop:NO];
+        }else{
+            isCodeSender=YES;
+            [self timeout];
+        }
     }];
 
+}
+
+-(void)timeout
+{
+    __block int timeout=60;
+    dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+    dispatch_source_set_event_handler(timer, ^{
+        if (timeout<=0) {
+            dispatch_source_cancel(timer);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_codeButton setTitle:@"点击获取" forState:UIControlStateNormal];
+            });
+        }else{
+            int minutes=timeout/60;
+            int seconds=timeout%60;
+            NSString* strTime=[NSString stringWithFormat:@"%.2d秒",seconds];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_codeButton setTitle:strTime forState:UIControlStateNormal];
+            });
+            timeout--;
+        }
+    });
+    dispatch_resume(timer);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -99,77 +151,97 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
+    
+    cell.backgroundColor=APP_TABLEBG_COLOR;
     CGRect bounds=self.view.frame;
     switch (indexPath.row) {
         case 0:
         {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(20, (58-26)/2, 80, 26)];
-            [uLabel setText:@"手机号"];
-            [uLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
-            [cell addSubview:uLabel];
+            self.userInputBG=[[UIView alloc]initWithFrame:CGRectMake(19.5, (80-46)/2-0.5, bounds.size.width-39, 47)];
+            [ self.userInputBG setBackgroundColor:APP_FONT_COLOR];
+            self.userInputBG.layer.masksToBounds=YES;
+            self.userInputBG.layer.cornerRadius=5;
+            [cell addSubview: self.userInputBG];
             
-            UITextField* areaField=[[UITextField alloc] initWithFrame:CGRectMake(80, (58-36)/2, 59, 36)];
-            [areaField setBackground:[[UIImage imageNamed:@"long_input_bg"] stretchableImageWithLeftCapWidth:50 topCapHeight:50]];
-            [areaField setTag:AREACODE_FIELD];
-            [areaField setText:@"+86"];
-            [areaField setEnabled:NO];
-            [areaField setBorderStyle:UITextBorderStyleNone];
-            [areaField setFont:[UIFont systemFontOfSize:16.0f]];
-            [areaField setReturnKeyType:UIReturnKeyNext];
-            [cell addSubview:areaField];
-            
-            
-            self.userField=[[UITextField alloc] initWithFrame:CGRectMake(140, (58-36)/2, 160, 36)];
-            [self.userField setBackground:[[UIImage imageNamed:@"long_input_bg"] stretchableImageWithLeftCapWidth:50 topCapHeight:50]];
+            self.userField=[[UITextField alloc] initWithFrame:CGRectMake(20,(80-46)/2, bounds.size.width-40, 46)];
+            [self.userField setTextColor:APP_FONT_COLOR];
+            [self.userField setBackgroundColor:APP_TABLEBG_COLOR];
+            [self.userField setAutocorrectionType:UITextAutocorrectionTypeNo];
             [self.userField setTag:USER_FIELD];
             [self.userField setPlaceholder:@"请输入手机号"];
-            [self.userField setBorderStyle:UITextBorderStyleNone];
-            [self.userField setFont:[UIFont systemFontOfSize:16.0f]];
+            [self.userField setBorderStyle:UITextBorderStyleRoundedRect];
+            [self.userField setFont:[UIFont systemFontOfSize:14.0f]];
             [self.userField setReturnKeyType:UIReturnKeyNext];
-            [self.userField setKeyboardType:UIKeyboardTypePhonePad];
-        
+            [self.userField setClearButtonMode:UITextFieldViewModeWhileEditing];
+            [self.userField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+            [self.userField setValue:APP_FONT_COLOR forKeyPath:@"_placeholderLabel.textColor"];
+            [self.userField.layer setMasksToBounds:YES];
+            [self.userField.layer setCornerRadius:5.0f];
             
+            UIView *leftView=[[UIView alloc]init];
+            CGRect frame=self.userField.frame;
+            frame.size.width=60;
+            [leftView setFrame:frame];
+            self.userLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
+            [self.userLabel setText:@"手机号"];
+            [self.userLabel setTextAlignment:NSTextAlignmentLeft];
+            [self.userLabel setTextColor:APP_FONT_COLOR];
+            [leftView addSubview:self.userLabel];
+            
+            self.userField.leftViewMode=UITextFieldViewModeAlways;
+            self.userField.leftView=leftView;
             [self.userField setDelegate:self];
             [cell addSubview:self.userField];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 59, bounds.size.width, 1)];
-            [img setImage:[UIImage imageNamed:@"contentview_topline"]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
         }
             break;
         case 1:
         {
-            UILabel* uLabel=[[UILabel alloc]init];
-            [uLabel setFrame:CGRectMake(20, (58-26)/2, 80, 26)];
-            [uLabel setText:@"验证码"];
-            [uLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
-            [cell addSubview:uLabel];
+            self.codeInputBG=[[UIView alloc]initWithFrame:CGRectMake(19.5, (80-46)/2-0.5, bounds.size.width-139, 47)];
+            [self.codeInputBG setBackgroundColor:APP_FONT_COLOR];
+            self.codeInputBG.layer.masksToBounds=YES;
+            self.codeInputBG.layer.cornerRadius=5;
+            [cell addSubview:self.codeInputBG];
             
-            self.codeField=[[UITextField alloc] initWithFrame:CGRectMake(80, (58-36)/2, 100, 36)];
-            [self.codeField setBackground:[[UIImage imageNamed:@"long_input_bg"] stretchableImageWithLeftCapWidth:50 topCapHeight:50]];
+            self.codeField=[[UITextField alloc] initWithFrame:CGRectMake(20, (80-46)/2, bounds.size.width-140, 46)];
+            [self.codeField setBackgroundColor:APP_TABLEBG_COLOR];
+            [self.codeField setTextColor:APP_FONT_COLOR];
+            [self.codeField setAutocorrectionType:UITextAutocorrectionTypeNo];
             [self.codeField setTag:CODE_FIELD];
-            [self.codeField setBorderStyle:UITextBorderStyleNone];
-            [self.codeField setFont:[UIFont systemFontOfSize:16.0f]];
+            [self.codeField setPlaceholder:@"验证码"];
+            [self.codeField setBorderStyle:UITextBorderStyleRoundedRect];
+            [self.codeField setFont:[UIFont systemFontOfSize:14.0f]];
             [self.codeField setReturnKeyType:UIReturnKeyGo];
-            [self.codeField setKeyboardType:UIKeyboardTypeNumberPad];
             [self.codeField setDelegate:self];
+            [self.codeField setValue:APP_FONT_COLOR forKeyPath:@"_placeholderLabel.textColor"];
+            [self.codeField.layer setMasksToBounds:YES];
+            [self.codeField.layer setCornerRadius:5.0f];
+            
+            UIView *leftView=[[UIView alloc]init];
+            CGRect frame=self.codeField.frame;
+            frame.size.width=60;
+            [leftView setFrame:frame];
+            self.codeLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 10, 60, 26)];
+            self.codeLabel.textAlignment=NSTextAlignmentLeft;
+            self.codeLabel.text=@"验证码";
+            [self.codeLabel setTextColor:[UIColor grayColor]];
+            [leftView addSubview:self.codeLabel];
+            self.codeField.leftViewMode=UITextFieldViewModeAlways;
+            self.codeField.leftView=leftView;
             [cell addSubview:self.codeField];
             
-            
             self.codeButton=[UIButton buttonWithType:UIButtonTypeCustom];
-            [self.codeButton setFrame:CGRectMake(200, (58-36)/2, 100, 36)];
+            [self.codeButton.titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
+            [self.codeButton setFrame:CGRectMake(bounds.size.width-100, (80-46)/2, 80, 46)];
             [self.codeButton setTitle:@"点击获取" forState:UIControlStateNormal];
-            [self.codeButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-            [self.codeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [self.codeButton setBackgroundColor:[UIColor grayColor]];
-            [self.codeButton addTarget:self action:@selector(codeRequest) forControlEvents:UIControlEventTouchUpInside];
+            [self.codeButton greenStyle];
+            if (isCodeSender) {
+                [self.codeButton setEnabled:NO];
+            }else{
+                [self.codeButton setEnabled:YES];
+            }
+            [self.codeButton addTarget:self action:@selector(codeRequest:) forControlEvents:UIControlEventTouchUpInside];
             
             [cell addSubview:self.codeButton];
-            UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 59, bounds.size.width, 1)];
-            [img setImage:[UIImage imageNamed:@"contentview_topline"]];
-            [cell addSubview:img];
-            [cell sendSubviewToBack:img];
         }
             break;
         case 4:

@@ -14,7 +14,7 @@
 -(void)setValue:(id)value forKey:(NSString *)key
 {
     if ([key isEqualToString:@"id"]) {
-        self.aid=[value intValue];
+        self.aid=[value longLongValue];
     }else if([key isEqualToString:@"type"]){
         self.type=[value intValue];
     }else if([key isEqualToString:@"userNick"]){
@@ -33,10 +33,11 @@
         self.targetType=[value intValue];
     }else if([key isEqualToString:@"targetWeight"]){
         self.targetWeight=value;
+    }else if([key isEqualToString:@"targetFat"]){
+        self.targetFat=value;
     }else if([key isEqualToString:@"doneTime"]){
         self.doneTime=value;
-    }
-    else if([key isEqualToString:@"weight"]){
+    }else if([key isEqualToString:@"weight"]){
         self.weight=value;
     }else if([key isEqualToString:@"fat"]){
         self.fat=value;
@@ -82,7 +83,7 @@
 
 +(NSArray*)fields
 {
-    return [NSArray arrayWithObjects:@"id",@"type",@"userNick",@"sex",@"birthday",@"height",@"age",@"avatar",@"targetType",@"targetWeight",@"doneTime",@"isSync",@"status",@"addtime", nil];
+    return [NSArray arrayWithObjects:@"id",@"type",@"userNick",@"sex",@"birthday",@"height",@"age",@"avatar",@"targetType",@"targetWeight",@"targetFat",@"doneTime",@"isSync",@"status",@"addtime", nil];
 }
 
 + (void)generateInsertSql:(NSDictionary *)aInfo completion:(SqlBlock)completion
@@ -97,20 +98,26 @@
         NSString *value = values[i];
         NSString *key = keys[i];
 //        DLog(@"%@:%@",key,value);
-        NSArray *integerKeyArray = @[@"id", @"type", @"sex",@"height",@"age",@"targetType",@"isSync",@"status"];
-        if ([integerKeyArray containsObject:key]) {
+        if ([key isEqualToString:@"id"]) {
             [finalKeys addObject:key];
-            [finalValues addObject:@([value integerValue])];
+            [finalValues addObject:@([value longLongValue])];
             [placeholder addObject:@"?"];
-        }
-        else{
-            if (![value isEqual:[NSNull null]] && value.length > 0){
-                [finalValues addObject:value];
-            }else{
-                [finalValues addObject:@""];
+        }else{
+            NSArray *integerKeyArray = @[@"type", @"sex",@"height",@"age",@"targetType",@"isSync",@"status"];
+            if ([integerKeyArray containsObject:key]) {
+                [finalKeys addObject:key];
+                [finalValues addObject:@([value integerValue])];
+                [placeholder addObject:@"?"];
             }
-            [finalKeys addObject:key];
-            [placeholder addObject:@"?"];
+            else{
+                if (![value isEqual:[NSNull null]] && value.length > 0){
+                    [finalValues addObject:value];
+                }else{
+                    [finalValues addObject:@""];
+                }
+                [finalKeys addObject:key];
+                [placeholder addObject:@"?"];
+            }
         }
     }
     
@@ -133,23 +140,22 @@
     for (int i=0; i<values.count; i++) {
         NSString *value = values[i];
         NSString *key = keys[i];
-        
-        NSArray *integerKeyArray = @[@"id", @"type", @"sex",@"height",@"age",@"targetType",@"isSync",@"status"];
-        if ([integerKeyArray containsObject:key]) {
-            if ([key isEqualToString:@"id"]) {
-                mID = @([value integerValue]);
-            }else{
+        if ([key isEqualToString:@"id"]) {
+            mID=@([value longLongValue]);
+        }else{
+            NSArray *integerKeyArray = @[@"type", @"sex",@"height",@"age",@"targetType",@"isSync",@"status"];
+            if ([integerKeyArray containsObject:key]) {
                 [finalValues addObject:@([value integerValue])];
                 [kvPairs addObject:[NSString stringWithFormat:@"%@=?", keys[i]]];
             }
-        }
-        else{
-            if (![value isEqual:[NSNull null]] && value.length > 0) {
-                [finalValues addObject:value];
-            }else{
-                [finalValues addObject:@""];
+            else{
+                if (![value isEqual:[NSNull null]] && value.length > 0) {
+                    [finalValues addObject:value];
+                }else{
+                    [finalValues addObject:@""];
+                }
+                [kvPairs addObject:[NSString stringWithFormat:@"%@=?", keys[i]]];
             }
-            [kvPairs addObject:[NSString stringWithFormat:@"%@=?", keys[i]]];
         }
     }
     

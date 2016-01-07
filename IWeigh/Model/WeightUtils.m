@@ -14,55 +14,29 @@
 +(int)getWeightStatus:(int)nHeight sex:(int)nSex value:(double)fValue
 {
     int result=1;
-    switch (nSex) {
-        case 0:
-        {
-            int val=(nHeight-100);
-            if (fValue<(val*1.1)) {
-                result=0;
-            }else if(fValue>(val*1.1)){
-                result=2;
-            }
-        }
-            break;
-        default:
-        {
-            int val=(nHeight-105);
-            if (fValue<(val*1.1)) {
-                result=0;
-            }else if(fValue>(val*1.1)){
-                result=2;
-            }
-        }
-            break;
+    int w=nHeight-105;
+    if (nSex==1) {
+        w=nHeight-100;
+    }
+    if (fValue>(w*1.1)){
+        result=2;
+    }else if(fValue<(w*0.9)){
+        result=0;
     }
     return result;
 }
 
 +(NSString*)getWeightStatusTitle:(int)nHeight sex:(int)nSex value:(double)fValue
 {
-    NSString* result=@"正常";
-    switch (nSex) {
-        case 0:
-        {
-            int val=(nHeight-100);
-            if (fValue<(val*1.1)) {
-                result=@"偏瘦";
-            }else if(fValue>(val*1.1)){
-                result=@"偏胖";
-            }
-        }
-            break;
-        default:
-        {
-            int val=(nHeight-105);
-            if (fValue<(val*1.1)) {
-                result=@"偏瘦";
-            }else if(fValue>(val*1.1)){
-                result=@"偏胖";
-            }
-        }
-            break;
+    NSString* result=@"标准";
+    int w=nHeight-105;
+    if (nSex==1) {
+        w=nHeight-100;
+    }
+    if (fValue>(w*1.1)){
+        result=@"偏胖";
+    }else if(fValue<(w*0.9)){
+        result=@"偏瘦";
     }
     
     return result;
@@ -71,27 +45,14 @@
 +(double)getWeightStatusValue:(int)nHeight sex:(int)nSex value:(double)fValue
 {
     double result=0.5;
-    switch (nSex) {
-        case 0:
-        {
-            int val=(nHeight-100);
-            if (fValue<(val*1.1)) {
-                result=0.25;
-            }else if(fValue>(val*1.1)){
-                result=0.75;
-            }
-        }
-            break;
-        default:
-        {
-            int val=(nHeight-105);
-            if (fValue<(val*1.1)) {
-                result=0.25;
-            }else if(fValue>(val*1.1)){
-                result=0.75;
-            }
-        }
-            break;
+    int w=nHeight-105;
+    if (nSex==1) {
+        w=nHeight-100;
+    }
+    if (fValue>(w*1.1)){
+        result=0.25;
+    }else if(fValue<(w*0.9)){
+        result=0.85;
     }
     return result;
 }
@@ -101,20 +62,20 @@
 {
     int result=1;
     switch (nSex){
-        case 0:{
-            if (nAge>=18&&nAge<=39){
+        case 1:{
+            if (nAge>17&&nAge<40){
                 if (fValue<21.0){
                     result=0;
                 }else if (fValue>27.0){
                     result=2;
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<22.0){
                     result=0;
-                }else if (fValue>29.0){
+                }else if (fValue>28.0){
                     result=2;
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<23.0){
                     result=0;
                 }else if (fValue>29.0){
@@ -124,19 +85,19 @@
             break;
         }
         default:{
-            if (nAge>=18&&nAge<=39){
+            if (nAge>17&&nAge<40){
                 if (fValue<11.0){
                     result=0;
-                }else if (fValue>17.0){
+                }else if (fValue>16.0){
                     result=2;
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<12.0){
                     result=0;
                 }else if (fValue>17.0){
                     result=2;
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<14.0){
                     result=0;
                 }else if (fValue>19.0){
@@ -151,48 +112,48 @@
 
 +(NSString*)getFatStatusTitle:(int)nAge sex:(int)nSex value:(double)fValue
 {
-    NSString* result=@"健康";
+    NSString* result=@"标准";
     switch (nSex){
-        case 0:{
-            if (nAge>=18&&nAge<=39){
+        case 1:{
+            if (nAge>17&&nAge<40){
                 if (fValue<21.0){
-                    result=@"偏瘦";
+                    result=@"偏低";
                 }else if (fValue>27.0){
-                    result=@"偏胖";
+                    result=@"偏高";
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<22.0){
-                    result=@"偏瘦";
-                }else if (fValue>29.0){
-                    result=@"偏胖";
+                    result=@"偏低";
+                }else if (fValue>28.0){
+                    result=@"偏高";
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<23.0){
-                    result=@"偏瘦";
+                    result=@"偏低";
                 }else if (fValue>29.0){
-                    result=@"偏胖";
+                    result=@"偏高";
                 }
             }
             break;
         }
         default:{
-            if (nAge>=18&&nAge<=39){
+            if (nAge>17&&nAge<40){
                 if (fValue<11.0){
-                    result=@"偏瘦";
-                }else if (fValue>17.0){
-                    result=@"偏胖";
+                    result=@"偏低";
+                }else if (fValue>16.0){
+                    result=@"偏高";
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<12.0){
-                    result=@"偏瘦";
+                    result=@"偏低";
                 }else if (fValue>17.0){
-                    result=@"偏胖";
+                    result=@"偏高";
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<14.0){
-                    result=@"偏瘦";
+                    result=@"偏低";
                 }else if (fValue>19.0){
-                    result=@"偏胖";
+                    result=@"偏高";
                 }
             }
             break;
@@ -205,48 +166,48 @@
 {
     double result=0.5;
     switch (nSex) {
-        case 0:
+        case 1:
         {
-            if (nAge>=18&&nAge<=39) {
+            if (nAge>17&&nAge<40) {
                 if (fValue<21.0) {
                     result=0.25;
                 }else if(fValue>27.0){
-                    result=0.75;
+                    result=0.85;
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<22.0){
-                    result=0.26;
-                }else if (fValue>29.0){
-                    result=0.76;
+                    result=0.25;
+                }else if (fValue>28.0){
+                    result=0.85;
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<23.0){
-                    result=0.26;
+                    result=0.25;
                 }else if (fValue>29.0){
-                    result=0.80;
+                    result=0.85;
                 }
             }
         }
             break;
         default:
         {
-            if (nAge>=18&&nAge<=39){
+            if (nAge>17&&nAge<40){
                 if (fValue<11.0){
                     result=0.25;
-                }else if (fValue>17.0){
-                    result=0.70;
+                }else if (fValue>16.0){
+                    result=0.85;
                 }
-            }else if(nAge>=40&&nAge<=59){
+            }else if(nAge>39&&nAge<60){
                 if (fValue<12.0){
-                    result=0.23;
+                    result=0.25;
                 }else if (fValue>17.0){
-                    result=0.76;
+                    result=0.85;
                 }
-            }else if(nAge>=60){
+            }else if(nAge>59){
                 if (fValue<14.0){
-                    result=0.24;
+                    result=0.25;
                 }else if (fValue>19.0){
-                    result=0.73;
+                    result=0.85;
                 }
             }
         }
@@ -260,7 +221,7 @@
 {
     int result=1;
     switch (nSex){
-        case 0:{
+        case 1:{
             if (fValue<18.5){
                 result=0;
             }else if(fValue>26.7){
@@ -284,7 +245,7 @@
 {
     NSString* result=@"标准";
     switch (nSex){
-        case 0:{
+        case 1:{
             if (fValue<18.5){
                 result=@"偏低";
             }else if(fValue>26.7){
@@ -308,19 +269,19 @@
 {
     double result=0.5;
     switch (nSex){
-        case 0:{
+        case 1:{
             if (fValue<18.5){
-                result=0.24;
+                result=0.25;
             }else if(fValue>26.7){
-                result=0.70;
+                result=0.85;
             }
             break;
         }
         default:{
             if (fValue<8.6){
-                result=0.18;
+                result=0.25;
             }else if(fValue>16.7){
-                result=0.72;
+                result=0.85;
             }
             break;
         }
@@ -331,37 +292,33 @@
 #pragma mark - VisFat
 +(int)getVisFatStatus:(double)fValue
 {
-    if (fValue>1&&fValue<9){
-        return 0;
-    }else if(fValue>10&&fValue<14){
-        return 2;
-    }else if(fValue>15){
-        return 3;
+    int result=1;
+    if (fValue<1){
+        result=0;
+    }else if(fValue>9){
+        result=2;
     }
-    return 1;
+    return result;
 }
 
 +(NSString*)getVisFatStatusTitle:(double)fValue
 {
-    if (fValue>1&&fValue<9){
-        return @"正常";
-    }else if(fValue>10&&fValue<14){
-        return @"偏高";
-    }else if(fValue>15){
-        return @"严重偏高";
+    NSString* result=@"标准";
+    if (fValue<1){
+        result=@"偏低";
+    }else if(fValue>9){
+        result=@"偏高";
     }
-    return @"标准";
+    return result;
 }
 
 +(double)getVisFatStatusValue:(double)fValue
 {
-    double result=0.20;
-    if (fValue>1&&fValue<9){
-        result=0.50;
-    }else if(fValue>10&&fValue<14){
-        result=0.75;
-    }else if(fValue>15){
-        result=0.90;
+    double result=0.50;
+    if (fValue<1){
+        result=0.25;
+    }else if(fValue>9){
+        result=0.85;
     }
     return result;
 }
@@ -369,61 +326,61 @@
 #pragma mark - Water
 +(int)getWaterStatus:(int)nSex value:(double)fValue
 {
-    if (nSex==1){
-        if (fValue>=55&&fValue<=65){
-            return 1;
+    int result=1;
+    if (nSex==0){
+        if (fValue>65){
+            result=2;
         }else if(fValue<55){
-            return 0;
+            result=0;
         }
-        return 2;
     }else{
-        if (fValue>=45&&fValue<=60){
-            return 1;
+        if (fValue>60){
+            result=2;
         }else if(fValue<45){
-            return 0;
+            result=0;
         }
-        return 2;
     }
+    return result;
 }
 
 +(NSString*)getWaterStatusTitle:(int)nSex value:(double)fValue
 {
-    if (nSex==1){
-        if (fValue>=55&&fValue<=65){
-            return @"正常";
+    NSString* result=@"标准";
+    if (nSex==0){
+        if (fValue>65){
+            result=@"偏高";
         }else if(fValue<55){
-            return @"偏低";
+            result=@"偏低";
         }
-        return @"偏高";
     }else{
-        if (fValue>=45&&fValue<=60){
-            return @"正常";
+        if (fValue>60){
+            result=@"偏高";
         }else if(fValue<45){
-            return @"偏低";
+            result=@"偏低";
         }
-        return @"偏高";
     }
+    return result;
 }
 
 +(double)getWaterStatusValue:(int)nSex value:(double)fValue
 {
     double result=0.50;
     switch (nSex){
-        case 0:
+        case 1:
         {
-            if (fValue<=45.0){
+            if (fValue<45.0){
                 result=0.25;
-            }else if(fValue>=60.0){
-                result=0.78;
+            }else if(fValue>60.0){
+                result=0.85;
             }
             break;
         }
         default:
         {
-            if (fValue<=55.0){
-                result=0.22;
-            }else if(fValue>=65.0){
-                result=0.80;
+            if (fValue<55.0){
+                result=0.25;
+            }else if(fValue>65.0){
+                result=0.85;
             }
             break;
         }
@@ -436,57 +393,69 @@
 {
     int result=1;
     switch (nSex){
-        case 0:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<23.6){
+        case 1:{
+            if (nAge<=17) {
+                if (fValue>1392) {
+                    result=2;
+                }else if (fValue<1139){
                     result=0;
-                }else if(fValue>23.6){
+                }
+            }else if (nAge>17&&nAge<30){
+                if (fValue<1168){
+                    result=0;
+                }else if(fValue>1428){
                     result=2;
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<21.7){
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1172){
                     result=0;
-                }else if(fValue>21.7){
+                }else if(fValue>1432){
                     result=2;
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<20.7){
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1118){
                     result=0;
-                }else if(fValue>20.7){
+                }else if(fValue>1366){
                     result=2;
                 }
-            }else if(nAge>=70){
-                if (fValue<20.7){
+            }else{
+                if (fValue<932){
                     result=0;
-                }else if(fValue>20.7){
+                }else if(fValue>1139){
                     result=2;
                 }
             }
             break;
         }
         default:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<24.0){
+            if (nAge<=17) {
+                if (fValue>1386) {
+                    result=2;
+                }else if(fValue<1134){
                     result=0;
-                }else if(fValue>24.0){
+                }
+            }else if (nAge>17&&nAge<30){
+                if (fValue>1716){
+                    result=2;
+                }else if(fValue<1404){
+                    result=0;
+                }
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1405){
+                    result=0;
+                }else if(fValue>1717){
                     result=2;
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<22.3){
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1355){
                     result=0;
-                }else if(fValue>22.3){
+                }else if(fValue>1656){
                     result=2;
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<21.5){
+            }else{
+                if (fValue<1405){
                     result=0;
-                }else if(fValue>21.5){
-                    result=2;
-                }
-            }else if(nAge>=70){
-                if (fValue<21.5){
-                    result=0;
-                }else if(fValue>21.5){
+                }else if(fValue>1538){
                     result=2;
                 }
             }
@@ -501,57 +470,69 @@
 {
     NSString* result=@"标准";
     switch (nSex){
-        case 0:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<23.6){
+        case 1:{
+            if (nAge<=17) {
+                if (fValue<1139) {
                     result=@"偏低";
-                }else if(fValue>23.6){
+                }else if(fValue>1392){
                     result=@"偏高";
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<21.7){
+            } else if (nAge>17&&nAge<30){
+                if (fValue<1168){
                     result=@"偏低";
-                }else if(fValue>21.7){
+                }else if(fValue>1428){
                     result=@"偏高";
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<20.7){
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1172){
                     result=@"偏低";
-                }else if(fValue>20.7){
+                }else if(fValue>1432){
                     result=@"偏高";
                 }
-            }else if(nAge>=70){
-                if (fValue<20.7){
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1118){
                     result=@"偏低";
-                }else if(fValue>20.7){
+                }else if(fValue>1366){
+                    result=@"偏高";
+                }
+            }else{
+                if (fValue<932){
+                    result=@"偏低";
+                }else if(fValue>1139){
                     result=@"偏高";
                 }
             }
             break;
         }
         default:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<24.0){
+            if (nAge<=17) {
+                if (fValue<1134) {
                     result=@"偏低";
-                }else if(fValue>24.0){
+                }else if (fValue>1386){
                     result=@"偏高";
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<22.3){
+            }else if (nAge>17&&nAge<30){
+                if (fValue<1404){
                     result=@"偏低";
-                }else if(fValue>22.3){
+                }else if(fValue>1716){
                     result=@"偏高";
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<21.5){
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1405){
                     result=@"偏低";
-                }else if(fValue>21.5){
+                }else if(fValue>1717){
                     result=@"偏高";
                 }
-            }else if(nAge>=70){
-                if (fValue<21.5){
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1355){
                     result=@"偏低";
-                }else if(fValue>21.5){
+                }else if(fValue>1656){
+                    result=@"偏高";
+                }
+            }else{
+                if (fValue<1405){
+                    result=@"偏低";
+                }else if(fValue>1538){
                     result=@"偏高";
                 }
             }
@@ -566,112 +547,135 @@
 {
     int result=0.50;
     switch (nSex){
-        case 0:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<23.6){
-                    result=0.23;
-                }else if(fValue>23.6){
-                    result=0.80;
+        case 1:{
+            if (nAge<=17) {
+                if (fValue<1139) {
+                    result=0;
+                }else if(fValue>1392){
+                    result=2;
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<21.7){
-                    result=0.24;
-                }else if(fValue>21.7){
-                    result=0.76;
+            } else if (nAge>17&&nAge<30){
+                if (fValue<1168){
+                    result=0;
+                }else if(fValue>1428){
+                    result=2;
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<20.7){
-                    result=0.28;
-                }else if(fValue>20.7){
-                    result=0.71;
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1172){
+                    result=0;
+                }else if(fValue>1432){
+                    result=2;
                 }
-            }else if(nAge>=70){
-                if (fValue<20.7){
-                    result=0.18;
-                }else if(fValue>20.7){
-                    result=0.75;
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1118){
+                    result=0;
+                }else if(fValue>1366){
+                    result=2;
+                }
+            }else{
+                if (fValue<932){
+                    result=0;
+                }else if(fValue>1139){
+                    result=2;
                 }
             }
             break;
         }
         default:{
-            if (nAge>=18&&nAge<=29){
-                if (fValue<24.0){
-                    result=0.28;
-                }else if(fValue>24.0){
-                    result=0.79;
+            if (nAge<=17) {
+                if (fValue<1134) {
+                    result=0;
+                }else if (fValue>1386){
+                    result=2;
                 }
-            }else if(nAge>=30&&nAge<=49){
-                if (fValue<22.3){
-                    result=0.25;
-                }else if(fValue>22.3){
-                    result=0.78;
+            }else if (nAge>17&&nAge<30){
+                if (fValue<1404){
+                    result=0;
+                }else if(fValue>1716){
+                    result=2;
                 }
-            }else if(nAge>=50&&nAge<=69){
-                if (fValue<21.5){
-                    result=0.28;
-                }else if(fValue>21.5){
-                    result=0.78;
+            }else if(nAge>29&&nAge<50){
+                if (fValue<1405){
+                    result=0;
+                }else if(fValue>1717){
+                    result=2;
                 }
-            }else if(nAge>=70){
-                if (fValue<21.5){
-                    result=0.28;
-                }else if(fValue>21.5){
-                    result=0.72;
+            }else if(nAge>49&&nAge<70){
+                if (fValue<1355){
+                    result=0;
+                }else if(fValue>1656){
+                    result=2;
+                }
+            }else{
+                if (fValue<1405){
+                    result=0;
+                }else if(fValue>1538){
+                    result=2;
                 }
             }
             break;
         }
     }
-    
     return result;
 }
 
 #pragma mark - Muscle
-+(int)getMuscleStatus:(int)nHeight sex:(int)nSex value:(double)fValue
++(int)getMuscleStatus:(int)nAge sex:(int)nSex value:(double)fValue
 {
     int result=1;
     switch (nSex){
-        case 0:
+        case 1:
         {
-            if (nHeight<150){
-                if (fValue<29.1) {
+            if (nAge<16){
+                if (fValue<44.0) {
                     result =0;
-                }else if(fValue>34.7){
+                }else if(fValue>49.0){
                     result=2;
                 }
-            }else if(nHeight>150&&nHeight<160){
-                if (fValue<32.9){
+            }else if(nAge>15&&nAge<31){
+                if (fValue<43.0){
                     result=0;
-                }else if(fValue>37.5){
+                }else if(fValue>48.0){
                     result=2;
                 }
-            }else{
-                if(fValue<36.5){
+            }else if (nAge>30&&nAge<61){
+                if (fValue<42.0) {
                     result=0;
-                }else if(fValue>42.5){
+                }else if(fValue>47.0){
+                    result=2;
+                }
+            } else{
+                if(fValue<41.0){
+                    result=0;
+                }else if(fValue>46.0){
                     result=2;
                 }
             }
             break;
         }
         default:{
-            if (nHeight<160){
-                if (fValue<38.5) {
+            if (nAge<16){
+                if (fValue<46.0) {
                     result = 0;
-                }else if(fValue>46.5){
+                }else if(fValue>51.0){
                     result=2;
                 }
-            }else if(nHeight>160&&nHeight<170){
-                if (fValue<42.0){
+            }else if(nAge>15&&nAge<31){
+                if (fValue<45.0){
                     result=0;
-                }else if(fValue>52.4){
+                }else if(fValue>50.0){
+                    result=2;
+                }
+            }else if(nAge>30&&nAge<61){
+                if (fValue<44.0){
+                    result=0;
+                }else if(fValue>49.0){
                     result=2;
                 }
             }else{
-                if(fValue<49.4){
+                if(fValue<43.0){
                     result=0;
-                }else if(fValue>59.4){
+                }else if(fValue>48.0){
                     result=2;
                 }
             }
@@ -682,105 +686,128 @@
     return result;
 }
 
-+(NSString*)getMuscleStatusTitle:(int)nHeight sex:(int)nSex value:(double)fValue
++(NSString*)getMuscleStatusTitle:(int)nAge sex:(int)nSex value:(double)fValue
 {
     NSString* result=@"标准";
     switch (nSex){
-        case 0:
+        case 1:
         {
-            if (nHeight<150){
-                if (fValue<29.1) {
+            if (nAge<16){
+                if (fValue<44.0) {
                     result =@"偏低";
-                }else if(fValue>34.7){
+                }else if(fValue>49.0){
                     result=@"偏高";
                 }
-            }else if(nHeight>150&&nHeight<160){
-                if (fValue<32.9){
+            }else if(nAge>15&&nAge<31){
+                if (fValue<43.0){
                     result=@"偏低";
-                }else if(fValue>37.5){
+                }else if(fValue>48.0){
                     result=@"偏高";
                 }
-            }else{
-                if(fValue<36.5){
+            }else if (nAge>30&&nAge<61){
+                if (fValue<42.0) {
                     result=@"偏低";
-                }else if(fValue>42.5){
+                }else if(fValue>47.0){
+                    result=@"偏高";
+                }
+            } else{
+                if(fValue<41.0){
+                    result=@"偏低";
+                }else if(fValue>46.0){
                     result=@"偏高";
                 }
             }
             break;
         }
         default:{
-            if (nHeight<160){
-                if (fValue<38.5) {
+            if (nAge<16){
+                if (fValue<46.0) {
                     result = @"偏低";
-                }else if(fValue>46.5){
+                }else if(fValue>51.0){
                     result=@"偏高";
                 }
-            }else if(nHeight>160&&nHeight<170){
-                if (fValue<42.0){
+            }else if(nAge>15&&nAge<31){
+                if (fValue<45.0){
                     result=@"偏低";
-                }else if(fValue>52.4){
+                }else if(fValue>50.0){
+                    result=@"偏高";
+                }
+            }else if(nAge>30&&nAge<61){
+                if (fValue<44.0){
+                    result=@"偏低";
+                }else if(fValue>49.0){
                     result=@"偏高";
                 }
             }else{
-                if(fValue<49.4){
+                if(fValue<43.0){
                     result=@"偏低";
-                }else if(fValue>59.4){
+                }else if(fValue>48.0){
                     result=@"偏高";
                 }
             }
             break;
         }
     }
-    
     return result;
 }
 
-+(double)getMuscleStatusValue:(int)nHeight sex:(int)nSex value:(double)fValue
++(double)getMuscleStatusValue:(int)nAge sex:(int)nSex value:(double)fValue
 {
     double result=0.50;
     switch (nSex){
-        case 0:
+        case 1:
         {
-            if (nHeight<150){
-                if (fValue<29.1) {
-                    result=0.26;
-                }else if(fValue>34.7){
-                    result=0.75;
+            if (nAge<16){
+                if (fValue<44.0) {
+                    result =0.25;
+                }else if(fValue>49.0){
+                    result=0.85;
                 }
-            }else if(nHeight>150&&nHeight<160){
-                if (fValue<32.9){
-                    result=0.22;
-                }else if(fValue>37.5){
-                    result=0.78;
+            }else if(nAge>15&&nAge<31){
+                if (fValue<43.0){
+                    result=0.25;
+                }else if(fValue>48.0){
+                    result=0.85;
                 }
-            }else{
-                if(fValue<36.5){
-                    result=0.23;
-                }else if(fValue>42.5){
-                    result=0.68;
+            }else if (nAge>30&&nAge<61){
+                if (fValue<42.0) {
+                    result=0.25;
+                }else if(fValue>47.0){
+                    result=0.85;
+                }
+            } else{
+                if(fValue<41.0){
+                    result=0.25;
+                }else if(fValue>46.0){
+                    result=0.85;
                 }
             }
             break;
         }
         default:{
-            if (nHeight<160){
-                if (fValue<38.5) {
-                    result=0.19;
-                }else if(fValue>46.5){
-                    result=0.68;
+            if (nAge<16){
+                if (fValue<46.0) {
+                    result = 0.25;
+                }else if(fValue>51.0){
+                    result=0.85;
                 }
-            }else if(nHeight>160&&nHeight<170){
-                if (fValue<42.0){
-                    result=0.28;
-                }else if(fValue>52.4){
-                    result=0.78;
+            }else if(nAge>15&&nAge<31){
+                if (fValue<45.0){
+                    result=0.25;
+                }else if(fValue>50.0){
+                    result=0.85;
+                }
+            }else if(nAge>30&&nAge<61){
+                if (fValue<44.0){
+                    result=0.25;
+                }else if(fValue>49.0){
+                    result=0.85;
                 }
             }else{
-                if(fValue<49.4){
-                    result=0.28;
-                }else if(fValue>59.4){
-                    result=0.68;
+                if(fValue<43.0){
+                    result=0.25;
+                }else if(fValue>48.0){
+                    result=0.85;
                 }
             }
             break;
@@ -795,24 +822,24 @@
 {
     int result=1;
     switch (nSex){
-        case 0:
+        case 1:
         {
             if (fWeight<45){
-                if (fValue<1.8) {
+                if (fValue<0.5) {
                     result =0;
-                }else if(fValue>1.8){
+                }else if(fValue>3.0){
                     result=2;
                 }
-            }else if(fWeight>45&&fWeight<60){
-                if (fValue<2.2){
+            }else if(fWeight>44&&fWeight<61){
+                if (fValue<0.5){
                     result=0;
-                }else if(fValue>2.2){
+                }else if(fValue>4.2){
                     result=2;
                 }
-            }else{
-                if(fValue<2.5){
+            }else if(fWeight>60.0){
+                if(fValue<0.5){
                     result=0;
-                }else if(fValue>2.5){
+                }else if(fValue>3.0){
                     result=2;
                 }
             }
@@ -820,21 +847,21 @@
         }
         default:{
             if (fWeight<60){
-                if (fValue<2.5) {
+                if (fValue<0.5) {
                     result =0;
-                }else if(fValue>2.5){
+                }else if(fValue>4.5){
                     result=2;
                 }
-            }else if(fWeight>60&&fWeight<75){
-                if (fValue<2.9){
+            }else if(fWeight>59&&fWeight<76){
+                if (fValue<0.5){
                     result=0;
-                }else if(fValue>2.9){
+                }else if(fValue>6.0){
                     result=2;
                 }
-            }else{
-                if(fValue<3.2){
+            }else if(fWeight>75){
+                if(fValue<0.5){
                     result=0;
-                }else if(fValue>3.2){
+                }else if(fValue>7.5){
                     result=2;
                 }
             }
@@ -848,24 +875,24 @@
 {
     NSString* result=@"标准";
     switch (nSex){
-        case 0:
+        case 1:
         {
             if (fWeight<45){
-                if (fValue<1.8) {
+                if (fValue<0.5) {
                     result =@"偏低";
-                }else if(fValue>1.8){
+                }else if(fValue>3.0){
                     result=@"偏高";
                 }
-            }else if(fWeight>45&&fWeight<60){
-                if (fValue<2.2){
+            }else if(fWeight>44&&fWeight<61){
+                if (fValue<0.5){
                     result=@"偏低";
-                }else if(fValue>2.2){
+                }else if(fValue>4.2){
                     result=@"偏高";
                 }
-            }else{
-                if(fValue<2.5){
+            }else if(fWeight>60.0){
+                if(fValue<0.5){
                     result=@"偏低";
-                }else if(fValue>2.5){
+                }else if(fValue>3.0){
                     result=@"偏高";
                 }
             }
@@ -873,21 +900,21 @@
         }
         default:{
             if (fWeight<60){
-                if (fValue<2.5) {
+                if (fValue<0.5) {
                     result =@"偏低";
-                }else if(fValue>2.5){
+                }else if(fValue>4.5){
                     result=@"偏高";
                 }
-            }else if(fWeight>60&&fWeight<75){
-                if (fValue<2.9){
+            }else if(fWeight>59&&fWeight<76){
+                if (fValue<0.5){
                     result=@"偏低";
-                }else if(fValue>2.9){
+                }else if(fValue>6.0){
                     result=@"偏高";
                 }
-            }else{
-                if(fValue<3.2){
+            }else if(fWeight>75){
+                if(fValue<0.5){
                     result=@"偏低";
-                }else if(fValue>3.2){
+                }else if(fValue>7.5){
                     result=@"偏高";
                 }
             }
@@ -901,47 +928,47 @@
 {
     double result=0.50;
     switch (nSex){
-        case 0:
+        case 1:
         {
             if (fWeight<45){
-                if (fValue<1.8) {
+                if (fValue<0.5) {
+                    result =0.25;
+                }else if(fValue>3.0){
+                    result=0.85;
+                }
+            }else if(fWeight>44&&fWeight<61){
+                if (fValue<0.5){
                     result=0.25;
-                }else if(fValue>1.8){
-                    result=0.74;
+                }else if(fValue>4.2){
+                    result=0.85;
                 }
-            }else if(fWeight>45&&fWeight<60){
-                if (fValue<2.2){
-                    result=0.28;
-                }else if(fValue>2.2){
-                    result=0.68;
-                }
-            }else{
-                if(fValue<2.5){
-                    result=0.22;
-                }else if(fValue>2.5){
-                    result=0.68;
+            }else if(fWeight>60.0){
+                if(fValue<0.5){
+                    result=0.25;
+                }else if(fValue>3.0){
+                    result=0.85;
                 }
             }
             break;
         }
         default:{
             if (fWeight<60){
-                if (fValue<2.5) {
-                    result=0.28;
-                }else if(fValue>2.5){
-                    result=0.68;
+                if (fValue<0.5) {
+                    result =0.25;
+                }else if(fValue>4.5){
+                    result=0.85;
                 }
-            }else if(fWeight>60&&fWeight<75){
-                if (fValue<2.9){
-                    result=0.28;
-                }else if(fValue>2.9){
-                    result=0.68;
+            }else if(fWeight>59&&fWeight<76){
+                if (fValue<0.5){
+                    result=0.25;
+                }else if(fValue>6.0){
+                    result=0.85;
                 }
-            }else{
-                if(fValue<3.2){
-                    result=0.28;
-                }else if(fValue>3.2){
-                    result=0.68;
+            }else if(fWeight>75){
+                if(fValue<0.5){
+                    result=0.25;
+                }else if(fValue>7.5){
+                    result=0.85;
                 }
             }
             break;
@@ -954,37 +981,34 @@
 #pragma mark - BMI
 +(int)getBMIStatus:(double)fValue
 {
-    if (fValue>=24&&fValue<=28)
+    int result=1;
+    if (fValue>23.0)
     {
-        return 2;
-    }else if(fValue>28){
-        return 3;
+        result=2;
     }else if(fValue<18.5){
-        return 0;
+        result=0;
     }
-    return 1;
+    return result;
 }
 
 +(NSString*)getBMIStatusTitle:(double)fValue
 {
-    if (fValue>=24&&fValue<=28)
+    NSString* result=@"标准";
+    if (fValue>23.0)
     {
-        return @"轻度脂肪堆积";
-    }else if(fValue>28){
-        return @"严重脂肪堆积";
+        result=@"偏高";
     }else if(fValue<18.5){
-        return @"偏瘦";
+        result=@"偏低";
     }
-    return @"健康";
+    return result;
 }
 
 +(double)getBMIStatusValue:(double)fValue
 {
     double result=0.50;
-    if (fValue>=24&&fValue<=28){
-        result=0.65;
-    }else if(fValue>28){
-        result=0.90;
+    if (fValue>23.0)
+    {
+        result=0.85;
     }else if(fValue<18.5){
         result=0.25;
     }

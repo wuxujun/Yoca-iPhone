@@ -13,7 +13,7 @@
 #import "CustomTabBarViewController.h"
 #import <CoreLocation/CoreLocation.h>
 #import <CoreLocation/CLLocationManagerDelegate.h>
-#import <GoogleAnalytics-iOS-SDK/GAI.h>
+#import <GoogleAnalytics/GAI.h>
 #import "HNetworkEngine.h"
 #import <SMS_SDK/SMS_SDK.h>
 

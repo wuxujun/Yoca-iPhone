@@ -10,7 +10,7 @@
 @implementation UIButton (Bootstrap)
 
 -(void)bootstrapStyle{
-    self.layer.borderWidth = 1;
+    self.layer.borderWidth = 0.5;
     self.layer.cornerRadius = 4.0;
     self.layer.masksToBounds = YES;
     [self setAdjustsImageWhenHighlighted:NO];

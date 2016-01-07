@@ -14,7 +14,8 @@
 
 -(NSArray*)queryAccount;
 -(NSArray*)queryAccountForType:(NSInteger)type;
--(NSArray*)queryAccountForID:(NSInteger)aId;
+-(NSArray*)queryAccountForID:(long)aId;
+-(BOOL)updateAccountStatus:(long)aId;
 
 -(NSInteger)queryAccountCountWithType:(NSInteger)type;
 
@@ -36,6 +37,9 @@
 -(NSArray*)queryWeightHisWithPicktime:(NSString*)pickTime account:(NSInteger)aid;
 -(NSArray*)queryWeightHisWithAccountId:(NSInteger)aid;
 -(BOOL)deleteWeightHisEntity:(NSInteger)wid;
+-(BOOL)updateWeightHisStatus:(NSInteger)wid;
+-(BOOL)updateWeightStatus:(NSInteger)wid;
+-(NSArray*)queryWeightHisWithWeight:(NSString *)pickTime account:(NSInteger)aid;
 
 -(BOOL)insertOrUpdateHomeTarget:(NSDictionary*)info;
 -(NSInteger)queryHomeTargetCountWithAId:(NSInteger)aid;

@@ -32,9 +32,9 @@
 #import <UMSocialQQHandler.h>
 #import <UMSocialSinaHandler.h>
 
-#import <GoogleAnalytics-iOS-SDK/GAIFields.h>
-#import <GoogleAnalytics-iOS-SDK/GAITracker.h>
-#import <GoogleAnalytics-iOS-SDK/GAIDictionaryBuilder.h>
+#import <GoogleAnalytics/GAIFields.h>
+#import <GoogleAnalytics/GAITracker.h>
+#import <GoogleAnalytics/GAIDictionaryBuilder.h>
 
 #define PUSHTYPE @"type"
 #define PUSHTYPENEWS @"1"
@@ -69,6 +69,9 @@ static NSString *const kAllowTracking=@"allowTracking";
         myDelegate.autoSizeScaleY=1.0;
     }
     
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"StoredDevices"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     NSDictionary *appDefault=@{kAllowTracking:@(YES)};
     [[NSUserDefaults standardUserDefaults]registerDefaults:appDefault];
     [GAI sharedInstance].optOut=![[NSUserDefaults standardUserDefaults] boolForKey:kAllowTracking];
@@ -78,7 +81,7 @@ static NSString *const kAllowTracking=@"allowTracking";
     self.tracker=[[GAI sharedInstance] trackerWithTrackingId:kTrackingId];
     
     [[GAI sharedInstance].defaultTracker set:kGAIScreenName value:@"Yoca"];
-    [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createAppView]build]];
+    [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createScreenView]build]];
     
 #if TARGET_IPHONE_SIMULATOR
     DLog(@" TARGET_IPHONE_SIMULATOR is not support Notification ");
@@ -149,9 +152,10 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 
 -(void)initializePlat
 {
-//    [UMSocialWechatHandler setWXAppId:@"" appSecret:@"" url:@""];
-//    [UMSocialQQHandler setQQWithAppId:@"" appKey:@"" url:@""];
+    [UMSocialWechatHandler setWXAppId:APPKEY_WEIXIN appSecret:APPKEY_WEIXIN_SECRET url:@"https://app.sholai.cn/"];
+    [UMSocialQQHandler setQQWithAppId:APPKEY_QQ appKey:APPKEY_QQ_SECRET url:@"http://www.umeng.com/social"];
     [UMSocialSinaHandler openSSOWithRedirectURL:@"http://sns.whalecloud.com/sina2/callback"];
+    
     
     int buildVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey] intValue];
     DLog(@"%d",buildVersion);
@@ -234,6 +238,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     
     [self.window setRootViewController:navController];
     [self.window makeKeyAndVisible];
+//    self.window.tintColor=[UIColor whiteColor];
 }
 
 -(void)openMainView
@@ -320,6 +325,80 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     
 }
 
+-(void)onSyncAccount:(NSNotification*)notification
+{
+    NSDictionary* dict=(NSDictionary*)notification.object;
+    if ([dict objectForKey:@"id"]) {
+        NSArray* array=[[DBManager getInstance] queryAccountForID:[[dict objectForKey:@"id"] longLongValue]];
+        if ([array count]>0) {
+            AccountEntity *account=[array objectAtIndex:0];
+            NSString *url = [NSString stringWithFormat:@"%@syncaccount",kHttpUrl];
+            NSMutableDictionary* params=[[NSMutableDictionary alloc]init ];
+            [params setObject:[NSString stringWithFormat:@"%ld",account.aid] forKey:@"id"];
+            [params setObject:[NSString stringWithFormat:@"%ld",account.type] forKey:@"type"];
+            [params setObject:account.userNick forKey:@"userNick"];
+            [params setObject:[NSString stringWithFormat:@"%ld",account.sex] forKey:@"sex"];
+            [params setObject:account.birthday forKey:@"birthday"];
+            [params setObject:[NSString stringWithFormat:@"%ld",account.height] forKey:@"height"];
+            [params setObject:[NSString stringWithFormat:@"%ld",account.age] forKey:@"age"];
+            if (account.avatar) {
+                [params setObject:account.avatar forKey:@"avatar"];
+            }else{
+                [params setObject:@"" forKey:@"avatar"];
+            }
+            if(account.targetType>0){
+                [params setObject:[NSString stringWithFormat:@"%ld",account.targetType] forKey:@"targetType"];
+            }else{
+                [params setObject:@"0" forKey:@"targetType"];
+            }
+            if (account.targetWeight) {
+                [params setObject:account.targetWeight forKey:@"targetWeight"];
+            }else{
+                [params setObject:@"0" forKey:@"targetWeight"];
+            }
+            [params setObject:@"0" forKey:@"targetFat"];
+            if (account.doneTime) {
+                [params setObject:account.doneTime forKey:@"doneTime"];
+            }else{
+                [params setObject:@"20151231" forKey:@"doneTime"];
+            }
+            
+            NSMutableDictionary* root=[[NSMutableDictionary alloc]init];
+            [root setObject:[NSArray arrayWithObjects:params, nil] forKey:@"root"];
+            
+           [self.networkEngine postOperationWithURLString:url params:root success:^(MKNetworkOperation *completedOperation, id result) {
+//               DLog(@"%@",result);
+            } error:^(NSError *error) {
+                DLog(@"%@",error);
+            }];
+            
+            [[DBManager getInstance] updateAccountStatus:account.aid];
+        }
+    }
+}
+
+-(void)onSyncWeight:(NSNotification*)notification
+{
+    NSDictionary* dict=(NSDictionary*)notification.object;
+    if ([dict objectForKey:@"wid"]) {
+        NSString *url = [NSString stringWithFormat:@"%@%@",kHttpUrl,[dict objectForKey:@"requestUrl"]];
+        NSMutableDictionary* params=[NSMutableDictionary dictionaryWithDictionary:dict];
+        NSMutableDictionary* root=[[NSMutableDictionary alloc]init];
+            [root setObject:[NSArray arrayWithObjects:params, nil] forKey:@"root"];
+            
+        [self.networkEngine postOperationWithURLString:url params:root success:^(MKNetworkOperation *completedOperation, id result) {
+//            DLog(@"%@",result);
+        } error:^(NSError *error) {
+            DLog(@"%@",error);
+        }];
+        if ([[dict objectForKey:@"requestUrl"] isEqualToString:@"syncweighthis"]) {
+            [[DBManager getInstance] updateWeightHisStatus:[[dict objectForKey:@"wid"] integerValue]];
+        }else{
+            [[DBManager getInstance] updateWeightStatus:[[dict objectForKey:@"wid"] integerValue]];
+        }
+    }
+}
+
 -(void)onUploadFile:(NSNotification*)notification
 {
     NSDictionary* dict=(NSDictionary*)notification.object;
@@ -339,7 +418,7 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
         [dic setObject:imgs forKey:@"images"];
         [params setObject:dic forKey:@"content"];
         
-        DLog(@"%@",params);
+//        DLog(@"%@",params);
         
         [self.networkEngine postDatasWithURLString:url datas:params process:^(double progress) {
         } success:^(MKNetworkOperation *completedOperation, id result) {
@@ -405,6 +484,8 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     }
     [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createEventWithCategory:@"Yoca" action:@"Close" label:@"Close Yoca" value:[NSNumber numberWithInt:2]] build]];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UPLOAD_AVATAR_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SYNC_ACCOUNT_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:SYNC_WEIGHT_NOTIFICATION object:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -424,9 +505,9 @@ CGRectMake1(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [GAI sharedInstance].optOut=![[NSUserDefaults standardUserDefaults]boolForKey:kAllowTracking];
     [[GAI sharedInstance].defaultTracker send:[[GAIDictionaryBuilder createEventWithCategory:@"Yoca" action:@"Open" label:@"Open Yoca" value:[NSNumber numberWithInt:1]] build]];
-    [MobClick checkUpdate];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onUploadFile:) name:UPLOAD_AVATAR_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSyncAccount:) name:SYNC_ACCOUNT_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onSyncWeight:) name:SYNC_WEIGHT_NOTIFICATION object:nil];
     
 }
 

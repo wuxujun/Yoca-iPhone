@@ -133,7 +133,7 @@
     switch (indexPath.row) {
         case 0:
         {
-            NSArray* types=@[@"减重",@"减脂",@"保持"];
+            NSArray* types=@[@"减重",@"保持",@"增肥"];
             ISegmentView* segmentView=[[ISegmentView alloc]initWithFrame:CGRectMake(5, (80-44)/2, bounds.size.width-10, 44) items:types];
             [segmentView selectForItem:currentType];
             segmentView.tintColor=APP_FONT_COLOR_SEL;
@@ -175,7 +175,7 @@
         case 2:
         {
             UILabel* label=[[UILabel alloc]initWithFrame:CGRectMake(20, 10, 100, 26)];
-            [label setText:@"达成日期:"];
+            [label setText:@"完成日期:"];
             [label setTextColor:APP_FONT_COLOR];
             [cell addSubview:label];
             

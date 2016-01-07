@@ -12,7 +12,7 @@
 
 -(void)setValue:(id)value forKey:(NSString *)key
 {
-    if ([key isEqualToString:@"id"]) {
+    if ([key isEqualToString:@"wid"]) {
         self.wid=[value intValue];
     }else if([key isEqualToString:@"type"]){
         self.type=[value intValue];

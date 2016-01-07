@@ -29,6 +29,7 @@ typedef void(^SqlBlock)(NSString* sql,NSArray* arguments);
 @property (nonatomic, assign) NSInteger addtime;
 @property (nonatomic, assign) NSInteger syncid;
 @property (nonatomic, strong) NSString* protein;
+@property (nonatomic, strong) NSString* sholai;
 
 
 +(void)generateInsertSql:(NSDictionary*)info completion:(SqlBlock)completion;

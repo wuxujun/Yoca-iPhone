@@ -95,7 +95,7 @@
     if (section==0) {
         return 1;
     }
-    return 2;
+    return 3;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -117,7 +117,7 @@
         UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(10, 11, 96, 96)];
         avatarImg.image = [UIImage imageNamed:@"userbig.png"];
         if (_account) {
-            if (_account.avatar&&[PathHelper fileExistsAtPath:_account.avatar]) {
+            if (_account.avatar&&_account.avatar.length>1&&[PathHelper fileExistsAtPath:_account.avatar]) {
                 [avatarImg setImage:[UIImage imageNamed:[PathHelper filePathInDocument:_account.avatar]]];
             }
         }

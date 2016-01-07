@@ -11,7 +11,7 @@ typedef void(^SqlBlock)(NSString *sql, NSArray *arguments);
 
 @interface AccountEntity : NSObject
 
-@property (nonatomic, assign) NSInteger aid;
+@property (nonatomic, assign) long aid;
 @property (nonatomic, assign) NSInteger type;
 @property (nonatomic, strong) NSString * userNick;
 @property (nonatomic, assign) NSInteger sex;
@@ -21,6 +21,7 @@ typedef void(^SqlBlock)(NSString *sql, NSArray *arguments);
 @property (nonatomic, strong) NSString * avatar;
 @property (nonatomic, assign) NSInteger targetType;
 @property (nonatomic, strong) NSString * targetWeight;
+@property (nonatomic, strong) NSString * targetFat;
 @property (nonatomic, strong) NSString * doneTime;
 
 @property (nonatomic, strong) NSString * weight;
@@ -35,7 +36,7 @@ typedef void(^SqlBlock)(NSString *sql, NSArray *arguments);
 @property (nonatomic, strong) NSString * bmi;
 @property (nonatomic, strong) NSString * protein;
 
-@property (nonatomic,assign)NSInteger   isSync;
+@property (nonatomic, assign) NSInteger isSync;
 @property (nonatomic, assign) NSInteger status;
 @property (nonatomic, assign) NSInteger addtime;
 

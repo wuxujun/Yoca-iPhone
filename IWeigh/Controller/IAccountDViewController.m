@@ -48,7 +48,7 @@
     [super viewDidLoad];
     [self addBackBarButton];
     
-    bSex=false;
+    bSex=true;
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     int dataType=0;
@@ -62,9 +62,10 @@
         self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_left"] style:UIBarButtonItemStylePlain target:(INavigationController*)self.navigationController action:@selector(showMenu)];
     }
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    if (dataType>=1) {
-        [self addRightButtonWithTitle:@"目标" withSel:@selector(addTarget:)];
-    }
+    
+//    if (dataType>=1) {
+//        [self addRightButtonWithTitle:@"目标" withSel:@selector(addTarget:)];
+//    }
 
     CGRect frame=self.view.bounds;
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -130,11 +131,11 @@
     if (btn.tag==SEX_FAMALE_BTN) {
         [self.femaleButton setBackgroundColor:APP_FONT_COLOR_SEL];
         [self.maleButton setBackgroundColor:[UIColor grayColor]];
-        bSex=false;
+        bSex=true;
     }else{
         [self.femaleButton setBackgroundColor:[UIColor grayColor]];
         [self.maleButton setBackgroundColor:APP_FONT_COLOR_SEL];
-        bSex=true;
+        bSex=false;
     }
 }
 
@@ -170,6 +171,7 @@
                     [dict setObject:[NSString stringWithFormat:@"%ld",nAge] forKey:@"age"];
                     [dict setObject:[NSString stringWithFormat:@"%ld",nHeight] forKey:@"height"];
                     [dict setObject:[NSString stringWithFormat:@"%ld",entity.aid] forKey:@"id"];
+                    [dict setObject:@"0" forKey:@"isSync"];
                     if (fileName) {
                         [dict setObject:fileName forKey:@"avatar"];
                         [[NSNotificationCenter defaultCenter] postNotificationName:UPLOAD_AVATAR_NOTIFICATION object:dict];
@@ -177,6 +179,7 @@
                     DLog(@"%@",dict);
                     if ([[DBManager getInstance] insertOrUpdateAccount:dict]) {
                         NSLog(@"%@ user account update success.",mUserNick);
+                        [[NSNotificationCenter defaultCenter] postNotificationName:SYNC_ACCOUNT_NOTIFICATION object:dict];
                         [self.navigationController popViewControllerAnimated:YES];
                     }
                 }
@@ -186,19 +189,22 @@
                 NSMutableDictionary *entity=[NSMutableDictionary dictionary];
                 if (rows==0) {
                     [entity setObject:@"1" forKey:@"type"];
-                    [entity setObject:@"1" forKey:@"id"];
+                    NSString *time = [NSString stringWithFormat:@"%ld",(long)[[NSDate date] timeIntervalSince1970]];
+                    [entity setObject:time forKey:@"id"];
                 }
                 [entity setObject:mUserNick?mUserNick:@"" forKey:@"userNick"];
                 [entity setObject:[NSString stringWithFormat:@"%ld",nHeight] forKey:@"height"];
                 [entity setObject:mBirthday?mBirthday:@"" forKey:@"birthday"];
                 [entity setObject:[NSString stringWithFormat:@"%ld",nAge] forKey:@"age"];
                 [entity setObject:[NSString stringWithFormat:@"%d",bSex?1:0] forKey:@"sex"];
+                [entity setObject:@"0" forKey:@"isSync"];
                 if (fileName) {
                     [entity setObject:fileName forKey:@"avatar"];
                     [[NSNotificationCenter defaultCenter] postNotificationName:UPLOAD_AVATAR_NOTIFICATION object:entity];
                 }
                 
                 if([[DBManager getInstance] insertOrUpdateAccount:entity]){
+                    [[NSNotificationCenter defaultCenter] postNotificationName:SYNC_ACCOUNT_NOTIFICATION object:entity];
                     if ([[self.infoDict objectForKey:@"dataType"] integerValue]==3) {
                         [ApplicationDelegate openTabMainView];
                     }else{
@@ -325,7 +331,7 @@
             self.avatarImageView=[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-100)/2, 20, 100, 100)];
             [self.avatarImageView setImage:[UIImage imageNamed:@"userbig.png"]];
             [cell addSubview:self.avatarImageView];
-            if (fileName&&[PathHelper fileExistsAtPath:fileName]) {
+            if (fileName&&fileName.length>1&&[PathHelper fileExistsAtPath:fileName]) {
                 [self.avatarImageView setImage:[UIImage imageNamed:[PathHelper filePathInDocument:fileName]]];
             }
             
@@ -346,7 +352,8 @@
             [self.femaleButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [self.femaleButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
             [self.femaleButton addTarget:self action:@selector(sexSelected:) forControlEvents:UIControlEventTouchUpInside];
-            [self.femaleButton greenStyle];
+            [self.femaleButton defaultStyle];
+            [self.femaleButton setBackgroundColor:[UIColor grayColor]];
             [cell addSubview:self.femaleButton];
             self.maleButton=[UIButton buttonWithType:UIButtonTypeCustom];
             [self.maleButton setTag:SEX_MALE_BTN];
@@ -358,8 +365,15 @@
             [self.maleButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
             [self.maleButton addTarget:self action:@selector(sexSelected:) forControlEvents:UIControlEventTouchUpInside];
             [self.maleButton defaultStyle];
-            
+            [self.maleButton setBackgroundColor:[UIColor grayColor]];
+        
             [cell addSubview:self.maleButton];
+            
+            if (bSex) {
+                [self.femaleButton greenStyle];
+            }else{
+                [self.maleButton greenStyle];
+            }
             
             UIImageView *img=[[UIImageView alloc]initWithFrame:CGRectMake(0, 59.5, bounds.size.width, 0.5)];
             [img setBackgroundColor:[UIColor blackColor]];
@@ -525,7 +539,7 @@
             [self.startButton setFrame:CGRectMake(20, 10, bounds.size.width-40, 40)];
             [self.startButton greenStyle];
             [self.startButton.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
-            [self.startButton setTitle:@"保存" forState:UIControlStateNormal];
+            [self.startButton setTitle:@"保 存" forState:UIControlStateNormal];
             if (self.infoDict) {
                 [self.startButton setTitle:[self.infoDict objectForKey:@"buttonTitle"] forState:UIControlStateNormal];
             }

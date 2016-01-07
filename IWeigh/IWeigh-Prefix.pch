@@ -31,7 +31,11 @@
 #define REDIRECTURI_WEIBO   @"https://hlterm.oicp.net/openapi/ability/index.php/Micblog/callback"
 
 
-#define APPKEY_TENCENT      @"100334902"
+#define APPKEY_QQ           @"100334902"
+#define APPKEY_QQ_SECRET    @"c4b60d276b112c4aee8c30bbe62b1286"
+
+#define APPKEY_WEIXIN       @"wx7b3c49ed03390fb2"
+#define APPKEY_WEIXIN_SECRET    @"232c9d206dbe83a905294ad00d0b8738"
 
 #define kHttpUrl @"http://121.40.19.136/index.php?/ums/"
 
@@ -98,11 +102,15 @@
 #define CONFIG_INIT_FLAG        @"CONFIG_INIT_FLAG"
 #define NOTIFICATION_OPEN_INFO  @"kNotificationOpenInfo"
 
-#define UPLOAD_AVATAR_NOTIFICATION  @"kUpload_Avatar"
+#define UPLOAD_AVATAR_NOTIFICATION  @"kUploadAvatar"
+#define SYNC_ACCOUNT_NOTIFICATION   @"kSyncAccount"
+#define SYNC_WEIGHT_NOTIFICATION    @"kSyncWeight"
 
 #define CURRENT_ACCOUNT_ID          @"current_account_id"
 
 #define CONF_FIRST_START            @"conf_first_start"
+
+#define CONF_SHOW_TARGET_VALUE            @"conf_show_target_value"
 
 #define IWEIGH_SERVICE_UUID         @"0000fff0-0000-1000-8000-00805f9b34fb"
 #define IWEIGH_CHARACTERISTIC_UUID  @"00002902-0000-1000-8000-00805f9b34fb"

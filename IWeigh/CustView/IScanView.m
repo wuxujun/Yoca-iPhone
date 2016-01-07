@@ -95,10 +95,11 @@
     [contentView addSubview:statusLabel];
     
     sharedButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [sharedButton setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
+    [sharedButton setImage:[UIImage imageNamed:@"edit"] forState:UIControlStateNormal];
+    [sharedButton setImage:[UIImage imageNamed:@"write"] forState:UIControlStateHighlighted];
     [sharedButton addTarget:self action:@selector(shared:) forControlEvents:UIControlEventTouchUpInside];
     [contentView addSubview:sharedButton];
-    [sharedButton setHidden:YES];
+//    [sharedButton setHidden:YES];
     
     [self addSubview:contentView];
     
@@ -214,7 +215,7 @@
     [infoImage setFrame:CGRectMake((contentViewArea.width-170)/2+10, contentViewArea.height-70, 26, 26)];
 
     [statusLabel setFrame:CGRectMake((contentViewArea.width-150)/2, contentViewArea.height-70, 150, 40)];
-    [sharedButton setFrame:CGRectMake(contentViewArea.width-60, contentViewArea.height-80, 30, 38)];
+    [sharedButton setFrame:CGRectMake(contentViewArea.width-60, contentViewArea.height-80, 32, 32)];
     
 }
 

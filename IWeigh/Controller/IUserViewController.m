@@ -118,7 +118,7 @@
         {
             if (_account) {
                 UIImageView* avatarImg=[[UIImageView alloc] initWithFrame:CGRectMake(10, 6, 48, 48)];
-                if (_account.avatar&&[PathHelper fileExistsAtPath:_account.avatar]) {
+                if (_account.avatar&&_account.avatar.length>1&&[PathHelper fileExistsAtPath:_account.avatar]) {
                     [avatarImg setImage:[UIImage imageNamed:[PathHelper filePathInDocument:_account.avatar]]];
                 }else{
                     avatarImg.image = [UIImage imageNamed:@"userbig.png"];

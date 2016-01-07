@@ -83,7 +83,7 @@
     chartView.autoScaleYAxis=YES;
     chartView.alwaysDisplayDots=NO;
     chartView.enableReferenceXAxisLines=YES;
-    chartView.enableReferenceYAxisLines=YES;
+    chartView.enableReferenceYAxisLines=NO;
     chartView.enableReferenceAxisFrame=YES;
     chartView.animationGraphStyle=BEMLineAnimationDraw;
     chartView.alwaysDisplayDots=YES;
@@ -161,7 +161,7 @@
             if (entity) {
                 [titles addObject:entity.pickTime];
                 switch (type) {
-                    case 0:
+                    case 2:
                         total+=[entity.bmi floatValue];
                         [datas addObject:entity.bmi];
                         break;
@@ -169,19 +169,19 @@
                         total+=[entity.weight floatValue];
                         [datas addObject:entity.weight];
                         break;
-                    case 2:
+                    case 3:
                         total+=[entity.fat floatValue];
                         [datas addObject:entity.fat];
                         break;
-                    case 3:
+                    case 4:
                         total+=[entity.subFat floatValue];
                         [datas addObject:entity.subFat];
                         break;
-                    case 4:
+                    case 5:
                         total+=[entity.visFat floatValue];
                         [datas addObject:entity.visFat];
                         break;
-                    case 5:
+                    case 7:
                         total+=[entity.water floatValue];
                         [datas addObject:entity.water];
                         break;
@@ -189,7 +189,7 @@
                         total+=[entity.BMR floatValue];
                         [datas addObject:entity.bodyAge];
                         break;
-                    case 7:
+                    case 11:
                         total+=[entity.bodyAge floatValue];
                         [datas addObject:entity.bodyAge];
                         break;
@@ -201,10 +201,13 @@
                         total+=[entity.bone floatValue];
                         [datas addObject:entity.bone];
                         break;
-                    default:
+                    case 10:
                         total+=[entity.protein floatValue];
                         [datas addObject:entity.protein];
                         break;
+                    default:
+                        total+=[entity.sholai floatValue];
+                        [datas addObject:entity.sholai];
                 }
             }
         }

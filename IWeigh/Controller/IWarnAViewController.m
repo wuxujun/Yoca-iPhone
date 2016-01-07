@@ -93,6 +93,7 @@
     }
     
     NSMutableDictionary* dict=[[NSMutableDictionary alloc]init];
+    [dict setObject:[NSString stringWithFormat:@"%ld",(long)[[NSDate date] timeIntervalSince1970]] forKey:@"wid"];
     [dict setObject:title forKey:@"title"];
     [dict setObject:[NSString stringWithFormat:@"%ld",(long)currentType] forKey:@"repeats"];
     [dict setObject:[NSString stringWithFormat:@"%@",[self.weekDict objectForKey:@"100"]] forKey:@"weekMon"];

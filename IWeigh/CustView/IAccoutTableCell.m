@@ -31,7 +31,7 @@
     [super layoutSubviews];
     
     CGFloat leftPadding = 20.0;
-    CGFloat topPadding = (64-20)/2.0;
+    CGFloat topPadding = (64-40)/2.0;
     CGFloat textWidth = self.contentView.bounds.size.width - leftPadding * 2-80;
     
     _avatar.frame=CGRectMake(leftPadding, 10, 64, 64);

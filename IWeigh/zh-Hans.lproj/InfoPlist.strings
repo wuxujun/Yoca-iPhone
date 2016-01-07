@@ -1,5 +1,5 @@
 /* Localized versions of Info.plist keys */
-CFBundleDisplayName="YOCA";
+CFBundleDisplayName="Sholai";
 
 "dmpasscode_enter_new_code" = "请输入6位数字";
 "dmpasscode_enter_to_unlock" = "Enter code to unlock";
